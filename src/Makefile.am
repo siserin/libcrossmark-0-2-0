@@ -36,7 +36,9 @@ AM_CXXFLAGS = $(LIBCROSSMARK_CXXFLAGS) $(DEBUG_CXXFLAGS)
 libcrossmark_1_la_LDFLAGS = $(version_info) -export-dynamic $(no_undefined)
 libcrossmark_1_la_SOURCES = \
 	libcrossmark.cpp \
-	libcrossmark.h
+	libcrossmark.h \
+	sink.h \
+	writer.h
 
 if OS_WIN32
 @LIBCROSSMARK_WIN32_RESOURCE@ : libcrossmark.rc
@@ -48,9 +50,9 @@ install-data-local: install-libtool-import-lib
 
 uninstall-local: uninstall-libtool-import-lib
 
-#EXTRA_DIST = \
-#	makefile.mk \
-#	libcrossmark.rc.in
+EXTRA_DIST = \
+	makefile.mk \
+	libcrossmark.rc.in
 
 # These may be in the builddir too
 BUILD_EXTRA_DIST = \
