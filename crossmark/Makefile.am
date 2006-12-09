@@ -24,8 +24,8 @@ uninstall-libtool-import-lib:
 endif
 
 lib_LTLIBRARIES = libcrossmark-1.la
-libcrossmark_1_includedir = $(includedir)/libcrossmark-1/libcrossmark
-libcrossmark_1_include_HEADERS = libcrossmark.h
+libcrossmark_1_includedir = $(includedir)/libcrossmark-1/crossmark
+libcrossmark_1_include_HEADERS = crossmark.h
 
 INCLUDES = -I$(srcdir)
 
@@ -33,12 +33,18 @@ AM_CXXFLAGS = $(LIBCROSSMARK_CXXFLAGS) $(DEBUG_CXXFLAGS)
 
 #libcrossmark_1_la_LIBADD = @LIBCROSSMARK_WIN32_RESOURCE@
 #libcrossmark_1_la_DEPENDENCIES = @LIBCROSSMARK_WIN32_RESOURCE@
-libcrossmark_1_la_LDFLAGS = $(version_info) -export-dynamic $(no_undefined)
+
+libcrossmark_1_la_CXXFLAGS = $(DEPS_CFLAGS)
+
+libcrossmark_1_la_LDFLAGS = \
+	$(DEPS_LIBS) \
+	$(version_info) \
+	-export-dynamic \
+	$(no_undefined)
+
 libcrossmark_1_la_SOURCES = \
-	libcrossmark.cpp \
-	libcrossmark.h \
-	sink.h \
-	writer.h
+	sink.cpp \
+	writer.cpp
 
 if OS_WIN32
 @LIBCROSSMARK_WIN32_RESOURCE@ : libcrossmark.rc
@@ -51,7 +57,6 @@ install-data-local: install-libtool-import-lib
 uninstall-local: uninstall-libtool-import-lib
 
 EXTRA_DIST = \
-	makefile.mk \
 	libcrossmark.rc.in
 
 # These may be in the builddir too

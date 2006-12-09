@@ -20,7 +20,6 @@
 #ifndef LIBCROSSMARK_H
 #define LIBCROSSMARK_H
 
-#include <crossmark/crossmark-features.h>
 #include <iostream>
 #include <list>
 #include <map>

@@ -6,5 +6,6 @@ includedir=@includedir@
 Name: crossmark-1
 Description: A library for reading and writing Crossmark documents
 Version: @VERSION@
+Requires: @DEPS_PKGS@
 Libs: -L${libdir} -lcrossmark-1
 Cflags: -I${includedir}/libcrossmark-1

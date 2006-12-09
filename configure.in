@@ -1,4 +1,5 @@
-AC_INIT(crossmark/libcrossmark.cpp)
+
+AC_INIT(crossmark/crossmark.h)
 
 AM_CONFIG_HEADER(config.h)
 
@@ -31,17 +32,23 @@ AC_SUBST(LT_CURRENT_MINUS_AGE)
 AM_INIT_AUTOMAKE(libcrossmark, $CROSSMARK_VERSION)
 
 AC_PROG_CC
-
 AC_PROG_CXX
-
 AC_PROG_INSTALL
-
 AC_LIBTOOL_WIN32_DLL
-
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
-
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+
+DEPS_CFLAGS=
+DEPS_LIBS=
+DEPS_PKGS=
+
+# TODO require certain version
+glib_reqs="glib-2.0"
+PKG_CHECK_MODULES([GLIB], [$glib_reqs])
+DEPS_PKGS="$DEPS_PKGS $glib_reqs"
+DEPS_CFLAGS="$DEPS_CFLAGS $GLIB_CFLAGS"
+DEPS_LIBS="$DEPS_LIBS $GLIB_LIBS"
 
 dnl ***********************************************************************************
 
@@ -154,19 +161,18 @@ if test x"$native_win32" = xyes; then
   fi
 fi 
 
-LIBCROSSMARK_CXXFLAGS="$LIBCROSSMARK_CFLAGS"
-
-AC_SUBST(LIBCROSSMARK_CXXFLAGS)
 AC_SUBST(DEBUG_CXXFLAGS)
-AC_SUBST(LIBCROSSMARK_LIBS)
+AC_SUBST(DEPS_CFLAGS)
+AC_SUBST(DEPS_LIBS)
+AC_SUBST(DEPS_PKGS)
 
 AC_OUTPUT([
 Makefile
+libcrossmark-1.pc
 crossmark/Makefile
 crossmark/libcrossmark.rc
 docs/Makefile
 docs/doxygen/Makefile
-libcrossmark-1.pc
 ])
 
 case "$debug" in
