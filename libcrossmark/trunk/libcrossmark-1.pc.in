@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: crossmark-1
+Description: A library for reading and writing Crossmark documents
+Version: @VERSION@
+Libs: -L${libdir} -lcrossmark-1
+Cflags: -I${includedir}/libcrossmark-1
