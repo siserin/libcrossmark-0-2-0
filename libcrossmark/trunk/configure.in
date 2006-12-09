@@ -1,4 +1,4 @@
-AC_INIT(src/libcrossmark.cpp)
+AC_INIT(crossmark/libcrossmark.cpp)
 
 AM_CONFIG_HEADER(config.h)
 
