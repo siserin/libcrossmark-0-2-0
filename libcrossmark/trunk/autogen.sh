@@ -1,5 +1,14 @@
 #!/bin/sh
 
+rm -rf autom4te.cache
+rm -f autogen.err
+
+srcdir=`dirname $0`
+test -z "$srcdir" && srcdir=.
+
+olddir=`pwd`
+cd $srcdir
+
 aclocal --version > /dev/null 2> /dev/null || {
     echo "error: aclocal not found"
     exit 1
@@ -34,3 +43,15 @@ autoconf || {
     echo "error: autoconf failed"
     exit 1
 }
+
+cd $olddir
+
+conf_flags="--enable-maintainer-mode"
+
+if test x$NOCONFIGURE = x; then
+  echo Running $srcdir/configure $conf_flags "$@" ...
+  $srcdir/configure $conf_flags "$@" \
+  && echo Now type \`make\' to compile. || exit 1
+else
+  echo Skipping configure process.
+fi

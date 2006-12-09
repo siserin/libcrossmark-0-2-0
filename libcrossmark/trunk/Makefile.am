@@ -1,19 +1,16 @@
-pkgconfdir = $(libdir)/pkgconfig
 
+pkgconfdir = $(libdir)/pkgconfig
 pkgconf_DATA = libcrossmark-1.pc
 
 SUBDIRS = crossmark docs
 
 EXTRA_DIST = \
-	autogen.sh	\
-	libcrossmark-*.pc.in	\
-	CHANGES		\
+	AUTHORS		\
 	COPYING		\
-	CREDITS		\
 	HACKING		\
 	INSTALL		\
-	README		\
-	TODO
+	autogen.sh	\
+	libcrossmark-1.pc.in
 
 distclean-local:
 	rm -rf *.cache *~
