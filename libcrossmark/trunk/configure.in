@@ -162,8 +162,8 @@ AC_SUBST(LIBCROSSMARK_LIBS)
 
 AC_OUTPUT([
 Makefile
-src/Makefile
-src/libcrossmark.rc
+crossmark/Makefile
+crossmark/libcrossmark.rc
 docs/Makefile
 docs/doxygen/Makefile
 libcrossmark-1.pc
