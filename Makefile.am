@@ -18,16 +18,16 @@ EXTRA_DIST = \
 distclean-local:
 	rm -rf *.cache *~
 
-#if WITH_LIBWPD_DOCS
+#if WITH_LIBCROSSMARK_DOCS
 #install-data-local:
-#	mkdir -p $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@
-#	$(INSTALL) $(srcdir)/CHANGES $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@/
-#	$(INSTALL) $(srcdir)/COPYING $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@/
-#	$(INSTALL) $(srcdir)/CREDITS $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@/
-#	$(INSTALL) $(srcdir)/HACKING $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@/
-#	$(INSTALL) $(srcdir)/INSTALL $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@/
-#	$(INSTALL) $(srcdir)/README $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@/
-#	$(INSTALL) $(srcdir)/TODO $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@/
+#	mkdir -p $(DESTDIR)$(datadir)/doc/libwpd-@CROSSMARK_VERSION@
+#	$(INSTALL) $(srcdir)/CHANGES $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
+#	$(INSTALL) $(srcdir)/COPYING $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
+#	$(INSTALL) $(srcdir)/CREDITS $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
+#	$(INSTALL) $(srcdir)/HACKING $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
+#	$(INSTALL) $(srcdir)/INSTALL $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
+#	$(INSTALL) $(srcdir)/README $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
+#	$(INSTALL) $(srcdir)/TODO $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
 #uninstall-local:
-#	-rm -rf $(DESTDIR)$(datadir)/doc/libwpd-@WPD_VERSION@
+#	-rm -rf $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@
 #endif
