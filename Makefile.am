@@ -2,7 +2,7 @@ pkgconfdir = $(libdir)/pkgconfig
 
 pkgconf_DATA = libcrossmark-1.pc
 
-SUBDIRS = src docs
+SUBDIRS = crossmark docs
 
 EXTRA_DIST = \
 	autogen.sh	\
