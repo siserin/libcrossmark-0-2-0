@@ -17,14 +17,36 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef LIBCROSSMARK_H
-#define LIBCROSSMARK_H
+#ifndef CROSSMARK_H
+#define CROSSMARK_H
 
-#include <iostream>
 #include <list>
 #include <map>
 #include <stack>
 #include <string>
+
+/*
+
+Initial poking at grammar, just to wrap my head around crossmark.
+Will not be implemente like that, need to work out scanner before.
+
+Some obvious flaws, notes:
++ incomplete
++ arbitrary nesting of styling allowed
++ many more
+
+# Some quickie top-down grammar, to wrap my head around the problem
+document   := [ paragraph | blockquote ]*
+paragraph  := [ text | markup ]* '\n' '\n'
+markup     := bold | italic | monospace | underline
+bold       := " *" [ {charset} | markup ]* "* "
+italic     := " /" [ {charset} | markup ]* "/ "
+monospace  := " `" [ {charset} | markup ]* "` "
+underline  := " _" [ {charset} | markup ]* "_ "
+blockquote := [ ' '* line '\n' ]*
+line       := [ text | markup ]*
+text       := {charset}*
+*/
 
 /*!
  * Crossmark implementation.
@@ -341,9 +363,6 @@ public:
 	Source (const std::string &file, 
 		Reader &reader);
 
-	Source (std::istream stream, 
-		Reader &reader);
-
 	/* maybe optionally: 
 	Source (GsfInput *input, 
 		Reader &reader);
@@ -355,7 +374,6 @@ public:
 	 * \todo use GError or exceptions?
 	 */
 	bool open (const std::string &file);
-	bool open (std::istream stream);
 	/* maybe optionally: 
 	bool open (GsfInput *input);
 	*/
@@ -400,9 +418,9 @@ public:
 	// TODO implement
 
 private:
-	void setStream (std::ostream &stream);
+	void setStream (FILE *ostream);
 
-	std::ostream *_ostream;
+	FILE *_ostream;
 	std::stack<modules::Style::Type> _styleStack;
 };
 
@@ -413,9 +431,6 @@ class Sink
 {
 public:
 	Sink (const std::string &file, 
-	      Writer &writer);
-
-	Sink (std::ostream stream, 
 	      Writer &writer);
 
 	/* maybe optionally: 
@@ -429,17 +444,14 @@ public:
 	 * \todo use GError or exceptions?
 	 */
 	bool open (const std::string &file);
-	bool open (std::ostream stream);
 	// maybe optionally: bool open (GsfOutput *output);
 
 	/*!
 	 * \todo use GError or exceptions?
 	 */
 	bool close ();
-private:
-	std::ostream *_ostream;
 };
 
 };  // namespace crossmark
 
-#endif /* LIBCROSSMARK_H */
+#endif /* CROSSMARK_H */

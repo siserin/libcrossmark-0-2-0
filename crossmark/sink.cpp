@@ -22,19 +22,7 @@
 
 crossmark::Sink::Sink (const std::string &file, 
 		       Writer &writer)
-  : _ostream (NULL)
 {
-	_ostream = new std::ofstream (file.c_str (), 
-				      std::ios_base::out | std::ios_base::trunc);
-	if (_ostream) {
-		writer.setStream (*_ostream);
-	}
-}
-
-crossmark::Sink::Sink (std::ostream stream, 
-		       Writer &writer)
-{
-
 }
 
 crossmark::Sink::~Sink ()
@@ -47,12 +35,6 @@ crossmark::Sink::~Sink ()
  */
 bool 
 crossmark::Sink::open (const std::string &file)
-{
-
-}
-
-bool 
-crossmark::Sink::open (std::ostream stream)
 {
 
 }

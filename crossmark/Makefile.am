@@ -25,9 +25,13 @@ endif
 
 lib_LTLIBRARIES = libcrossmark-1.la
 libcrossmark_1_includedir = $(includedir)/libcrossmark-1/crossmark
-libcrossmark_1_include_HEADERS = crossmark.h
+libcrossmark_1_include_HEADERS = \
+	crossmark.h
 
-INCLUDES = -I$(srcdir)
+noinst_HEADERS = \
+	crossmark-scanner.h
+
+AM_INCLUDES = -I$(top_srcdir)
 
 AM_CXXFLAGS = $(LIBCROSSMARK_CXXFLAGS) $(DEBUG_CXXFLAGS)
 
@@ -44,6 +48,7 @@ libcrossmark_1_la_LDFLAGS = \
 
 libcrossmark_1_la_SOURCES = \
 	sink.cpp \
+	scanner.cpp \
 	writer.cpp
 
 if OS_WIN32
