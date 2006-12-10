@@ -25,7 +25,7 @@ crossmark::Writer::text (const std::string &text)
 {
 	g_assert (_ostream);
 
-	*_ostream << text.c_str ();
+	fputs (text.c_str (), _ostream);
 }
 
 void 
@@ -35,16 +35,16 @@ crossmark::Writer::pushStyle (modules::Style::Type type)
 
 	switch (type) {
 	case modules::Style::BOLD:
-		*_ostream << '*';
+		fputc ('*', _ostream);
 		break;
 	case modules::Style::ITALIC:
-		*_ostream << '/';
+		fputc ('/', _ostream);
 		break;
 	case modules::Style::MONOSPACE:
-		*_ostream << '`';
+		fputc ('`', _ostream);
 		break;
 	case modules::Style::UNDERLINE:
-		*_ostream << '_';
+		fputc ('_', _ostream);
 		break;
 	default:
 		g_warning ("%s: _styleStack.top() == %d", 
@@ -61,16 +61,16 @@ crossmark::Writer::popStyle ()
 
 	switch (_styleStack.top ()) {
 	case modules::Style::BOLD:
-		*_ostream << '*';
+		fputc ('*', _ostream);
 		break;
 	case modules::Style::ITALIC:
-		*_ostream << '/';
+		fputc ('/', _ostream);
 		break;
 	case modules::Style::MONOSPACE:
-		*_ostream << '`';
+		fputc ('`', _ostream);
 		break;
 	case modules::Style::UNDERLINE:
-		*_ostream << '_';
+		fputc ('_', _ostream);
 		break;
 	default:
 		g_warning ("%s: _styleStack.top() == %d", 
