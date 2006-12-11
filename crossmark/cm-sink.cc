@@ -20,12 +20,14 @@
 #include <fstream>
 #include "crossmark.hh"
 
-crossmark::Sink::Sink (const std::string &file, 
+using namespace crossmark;
+
+Sink::Sink (const std::string &file, 
 		       Writer &writer)
 {
 }
 
-crossmark::Sink::~Sink ()
+Sink::~Sink ()
 {
 
 }
@@ -34,7 +36,7 @@ crossmark::Sink::~Sink ()
  * \todo use GError or exceptions?
  */
 bool 
-crossmark::Sink::open (const std::string &file)
+Sink::open (const std::string &file)
 {
 
 }
@@ -43,7 +45,7 @@ crossmark::Sink::open (const std::string &file)
  * \todo use GError or exceptions?
  */
 bool 
-crossmark::Sink::close ()
+Sink::close ()
 {
 
 }
