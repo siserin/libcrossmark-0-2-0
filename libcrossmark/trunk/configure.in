@@ -1,5 +1,5 @@
 
-AC_INIT(crossmark/crossmark.h)
+AC_INIT(crossmark/crossmark.hh)
 
 AM_CONFIG_HEADER(config.h)
 

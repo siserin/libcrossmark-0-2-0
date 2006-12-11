@@ -52,7 +52,12 @@ public:
 	Text (gchar *text)
 	  : _text (text)
 	{
-		g_assert (text);
+		g_assert (_text);
+	}
+	Text (const gchar *text)
+	  : _text (g_strdup (text))
+	{
+		g_assert (_text);
 	}
 	virtual ~Text ()
 	{

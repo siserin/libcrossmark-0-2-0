@@ -33,7 +33,9 @@ Will not be implemente like that, need to work out scanner before.
 Some obvious flaws, notes:
 + incomplete
 + arbitrary nesting of styling allowed
-+ many more
++ many more flaws
++ maybe use only give tabs a syntactical meaning (blockquote, lists), at least for now (easier to parse)
++ preserve single newlines?
 
 # Some quickie top-down grammar, to wrap my head around the problem
 document   := [ paragraph | blockquote ]*
