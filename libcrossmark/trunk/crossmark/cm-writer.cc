@@ -18,7 +18,7 @@
  */
 
 #include <glib.h>
-#include "crossmark.h"
+#include "crossmark.hh"
 
 void 
 crossmark::Writer::text (const std::string &text)
