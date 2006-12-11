@@ -1,5 +1,23 @@
-libcrossmark coding style
--------------------------
+HACKING
+=======
 
-Indentation/spacing: We indent with tabs. Not spaces. For the rest: just
-look at the code around you, and copy that :)
+Coding Style
+------------
+
+Indentation/spacing: We indent with tabs. Not spaces. For the rest: 
+just look at the code around you, and copy that :)
+
+While 80 character wide terminals are hardly used nowadays we are 
+still restricting lines of code to not be any wider. This prevents 
+deep nesting of constructs.
+
+Documentation
+-------------
+
+Source code and interfaces are documented using Doxygen. Usually one 
+short paragraph per method should be enough, except you are doing 
+seriously fancy stuff.
+
+Auxiliary documentation, like this very document for example, are 
+written in crossmark markup. Do not exceed a line-length of 72 
+characters.
