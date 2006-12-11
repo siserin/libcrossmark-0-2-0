@@ -26,10 +26,10 @@ endif
 lib_LTLIBRARIES = libcrossmark-1.la
 libcrossmark_1_includedir = $(includedir)/libcrossmark-1/crossmark
 libcrossmark_1_include_HEADERS = \
-	crossmark.h
+	crossmark.hh
 
 noinst_HEADERS = \
-	crossmark-scanner.h
+	cm-scanner.hh
 
 AM_INCLUDES = -I$(top_srcdir)
 
@@ -47,9 +47,13 @@ libcrossmark_1_la_LDFLAGS = \
 	$(no_undefined)
 
 libcrossmark_1_la_SOURCES = \
-	sink.cpp \
-	scanner.cpp \
-	writer.cpp
+	cm-sink.cc \
+	cm-writer.cc
+
+#libcrossmark_1_la_SOURCES = \
+#	cm-sink.cc \
+#	cm-scanner.cc \
+#	cm-writer.cc
 
 if OS_WIN32
 @LIBCROSSMARK_WIN32_RESOURCE@ : libcrossmark.rc

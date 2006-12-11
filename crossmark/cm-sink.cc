@@ -18,7 +18,7 @@
  */
 
 #include <fstream>
-#include "crossmark.h"
+#include "crossmark.hh"
 
 crossmark::Sink::Sink (const std::string &file, 
 		       Writer &writer)
