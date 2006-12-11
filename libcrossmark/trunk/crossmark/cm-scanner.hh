@@ -71,33 +71,33 @@ class Style : public Token
 {
 public:
 	enum Type {
-		BOLD, 
-		ITALIC,
-		MONOSPACE,
-		UNDERLINE
+		ASTERISK, 
+		SLASH,
+		BACKTICK,
+		UNDERSCORE
 	};
-	Style (Type type)
-	  : _type (type)
+
+	enum Pos {
+		LEFT,
+		RIGHT
+	};
+
+	Style (Type type_, Pos pos_)
+	  : type (type_), 
+	    pos (pos_)
 	{}
+
 	virtual ~Style () {}
-	virtual Type getType () const { return _type; }
-private:
-	Type _type;
+
+	Type type;
+	Pos pos;
 };
 
-class Outline : Token
+class Paragraph : public Token
 {
 public:
-	enum Type {
-		PARAGRAPH,
-		INDENT
-	};
-	Outline (Type type)
-	  : _type (type)
-	{}
-	virtual ~Outline () {}
-private:
-	Type _type;	
+	Paragraph () {}
+	virtual ~Paragraph () {}
 };
 
 };
@@ -113,8 +113,18 @@ public:
 
 	virtual tokens::Token * fetchToken ();
 
+protected:
+	virtual tokens::Token * scanEof ();
+	virtual tokens::Token * scanParagraph ();
+	virtual tokens::Token * scanStyle (tokens::Style::Type type,
+					   tokens::Style::Pos  pos);
+	virtual tokens::Token * scanText (gchar c1);
+	virtual tokens::Token * scanText (gchar c1, 
+					  gchar c2);
+
 private:
-	FILE *_istream;
+	FILE  *_istream;
+	gchar  _c1;
 };
 
 };

@@ -48,12 +48,8 @@ libcrossmark_1_la_LDFLAGS = \
 
 libcrossmark_1_la_SOURCES = \
 	cm-sink.cc \
+	cm-scanner.cc \
 	cm-writer.cc
-
-#libcrossmark_1_la_SOURCES = \
-#	cm-sink.cc \
-#	cm-scanner.cc \
-#	cm-writer.cc
 
 if OS_WIN32
 @LIBCROSSMARK_WIN32_RESOURCE@ : libcrossmark.rc

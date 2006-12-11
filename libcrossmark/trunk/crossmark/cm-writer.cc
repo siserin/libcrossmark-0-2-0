@@ -20,8 +20,10 @@
 #include <glib.h>
 #include "crossmark.hh"
 
+using namespace crossmark;
+
 void 
-crossmark::Writer::text (const std::string &text)
+Writer::text (const std::string &text)
 {
 	g_assert (_ostream);
 
@@ -29,7 +31,7 @@ crossmark::Writer::text (const std::string &text)
 }
 
 void 
-crossmark::Writer::pushStyle (modules::Style::Type type)
+Writer::pushStyle (modules::Style::Type type)
 {
 	g_assert (_ostream);
 
@@ -54,7 +56,7 @@ crossmark::Writer::pushStyle (modules::Style::Type type)
 }
 
 void 
-crossmark::Writer::popStyle ()
+Writer::popStyle ()
 {
 	g_assert (_ostream && 
 		  !_styleStack.empty ());
