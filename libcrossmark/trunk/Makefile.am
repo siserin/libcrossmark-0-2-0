@@ -2,7 +2,7 @@
 pkgconfdir = $(libdir)/pkgconfig
 pkgconf_DATA = libcrossmark-1.pc
 
-SUBDIRS = crossmark docs
+SUBDIRS = crossmark tools docs
 
 EXTRA_DIST = \
 	AUTHORS		\

@@ -39,9 +39,11 @@ text       := {charset}*
 using namespace crossmark;
 
 Scanner::Scanner (std::string &file)
-  : _c1 (0)
+  : _next (NULL),
+    _c1 (0)
 {
 	_istream = fopen (file.c_str (), "r");
+	g_assert (_istream);
 }
 
 Scanner::~Scanner ()
@@ -55,84 +57,126 @@ Scanner::~Scanner ()
 tokens::Token *
 Scanner::fetchToken ()
 {
-	gchar c2;
+	tokens::Token 	*t;
+	gchar 		 c2;
 
 	g_assert (_istream);
 
-	if (!_c1) {
-		_c1 = getc (_istream);
-		if (_c1 == EOF) {
-			return scanEof ();
-		}
+	if (_next) {
+		t = _next;
+		_next = NULL;
+		return t;
 	}
 
 	while (TRUE) {
 
+		// look ahead
+		if (_c1 == 0) {
+			_c1 = getc (_istream);
+		}
+
+		// look further
 		c2 = getc (_istream);
-		if (c2 == EOF) {
-			tokens::Token *t = scanText (_c1);
-			_c1 = EOF;
+
+		if (t = scanEof (c2)) {
 			return t;
 		}
-
-		if (_c1 == ' ' && c2 == '*') {
-			return scanStyle (tokens::Style::ASTERISK, tokens::Style::LEFT);
-		} else if (_c1 == '*' && c2 == ' ') {
-			return scanStyle (tokens::Style::ASTERISK, tokens::Style::RIGHT);
-		} else if (_c1 == ' ' && c2 == '/') {
-			return scanStyle (tokens::Style::SLASH, tokens::Style::LEFT);
-		} else if (_c1 == '/' && c2 == ' ') {
-			return scanStyle (tokens::Style::SLASH, tokens::Style::RIGHT);
-		} else if (_c1 == ' ' && c2 == '`') {
-			return scanStyle (tokens::Style::BACKTICK, tokens::Style::LEFT);
-		} else if (_c1 == '`' && c2 == ' ') {
-			return scanStyle (tokens::Style::BACKTICK, tokens::Style::RIGHT);
-		} else if (_c1 == ' ' && c2 == '_') {
-			return scanStyle (tokens::Style::UNDERSCORE, tokens::Style::LEFT);
-		} else if (_c1 == '_' && c2 == ' ') {
-			return scanStyle (tokens::Style::UNDERSCORE, tokens::Style::RIGHT);
+		else if (t = scanParagraph (c2)) {
+			return t;
 		}
-
-
-		if (c2 == EOF) {
-			// TODO
+		else if (t = scanStyle (c2)) {
+			return t;
 		}
-
-
+		else {
+			return scanText (c2);
+		}
 	}
 }
 
 tokens::Token * 
-Scanner::scanEof ()
+Scanner::scanEof (gchar c2)
 {
-	return new tokens::Eof ();
+	if (c2 == EOF) {
+		_next = new tokens::Eof ();
+		return new tokens::Text (g_strdup_printf ("%c", _c1));
+	} else if (_c1 == EOF) {
+		return new tokens::Eof ();
+	}
+	return NULL;
 }
 
 tokens::Token * 
-Scanner::scanParagraph ()
+Scanner::scanParagraph (gchar c2)
 {
-
+	if (_c1 == '\n' && c2 == '\n') {
+		do {
+			_c1 = getc (_istream);
+		} while (_c1 == '\n');
+		return new tokens::Paragraph ();
+	}
+	return NULL;
 }
 
 tokens::Token * 
-Scanner::scanStyle (tokens::Style::Type type, 
-		    tokens::Style::Pos  pos)
+Scanner::scanStyle (gchar c2)
 {
-	_c1 = 0;
-	return new tokens::Style (type, pos);
+	if (_c1 == ' ' && c2 == '*') {
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::ASTERISK, 
+					  tokens::Style::LEFT);
+	} else if (_c1 == '*' && c2 == ' ') {
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::ASTERISK, 
+					  tokens::Style::RIGHT);
+	} else if (_c1 == ' ' && c2 == '/') {
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::SLASH, 
+					  tokens::Style::LEFT);
+	} else if (_c1 == '/' && c2 == ' ') {
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::SLASH, 
+					  tokens::Style::RIGHT);
+	} else if (_c1 == ' ' && c2 == '`') {
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::BACKTICK, 
+					  tokens::Style::LEFT);
+	} else if (_c1 == '`' && c2 == ' ') {
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::BACKTICK, 
+					  tokens::Style::RIGHT);
+	} else if (_c1 == ' ' && c2 == '_') {
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::UNDERSCORE, 
+					  tokens::Style::LEFT);
+	} else if (_c1 == '_' && c2 == ' ') {
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::UNDERSCORE, 
+					  tokens::Style::RIGHT);
+	}
+	return NULL;
 }
 
-// TODO have only a c2 version since c1 is a member
-
 tokens::Token * 
-Scanner::scanText (gchar c1)
+Scanner::scanText (gchar c2)
 {
+	tokens::Text 	*t;
+	std::string 	 s;
 
-}
+	while (TRUE) {
 
-tokens::Token * 
-Scanner::scanText (gchar c1, 
-		   gchar c2)
-{
-
+		if (_next = scanEof (c2)) {
+			return t;
+		}
+		else if (_next = scanParagraph (c2)) {
+			return t;
+		}
+		else if (_next = scanStyle (c2)) {
+			return t;
+		}
+		else {
+			t->append (_c1);
+			_c1 = c2;
+			c2 = getc (_istream);
+		}
+	} 
 }

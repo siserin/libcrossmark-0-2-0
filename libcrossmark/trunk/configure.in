@@ -173,6 +173,7 @@ crossmark/Makefile
 crossmark/libcrossmark.rc
 docs/Makefile
 docs/doxygen/Makefile
+tools/Makefile
 ])
 
 case "$debug" in
