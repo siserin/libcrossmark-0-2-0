@@ -20,6 +20,9 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include "cm-scanner.hh"
+#include "cm-stdio-stream.hh"
+// debug
+#include <iostream>
 
 /*
 
@@ -29,7 +32,7 @@
 
 # Initial scanner grammar
 # 0 means start of file
-token      := paragraph | style | text | eof
+token      := paragraph | style | text | sof | eof
 paragraph  := '\n' '\n' '\n'*
 style      := " *" | "* " | " /" | "/ " | " `" | "` " | " _" | "_ "
 text       := {charset}*
@@ -38,145 +41,214 @@ text       := {charset}*
 
 using namespace crossmark;
 
-Scanner::Scanner (std::string &file)
-  : _next (NULL),
+Scanner::Scanner (const std::string &file)
+  : _istream (*new streams::StdInput (file)),
+    _ownStream (FALSE),
+    _next (NULL),
     _c1 (0)
 {
-	_istream = fopen (file.c_str (), "r");
-	g_assert (_istream);
+	_next = new tokens::Sof ();
+}
+
+Scanner::Scanner (streams::Input &istream)
+  : _istream (istream),
+    _ownStream (TRUE),
+    _next (NULL),
+    _c1 (0)
+{
+	_next = new tokens::Sof ();
 }
 
 Scanner::~Scanner ()
 {
-	if (_istream) {
-		fclose (_istream);
-		_istream = NULL;
+	if (_ownStream) {
+		delete &_istream;
 	}
 }
 
+/*!
+ * Fetch the next token from the input file.
+ */
 tokens::Token *
 Scanner::fetchToken ()
 {
-	tokens::Token 	*t;
-	gchar 		 c2;
-
-	g_assert (_istream);
+	tokens::Token *token;
 
 	if (_next) {
-		t = _next;
+		token = _next;
 		_next = NULL;
-		return t;
+		return token;
 	}
 
+	tokens::Text 	*text = NULL;
+	gboolean	 restart;
+	gunichar 	 c2;
+	gunichar 	 tail;
 	while (TRUE) {
+
+		restart = FALSE;
 
 		// look ahead
 		if (_c1 == 0) {
-			_c1 = getc (_istream);
+			_c1 = _istream.getChar ();
+		}
+
+		if ((_next = scanEof ()) ||
+		    (_next = scanParagraph (restart)) ||
+		    (_next = scanIndent ())) {
+			if (text) {
+				return text;
+			} else {
+				token = _next;
+				_next = NULL;
+				return token;
+			}
+		}
+
+		if (restart) {
+			continue;
 		}
 
 		// look further
-		c2 = getc (_istream);
+		c2 = _istream.getChar ();
 
-		if (t = scanEof (c2)) {
-			return t;
-		}
-		else if (t = scanParagraph (c2)) {
-			return t;
-		}
-		else if (t = scanStyle (c2)) {
-			return t;
-		}
-		else {
-			return scanText (c2);
+		//std::cout << "-- '" << _c1 << "' '" << c2 << "'" << std::endl;
+
+		if ((_next = scanEof (c2))) {
+			if (text) {
+				text->append (_c1);
+			} else {
+				text = new tokens::Text (g_strdup_printf ("%c", c2));
+			}
+			_c1 = c2;
+			return text;
+		} else if (_next = scanStyle (c2, tail)) {
+			if (text && tail) {
+				text->append (tail);
+				token = text;
+			} else if (text) {
+				token = text;
+			} else if (tail) {
+				text = new tokens::Text (g_strdup_printf ("%c", tail));
+				token = text;
+			} else {
+				token = _next;
+				_next = NULL;
+			}
+			return token;
+		} else {
+			if (text) {
+				text->append (_c1);
+			} else {
+				text = new tokens::Text (g_strdup_printf ("%c", _c1));
+			}
+			_c1 = c2;
 		}
 	}
 }
 
 tokens::Token * 
-Scanner::scanEof (gchar c2)
+Scanner::scanEof ()
 {
-	if (c2 == EOF) {
-		_next = new tokens::Eof ();
-		return new tokens::Text (g_strdup_printf ("%c", _c1));
-	} else if (_c1 == EOF) {
+	if (_c1 == EOF) {
 		return new tokens::Eof ();
 	}
 	return NULL;
 }
 
 tokens::Token * 
-Scanner::scanParagraph (gchar c2)
+Scanner::scanEof (gunichar c)
 {
-	if (_c1 == '\n' && c2 == '\n') {
+	if (c == EOF) {
+		return new tokens::Eof ();
+	}
+	return NULL;
+}
+
+/*!
+ * \todo Not eat the newline if an indentation follows, 
+ * 	 need to recognise that for blockquote, lists.
+ */
+tokens::Token * 
+Scanner::scanParagraph (gboolean &restart)
+{
+	gboolean isParagraph;
+
+	restart = FALSE;
+	isParagraph = FALSE;
+	if (_c1 == '\n') {
 		do {
-			_c1 = getc (_istream);
+			_c1 = _istream.getChar ();
+			if (_c1 == '\n') { 
+				isParagraph = TRUE;
+			}
 		} while (_c1 == '\n');
-		return new tokens::Paragraph ();
+		if (isParagraph) {
+			return new tokens::Paragraph ();
+		} else {
+			// eat single '\n'
+			// TODO reconsider when supporting blockquote, lists
+			_c1 = 0;
+			restart = TRUE;
+		}
+	}
+	return NULL;
+}
+
+/*!
+ * \todo For now only tab indentation is supported.
+ */
+tokens::Token * 
+Scanner::scanIndent ()
+{
+	if (_c1 == '\t') {
+		_c1 = 0;
+		return new tokens::Indent ();
 	}
 	return NULL;
 }
 
 tokens::Token * 
-Scanner::scanStyle (gchar c2)
+Scanner::scanStyle (gunichar c2, gunichar &tail)
 {
+	tail = 0;
+
 	if (_c1 == ' ' && c2 == '*') {
+		tail = _c1;
 		_c1 = 0;
 		return new tokens::Style (tokens::Style::ASTERISK, 
 					  tokens::Style::LEFT);
 	} else if (_c1 == '*' && c2 == ' ') {
-		_c1 = 0;
+		_c1 = c2;
 		return new tokens::Style (tokens::Style::ASTERISK, 
 					  tokens::Style::RIGHT);
 	} else if (_c1 == ' ' && c2 == '/') {
+		tail = _c1;
 		_c1 = 0;
 		return new tokens::Style (tokens::Style::SLASH, 
 					  tokens::Style::LEFT);
 	} else if (_c1 == '/' && c2 == ' ') {
-		_c1 = 0;
+		_c1 = c2;
 		return new tokens::Style (tokens::Style::SLASH, 
 					  tokens::Style::RIGHT);
 	} else if (_c1 == ' ' && c2 == '`') {
+		tail = _c1;
 		_c1 = 0;
 		return new tokens::Style (tokens::Style::BACKTICK, 
 					  tokens::Style::LEFT);
 	} else if (_c1 == '`' && c2 == ' ') {
-		_c1 = 0;
+		_c1 = c2;
 		return new tokens::Style (tokens::Style::BACKTICK, 
 					  tokens::Style::RIGHT);
 	} else if (_c1 == ' ' && c2 == '_') {
+		tail = _c1;
 		_c1 = 0;
 		return new tokens::Style (tokens::Style::UNDERSCORE, 
 					  tokens::Style::LEFT);
 	} else if (_c1 == '_' && c2 == ' ') {
-		_c1 = 0;
+		_c1 = c2;
 		return new tokens::Style (tokens::Style::UNDERSCORE, 
 					  tokens::Style::RIGHT);
 	}
 	return NULL;
-}
-
-tokens::Token * 
-Scanner::scanText (gchar c2)
-{
-	tokens::Text 	*t;
-	std::string 	 s;
-
-	while (TRUE) {
-
-		if (_next = scanEof (c2)) {
-			return t;
-		}
-		else if (_next = scanParagraph (c2)) {
-			return t;
-		}
-		else if (_next = scanStyle (c2)) {
-			return t;
-		}
-		else {
-			t->append (_c1);
-			_c1 = c2;
-			c2 = getc (_istream);
-		}
-	} 
 }
