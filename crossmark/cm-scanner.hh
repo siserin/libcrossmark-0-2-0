@@ -31,40 +31,47 @@ namespace tokens {
 class Token
 {
 public:
-	virtual ~Token ();
+	virtual ~Token () {}
+
+	virtual operator const gchar * () 
+	{
+		return "(void)";
+	}
+
 protected:
-	Token ();
+	Token () {}
 };
 
 class Eof : public Token
 {
 public:
 	Eof () {}
+
 	virtual ~Eof () {}
+
+	virtual operator const gchar * () { return "\n\nEOF\n"; }
 };
 
 class Text : public Token
 {
 public:
-	/*!
-	 * The object takes over ownership.
-	 */
-	Text (gchar *text)
+	Text (const gchar *text)
 	  : _text (text)
 	{
-		g_assert (_text);
+		g_assert (text);
 	}
-	Text (const gchar *text)
-	  : _text (g_strdup (text))
-	{
-		g_assert (_text);
-	}
-	virtual ~Text ()
-	{
-		g_free (_text);
-	}
+
+	virtual ~Text () {}
+
+	virtual void append (gchar c) { _text.append (1, c); }
+
+	virtual const gchar * getBuffer () { return _text.c_str (); }
+
+	virtual const std::string &getString () { return _text; }
+
+	virtual operator const gchar * () { return _text.c_str (); }
 private:
-	gchar *_text;
+	std::string _text;
 };
 
 class Style : public Token
@@ -89,6 +96,15 @@ public:
 
 	virtual ~Style () {}
 
+	virtual operator const gchar * () 
+	{
+		if (pos == LEFT) {
+			return "<style>";
+		} else {
+			return "</style>";
+		}
+	}
+
 	Type type;
 	Pos pos;
 };
@@ -97,7 +113,13 @@ class Paragraph : public Token
 {
 public:
 	Paragraph () {}
+
 	virtual ~Paragraph () {}
+
+	virtual operator const gchar * () 
+	{
+		return "<paragraph />";
+	}
 };
 
 };
@@ -114,17 +136,15 @@ public:
 	virtual tokens::Token * fetchToken ();
 
 protected:
-	virtual tokens::Token * scanEof ();
-	virtual tokens::Token * scanParagraph ();
-	virtual tokens::Token * scanStyle (tokens::Style::Type type,
-					   tokens::Style::Pos  pos);
-	virtual tokens::Token * scanText (gchar c1);
-	virtual tokens::Token * scanText (gchar c1, 
-					  gchar c2);
+	virtual tokens::Token * scanEof (gchar c2);
+	virtual tokens::Token * scanParagraph (gchar c2);
+	virtual tokens::Token * scanStyle (gchar c2);
+	virtual tokens::Token * scanText (gchar c2);
 
 private:
-	FILE  *_istream;
-	gchar  _c1;
+	FILE  		*_istream;
+	tokens::Token 	*_next;
+	gchar  		 _c1;
 };
 
 };

@@ -41,10 +41,12 @@ AM_CXXFLAGS = $(LIBCROSSMARK_CXXFLAGS) $(DEBUG_CXXFLAGS)
 libcrossmark_1_la_CXXFLAGS = $(DEPS_CFLAGS)
 
 libcrossmark_1_la_LDFLAGS = \
-	$(DEPS_LIBS) \
 	$(version_info) \
 	-export-dynamic \
 	$(no_undefined)
+
+libcrossmark_1_la_LIBADD = \
+	$(DEPS_LIBS)
 
 libcrossmark_1_la_SOURCES = \
 	cm-sink.cc \
