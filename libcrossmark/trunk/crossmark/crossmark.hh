@@ -24,30 +24,42 @@
 #include <map>
 #include <stack>
 #include <string>
+#include <crossmark/cm-scanner.hh>
+#include <crossmark/cm-stream.hh>
 
 /*
 
-Initial poking at grammar, just to wrap my head around crossmark.
-Will not be implemente like that, need to work out scanner before.
+Scanner tokens:
+sof
+eof
+pbreak
+newline	#todo
+indent
+text
+style-lb
+style-rb
+style-li
+style-ri
+style-lm
+style-rm
+style-lu
+style-ru
 
-Some obvious flaws, notes:
-+ incomplete
-+ arbitrary nesting of styling allowed
-+ many more flaws
-+ maybe use only give tabs a syntactical meaning (blockquote, lists), at least for now (easier to parse)
-+ preserve single newlines?
+# Some quickie top-down grammar, flaws:
+  + way incomplete
+  + arbitrary nesting of styling allowed
+  + ...
 
-# Some quickie top-down grammar, to wrap my head around the problem
-document   := [ paragraph | blockquote ]*
-paragraph  := [ text | markup ]* '\n' '\n'
-markup     := bold | italic | monospace | underline
-bold       := " *" [ {charset} | markup ]* "* "
-italic     := " /" [ {charset} | markup ]* "/ "
-monospace  := " `" [ {charset} | markup ]* "` "
-underline  := " _" [ {charset} | markup ]* "_ "
-blockquote := [ ' '* line '\n' ]*
-line       := [ text | markup ]*
-text       := {charset}*
+document    := sof ( pbreak* (paragraph | blockquote) )* pbreak* eof
+paragraph   := ( text | markup-text )* pbreak
+markup-text := bold | italic | monospace | underline
+bold        := style-lb ( text | markup-text )* style-rb
+italic      := style-li ( text | markup-text )* style-ri
+monospace   := style-lm ( text | markup-text )* style-rm
+underline   := style-lu ( text | markup-text )* style-ru
+blockquote  := indent line ( newline indent line )* pbreak
+line        := ( text | markup-text )*
+
 */
 
 /*!
@@ -365,10 +377,8 @@ public:
 	Source (const std::string &file, 
 		Reader &reader);
 
-	/* maybe optionally: 
-	Source (GsfInput *input, 
+	Source (streams::Input &istream, 
 		Reader &reader);
-	*/
 
 	virtual ~Source ();
 
@@ -376,9 +386,7 @@ public:
 	 * \todo use GError or exceptions?
 	 */
 	bool open (const std::string &file);
-	/* maybe optionally: 
-	bool open (GsfInput *input);
-	*/
+	bool open (streams::Input &istream);
 
 	/*!
 	 * \todo use GError or exceptions?
@@ -389,6 +397,10 @@ public:
 	 * \todo use GError or exceptions?
 	 */
 	bool close ();
+
+private:
+	Reader	&_reader;
+	Scanner &_scanner;
 };
 
 /*!

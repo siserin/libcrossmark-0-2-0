@@ -23,25 +23,46 @@
 #include <string>
 #include <glib.h>
 #include <stdio.h>
+#include <crossmark/cm-stream.hh>
 
 namespace crossmark {
 
+/*!
+ * This namespace contains the various token types recognised by the 
+ * scanner.
+ */
 namespace tokens {
 
+/*!
+ * Abstract base class.
+ */
 class Token
 {
 public:
 	virtual ~Token () {}
 
-	virtual operator const gchar * () 
-	{
-		return "(void)";
-	}
+	virtual const gchar * serialize () { return "\n<base />\n"; }
 
 protected:
 	Token () {}
 };
 
+/*!
+ * Start-of-file.
+ */
+class Sof : public Token
+{
+public:
+	Sof () {}
+
+	virtual ~Sof () {}
+
+	virtual const gchar * serialize () { return "<html><body>\n"; }
+};
+
+/*!
+ * End-of-file.
+ */
 class Eof : public Token
 {
 public:
@@ -49,9 +70,12 @@ public:
 
 	virtual ~Eof () {}
 
-	virtual operator const gchar * () { return "\n\nEOF\n"; }
+	virtual const gchar * serialize () { return "\n</body></html>\n"; }
 };
 
+/*!
+ * Text token.
+ */
 class Text : public Token
 {
 public:
@@ -63,17 +87,32 @@ public:
 
 	virtual ~Text () {}
 
-	virtual void append (gchar c) { _text.append (1, c); }
+	virtual void append (gunichar c) { _text.append (1, c); }
 
 	virtual const gchar * getBuffer () { return _text.c_str (); }
 
 	virtual const std::string &getString () { return _text; }
 
-	virtual operator const gchar * () { return _text.c_str (); }
+	virtual const gchar * serialize () { return _text.c_str (); }
 private:
 	std::string _text;
 };
 
+/*!
+ * Indentation token.
+ */
+class Indent : public Token
+{
+public:
+	Indent () {}
+	virtual ~Indent () {}
+
+	virtual const gchar * serialize () { return "<indent />"; }
+};
+
+/*!
+ * Style token.
+ */
 class Style : public Token
 {
 public:
@@ -96,19 +135,26 @@ public:
 
 	virtual ~Style () {}
 
-	virtual operator const gchar * () 
+	virtual const gchar * serialize ()
 	{
-		if (pos == LEFT) {
-			return "<style>";
-		} else {
-			return "</style>";
-		}
+		if (type == ASTERISK && pos == LEFT) return "<b>"; 
+		if (type == ASTERISK && pos == RIGHT) return "</b>"; 
+		if (type == SLASH && pos == LEFT) return "<i>"; 
+		if (type == SLASH && pos == RIGHT) return "</i>"; 
+		if (type == BACKTICK && pos == LEFT) return "<code>"; 
+		if (type == BACKTICK && pos == RIGHT) return "</code>"; 
+		if (type == UNDERSCORE && pos == LEFT) return "<u>"; 
+		if (type == UNDERSCORE && pos == RIGHT) return "</u>";
+		g_assert (FALSE);
 	}
 
 	Type type;
 	Pos pos;
 };
 
+/*!
+ * Paragraph break.
+ */
 class Paragraph : public Token
 {
 public:
@@ -116,37 +162,37 @@ public:
 
 	virtual ~Paragraph () {}
 
-	virtual operator const gchar * () 
-	{
-		return "<paragraph />";
-	}
+	virtual const gchar * serialize () { return "<paragraph />"; }
 };
 
 };
 
 /*!
- * \todo Use libgsf.
+ * Scanner.
  */
 class Scanner
 {
 public: 
-	Scanner (std::string &file);
+	Scanner (const std::string &file);
+	Scanner (streams::Input &istream);
 	virtual ~Scanner ();
 
 	virtual tokens::Token * fetchToken ();
 
 protected:
-	virtual tokens::Token * scanEof (gchar c2);
-	virtual tokens::Token * scanParagraph (gchar c2);
-	virtual tokens::Token * scanStyle (gchar c2);
-	virtual tokens::Token * scanText (gchar c2);
+	virtual tokens::Token * scanEof ();
+	virtual tokens::Token * scanEof (gunichar c);
+	virtual tokens::Token * scanParagraph (gboolean &restart);
+	virtual tokens::Token * scanIndent ();
+	virtual tokens::Token * scanStyle (gunichar c2, gunichar &tail);
 
 private:
-	FILE  		*_istream;
+	streams::Input	&_istream;
+	gboolean	 _ownStream;
 	tokens::Token 	*_next;
-	gchar  		 _c1;
+	gunichar	 _c1;
 };
 
-};
+}; // namespace crossmark
 
 #endif // CROSSMARK_SCANNER_H
