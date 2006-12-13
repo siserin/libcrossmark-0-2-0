@@ -94,7 +94,7 @@ Scanner::fetchToken ()
 		}
 
 		if ((_next = scanEof ()) ||
-		    (_next = scanParagraph (restart)) ||
+		    (_next = scanNewline (restart)) ||
 		    (_next = scanIndent ())) {
 			if (text) {
 				return text;
@@ -170,7 +170,7 @@ Scanner::scanEof (gunichar c)
  * 	 need to recognise that for blockquote, lists.
  */
 tokens::Token * 
-Scanner::scanParagraph (gboolean &restart)
+Scanner::scanNewline (gboolean &restart)
 {
 	gboolean isParagraph;
 
@@ -186,9 +186,7 @@ Scanner::scanParagraph (gboolean &restart)
 		if (isParagraph) {
 			return new tokens::Paragraph ();
 		} else {
-			// eat single '\n'
-			// TODO reconsider when supporting blockquote, lists
-			_c1 = 0;
+			return new tokens::Newline ();
 			restart = TRUE;
 		}
 	}

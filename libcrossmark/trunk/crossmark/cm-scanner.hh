@@ -155,6 +155,19 @@ public:
 /*!
  * Paragraph break.
  */
+class Newline : public Token
+{
+public:
+	Newline () {}
+
+	virtual ~Newline () {}
+
+	virtual const gchar * serialize () { return "<br />"; }
+};
+
+/*!
+ * Paragraph break.
+ */
 class Paragraph : public Token
 {
 public:
@@ -182,7 +195,7 @@ public:
 protected:
 	virtual tokens::Token * scanEof ();
 	virtual tokens::Token * scanEof (gunichar c);
-	virtual tokens::Token * scanParagraph (gboolean &restart);
+	virtual tokens::Token * scanNewline (gboolean &restart);
 	virtual tokens::Token * scanIndent ();
 	virtual tokens::Token * scanStyle (gunichar c2, gunichar &tail);
 

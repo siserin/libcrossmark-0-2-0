@@ -31,21 +31,3 @@ Sink::~Sink ()
 {
 
 }
-
-/*!
- * \todo use GError or exceptions?
- */
-bool 
-Sink::open (const std::string &file)
-{
-
-}
-
-/*!
- * \todo use GError or exceptions?
- */
-bool 
-Sink::close ()
-{
-
-}

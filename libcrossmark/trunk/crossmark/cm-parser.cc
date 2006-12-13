@@ -24,7 +24,7 @@ using namespace crossmark;
 Source::Source (const std::string &file, 
 		Reader &reader)
   : _reader (reader),
-    _scanner (*new Scanner (file))
+    _scanner (* new Scanner (file))
 {
 
 }
@@ -43,25 +43,7 @@ Source::~Source ()
 }
 
 bool 
-Source::open (const std::string &file)
-{
-
-}
-
-bool 
-Source::open (streams::Input &istream)
-{
-
-}
-
-bool 
 Source::sputter ()
-{
-
-}
-
-bool 
-Source::close ()
 {
 
 }
