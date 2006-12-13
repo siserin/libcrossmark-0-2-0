@@ -51,9 +51,9 @@ libcrossmark_1_la_LIBADD = \
 	$(DEPS_LIBS)
 
 libcrossmark_1_la_SOURCES = \
-	cm-parser.cc \
 	cm-scanner.cc \
 	cm-sink.cc \
+	cm-source.cc \
 	cm-stdio-stream.cc \
 	cm-writer.cc
 

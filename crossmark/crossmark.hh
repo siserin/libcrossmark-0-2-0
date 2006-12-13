@@ -27,41 +27,6 @@
 #include <crossmark/cm-scanner.hh>
 #include <crossmark/cm-stream.hh>
 
-/*
-
-Scanner tokens:
-sof
-eof
-pbreak
-newline	#todo
-indent
-text
-style-lb
-style-rb
-style-li
-style-ri
-style-lm
-style-rm
-style-lu
-style-ru
-
-# Some quickie top-down grammar, flaws:
-  + way incomplete
-  + arbitrary nesting of styling allowed
-  + ...
-
-document    := sof ( pbreak* (paragraph | blockquote) )* pbreak* eof
-paragraph   := ( text | markup-text )* pbreak
-markup-text := bold | italic | monospace | underline
-bold        := style-lb ( text | markup-text )* style-rb
-italic      := style-li ( text | markup-text )* style-ri
-monospace   := style-lm ( text | markup-text )* style-rm
-underline   := style-lu ( text | markup-text )* style-ru
-blockquote  := indent line ( newline indent line )* pbreak
-line        := ( text | markup-text )*
-
-*/
-
 /*!
  * Crossmark implementation.
  * \todo Maybe use glib::ustring instead of std::string and glib::TimeVal?
@@ -200,10 +165,6 @@ public:
 
 	virtual ~Structure ();
 
-	/*!
-	 * \todo Need to pass numbering/bullet type, maybe other params for lists? 
-		 -- Hmm, maybe that kind of styling should be separated anyways.
-	 */
 	virtual void pushStructure (Type type) = 0;
 	virtual void pushHeadingStructure (int level) = 0;
 	virtual void popStructure () = 0;
@@ -211,6 +172,7 @@ public:
 
 /*!
  * List interface.
+ * \todo Need to pass numbering/bullet type, maybe other params for lists? 
  */
 class List 
 {
@@ -330,7 +292,23 @@ class Reader : public modules::Text,
 public:
 	virtual ~Reader ();
 
-	// TODO implement modules
+	// document interface, 
+	// TODO maybe pull out, but this doesn't have a 
+	// crossmark counterpart
+	virtual void pushDocument () = 0;
+	virtual void popDocument () = 0;
+
+	// text interface
+	virtual void text (const std::string &text) = 0;
+
+	// style interface
+	virtual void pushStyle (modules::Style::Type type) = 0;
+	virtual void popStyle () = 0;
+
+	// document structure interface
+	virtual void pushStructure (modules::Structure::Type type) = 0;
+	virtual void pushHeadingStructure (int level) = 0;
+	virtual void popStructure () = 0;
 };
 
 /*
@@ -385,7 +363,18 @@ public:
 	/*!
 	 * \todo use GError or exceptions?
 	 */
-	bool sputter ();
+	gboolean sputter ();
+
+protected:
+	void parseDocument ();
+	void parseParagraph ();
+	void parseBlockquote ();
+	void parseLine ();
+	void parseMarkup ();
+	void parseBold ();
+	void parseItalic ();
+	void parseMonospace ();
+	void parseUnderline ();
 
 private:
 	Reader	&_reader;
