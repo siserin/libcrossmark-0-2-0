@@ -66,6 +66,14 @@ if test "x$test_docs" = xtrue; then
 		AC_MSG_WARN([*** Could not find doxygen in your PATH.])
 		AC_MSG_WARN([*** The documentation will not be built.])
 		test_docs=false
+	else
+		ABS_ROOTDIR=`pwd`
+		AC_SUBST(ABS_ROOTDIR)
+		pushd `pwd`
+		cd $ABS_ROOTDIR/..
+		DOXYGEN_STRIP_PATH=`pwd`
+		popd
+		AC_SUBST(DOXYGEN_STRIP_PATH)
 	fi
 fi
 
@@ -173,6 +181,7 @@ crossmark/Makefile
 crossmark/libcrossmark.rc
 docs/Makefile
 docs/doxygen/Makefile
+docs/doxygen/doxygen.cfg
 tools/Makefile
 ])
 
