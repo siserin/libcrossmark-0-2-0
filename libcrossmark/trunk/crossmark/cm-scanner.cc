@@ -19,35 +19,21 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <string>
 #include "cm-scanner.hh"
 #include "cm-stdio-stream.hh"
 // debug
 #include <iostream>
 
-/*
-
-# Yeah, this is flawed, but I'm trying to treat markup stuff 
-# as a single character (by using lookahead).
-{charset}    := {UTF-8} \ {" *", "* ", " /", "/ ", " `", "` ", " _", "_ "}
-
-# Initial scanner grammar
-# 0 means start of file
-token      := paragraph | style | text | sof | eof
-paragraph  := '\n' '\n' '\n'*
-style      := " *" | "* " | " /" | "/ " | " `" | "` " | " _" | "_ "
-text       := {charset}*
-
-*/
-
 using namespace crossmark;
 
 Scanner::Scanner (const std::string &file)
-  : _istream (*new streams::StdInput (file)),
+  : _istream (* new streams::StdInput (file)),
     _ownStream (FALSE),
     _next (NULL),
     _c1 (0)
 {
-	_next = new tokens::Sof ();
+	_next = new tokens::Start ();
 }
 
 Scanner::Scanner (streams::Input &istream)
@@ -56,7 +42,7 @@ Scanner::Scanner (streams::Input &istream)
     _next (NULL),
     _c1 (0)
 {
-	_next = new tokens::Sof ();
+	_next = new tokens::Start ();
 }
 
 Scanner::~Scanner ()
@@ -93,7 +79,7 @@ Scanner::fetchToken ()
 			_c1 = _istream.getChar ();
 		}
 
-		if ((_next = scanEof ()) ||
+		if ((_next = scanEnd ()) ||
 		    (_next = scanNewline (restart)) ||
 		    (_next = scanIndent ())) {
 			if (text) {
@@ -114,7 +100,7 @@ Scanner::fetchToken ()
 
 		//std::cout << "-- '" << _c1 << "' '" << c2 << "'" << std::endl;
 
-		if ((_next = scanEof (c2))) {
+		if ((_next = scanEnd (c2))) {
 			if (text) {
 				text->append (_c1);
 			} else {
@@ -148,19 +134,19 @@ Scanner::fetchToken ()
 }
 
 tokens::Token * 
-Scanner::scanEof ()
+Scanner::scanEnd ()
 {
 	if (_c1 == EOF) {
-		return new tokens::Eof ();
+		return new tokens::End ();
 	}
 	return NULL;
 }
 
 tokens::Token * 
-Scanner::scanEof (gunichar c)
+Scanner::scanEnd (gunichar c)
 {
 	if (c == EOF) {
-		return new tokens::Eof ();
+		return new tokens::End ();
 	}
 	return NULL;
 }
