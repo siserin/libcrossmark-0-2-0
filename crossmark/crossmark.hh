@@ -385,18 +385,7 @@ public:
 	/*!
 	 * \todo use GError or exceptions?
 	 */
-	bool open (const std::string &file);
-	bool open (streams::Input &istream);
-
-	/*!
-	 * \todo use GError or exceptions?
-	 */
 	bool sputter ();
-
-	/*!
-	 * \todo use GError or exceptions?
-	 */
-	bool close ();
 
 private:
 	Reader	&_reader;
@@ -447,23 +436,7 @@ public:
 	Sink (const std::string &file, 
 	      Writer &writer);
 
-	/* maybe optionally: 
-	Sink (GsfOutput *output, 
-	      Writer &writer);
-	*/
-
 	virtual ~Sink ();
-
-	/*!
-	 * \todo use GError or exceptions?
-	 */
-	bool open (const std::string &file);
-	// maybe optionally: bool open (GsfOutput *output);
-
-	/*!
-	 * \todo use GError or exceptions?
-	 */
-	bool close ();
 };
 
 };  // namespace crossmark
