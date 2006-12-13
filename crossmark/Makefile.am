@@ -27,7 +27,8 @@ lib_LTLIBRARIES = libcrossmark-1.la
 libcrossmark_1_includedir = $(includedir)/libcrossmark-1/crossmark
 libcrossmark_1_include_HEADERS = \
 	crossmark.hh \
-	cm-stream.hh
+	cm-stream.hh \
+	cm-tracker.hh
 
 noinst_HEADERS = \
 	cm-scanner.hh \

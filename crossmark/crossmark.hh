@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CROSSMARK_H
-#define CROSSMARK_H
+#ifndef CROSSMARK_HH
+#define CROSSMARK_HH
 
 #include <list>
 #include <map>
@@ -430,4 +430,4 @@ public:
 
 };  // namespace crossmark
 
-#endif /* CROSSMARK_H */
+#endif /* CROSSMARK_HH */

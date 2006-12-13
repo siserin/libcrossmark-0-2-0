@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CROSSMARK_STDIO_STREAM_H
-#define CROSSMARK_STDIO_STREAM_H
+#ifndef CM_STDIO_STREAM_HH
+#define CM_STDIO_STREAM_HH
 
 #include <glib.h>
 #include <stdio.h>
@@ -62,4 +62,4 @@ protected:
 
 }; // namespace crossmark
 
-#endif // CROSSMARK_STDIO_STREAM_H
+#endif // CM_STDIO_STREAM_HH

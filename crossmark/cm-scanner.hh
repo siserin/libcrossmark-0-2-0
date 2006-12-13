@@ -17,12 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CROSSMARK_SCANNER_H
-#define CROSSMARK_SCANNER_H
+#ifndef CM_SCANNER_HH
+#define CM_SCANNER_HH
 
 #include <string>
 #include <glib.h>
-#include <stdio.h>
 #include <crossmark/cm-stream.hh>
 
 namespace crossmark {
@@ -39,8 +38,20 @@ namespace tokens {
 class Token
 {
 public:
+	enum Class {
+		BASE,
+		START,
+		END,
+		TEXT,
+		INDENT,
+		STYLE,
+		NEWLINE,
+		PARAGRAPH
+	};
+
 	virtual ~Token () {}
 
+	virtual Token::Class getClass () { return Token::BASE; }
 	virtual const gchar * serialize () { return "\n<base />\n"; }
 
 protected:
@@ -50,26 +61,28 @@ protected:
 /*!
  * Start-of-file.
  */
-class Sof : public Token
+class Start : public Token
 {
 public:
-	Sof () {}
+	Start () {}
 
-	virtual ~Sof () {}
+	virtual ~Start () {}
 
+	virtual Token::Class getClass () { return Token::START; }
 	virtual const gchar * serialize () { return "<html><body>\n"; }
 };
 
 /*!
  * End-of-file.
  */
-class Eof : public Token
+class End : public Token
 {
 public:
-	Eof () {}
+	End () {}
 
-	virtual ~Eof () {}
+	virtual ~End () {}
 
+	virtual Token::Class getClass () { return Token::END; }
 	virtual const gchar * serialize () { return "\n</body></html>\n"; }
 };
 
@@ -93,6 +106,7 @@ public:
 
 	virtual const std::string &getString () { return _text; }
 
+	virtual Token::Class getClass () { return Token::TEXT; }
 	virtual const gchar * serialize () { return _text.c_str (); }
 private:
 	std::string _text;
@@ -107,6 +121,7 @@ public:
 	Indent () {}
 	virtual ~Indent () {}
 
+	virtual Token::Class getClass () { return Token::INDENT; }
 	virtual const gchar * serialize () { return "<indent />"; }
 };
 
@@ -135,6 +150,7 @@ public:
 
 	virtual ~Style () {}
 
+	virtual Token::Class getClass () { return Token::STYLE; }
 	virtual const gchar * serialize ()
 	{
 		if (type == ASTERISK && pos == LEFT) return "<b>"; 
@@ -162,6 +178,7 @@ public:
 
 	virtual ~Newline () {}
 
+	virtual Token::Class getClass () { return Token::NEWLINE; }
 	virtual const gchar * serialize () { return "<br />"; }
 };
 
@@ -175,13 +192,25 @@ public:
 
 	virtual ~Paragraph () {}
 
+	virtual Token::Class getClass () { return Token::PARAGRAPH; }
 	virtual const gchar * serialize () { return "<paragraph />"; }
 };
 
-};
+}; // namespace tokens
 
 /*!
  * Scanner.
+ *
+ * Yeah, this is flawed, but I'm trying to treat markup stuff 
+ * as a single character (by using lookahead).
+ * {charset}    := {UTF-8} \ {" *", "* ", " /", "/ ", " `", "` ", " _", "_ "}
+ *
+ * Initial scanner grammar
+ * 0 means start of file
+ * token      := paragraph | style | text | sof | eof
+ * paragraph  := '\n' '\n' '\n'*
+ * style      := " *" | "* " | " /" | "/ " | " `" | "` " | " _" | "_ "
+ * text       := {charset}*
  */
 class Scanner
 {
@@ -193,8 +222,8 @@ public:
 	virtual tokens::Token * fetchToken ();
 
 protected:
-	virtual tokens::Token * scanEof ();
-	virtual tokens::Token * scanEof (gunichar c);
+	virtual tokens::Token * scanEnd ();
+	virtual tokens::Token * scanEnd (gunichar c);
 	virtual tokens::Token * scanNewline (gboolean &restart);
 	virtual tokens::Token * scanIndent ();
 	virtual tokens::Token * scanStyle (gunichar c2, gunichar &tail);
@@ -208,4 +237,4 @@ private:
 
 }; // namespace crossmark
 
-#endif // CROSSMARK_SCANNER_H
+#endif // CM_SCANNER_HH

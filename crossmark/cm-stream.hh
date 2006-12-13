@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CROSSMARK_STREAM_H
-#define CROSSMARK_STREAM_H
+#ifndef CM_STREAM_HH
+#define CM_STREAM_HH
 
 #include <glib.h>
 
@@ -45,4 +45,4 @@ public:
 
 }; // namespace crossmark
 
-#endif // CROSSMARK_STREAM_H
+#endif // CM_STREAM_HH
