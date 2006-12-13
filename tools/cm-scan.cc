@@ -19,12 +19,15 @@ main (int 	  argc,
 	std::string file (argv[1]);
 	Scanner scanner (file);
 
-	tokens::Token *token;
+	tokens::Token *token = NULL;
 	do {
+		if (token)
+			delete token;
 		token = scanner.fetchToken ();
 		std::cout << token->serialize ();
 
-	} while (!dynamic_cast<tokens::Eof *> (token));
+	} while (!dynamic_cast<tokens::End *> (token));
+	delete token;
 
 	return 0;
 }
