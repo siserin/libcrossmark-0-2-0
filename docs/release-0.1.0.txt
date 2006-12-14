@@ -1,0 +1,26 @@
+Libcrossmark 0.1 released
+=========================
+
+Libcrossmark 0.1 /Four style one break/ has been released on 
+Dec, 14. 2006. 
+
+Libcrossmark is an effort to implement a library for handling the 
+emerging crossmark document format. The crossmark format is a simple, 
+wiki-inspired text format that lends itself very well for the creation 
+of text documents or elaborate emails. Apart from that it is also used 
+in the Laptop.org[2] educational revolution.
+
+This early preview release, supporting only a limited subset of the 
+currently specified standard draft version 4 is intended to start 
+discussion about public API and internal architecture.
+
+Thanks goes out to all AbiWord[3] developers who assisted in the 
+effort, in particular
+# Marc Maurer: svn setup, portable build system, initial API review.
+# Fridrich Strba: architecture review, advanced C++ tips.
+
+[1] http://wiki.laptop.org/go/Crossmark
+[2] http://laptop.org
+[3] http://www.abisource.com
+
+- Rob Staudinger
