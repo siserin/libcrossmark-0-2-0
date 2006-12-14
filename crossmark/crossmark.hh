@@ -42,9 +42,8 @@ namespace crossmark {
 
 /*!
  * Each module provides an interface for a specific aspect of the crossmark format.
- * The goal ist to re-use 
  */
-namespace modules {
+namespace document {
 
 /*!
  * Content interface for reader and writer implementations.
@@ -53,7 +52,7 @@ namespace modules {
 class Text 
 {
 public:
-	virtual ~Text ();
+	virtual ~Text () {}
 
 	virtual void text (const std::string &text) = 0;
 };
@@ -69,7 +68,7 @@ public:
 		ANNOTATION
 	};
 
-	virtual ~Note ();
+	virtual ~Note () {}
 
 	virtual void blockNote (Type type, 
 				const std::map<char const *, char const *> *attribs, 
@@ -95,7 +94,7 @@ public:
 		EXTERNAL_LABEL		//< External link with custom label.
 	};
 
-	virtual ~Link ();
+	virtual ~Link () {}
 
 	virtual void internalLink (Type type, 
 				   const std::string &anchor) = 0;
@@ -118,6 +117,8 @@ public:
 class Style
 {
 public:
+	// don't change order
+	// see tokens::Style::Type
 	enum Type {
 		BOLD, 
 		ITALIC,
@@ -125,7 +126,7 @@ public:
 		UNDERLINE
 	};
 
-	virtual ~Style ();
+	virtual ~Style () {}
 
 	virtual void pushStyle (Type type) = 0;
 	virtual void popStyle () = 0;
@@ -140,7 +141,7 @@ public:
 class Image
 {
 public:	
-	virtual ~Image ();
+	virtual ~Image () {}
 
 	virtual void image (const std::string &uri, 
 			    const std::string &caption, 
@@ -163,7 +164,7 @@ public:
 		HEADING
 	};
 
-	virtual ~Structure ();
+	virtual ~Structure () {}
 
 	virtual void pushStructure (Type type) = 0;
 	virtual void pushHeadingStructure (int level) = 0;
@@ -182,7 +183,7 @@ public:
 		UNORDERED
 	};
 
-	virtual ~List ();
+	virtual ~List () {}
 
 	virtual void pushList (Type type) = 0;
 	virtual void popList () = 0;
@@ -197,7 +198,7 @@ public:
 class Table 
 {
 public:
-	virtual ~Table ();
+	virtual ~Table () {}
 
 	virtual void pushTable (const std::string &caption) = 0;
 	virtual void popTable () = 0;
@@ -220,7 +221,7 @@ public:
 class Math
 {
 public:
-	virtual ~Math ();
+	virtual ~Math () {}
 	
 };
 
@@ -230,7 +231,7 @@ public:
 class Macro 
 {
 public:
-	virtual ~Macro ();
+	virtual ~Macro () {}
 
 	virtual void blockMacro (const std::string &name, 
 				 const std::list<char const *> &params, 
@@ -243,54 +244,22 @@ public:
 }; // namespace modules
 
 /*!
- * The ``editor'' namespace specialises modules so they can be used for
- * automatic input conversion. 
- *
- * E.g. after input of "*foo" it should
- * automatically switch to boldface, but if the next "*" doesn't match
- * word boundaries boldface would have to be cancelled and reverted.
- * Blockquotes are similar, e.g. 3 times <enter> ends blockquote mode.
- * 
- * It will be important to (1) keep the input parser in sync when formatting 
- * is done using the toolbar and (2) resync when the cursor is moved using
- * mouse or keyboard navigation. 
- * For (2) we may just re-parse from the beginning of the block.
- * \see Tracker::resume()
- * 
- * \todo Figure out a better name. Calling it trackers for now because 
-	 it keeps track of keystrokes.
- */
-namespace trackers {
-
-class Style : public modules::Style
-{
-public:
-	virtual ~Style ();
-
-	virtual void pushStyle (Type type) = 0;
-	virtual void cancelStyle (Type type) = 0;
-	virtual void popStyle () = 0;
-};
-
-}; // namespace trackers
-
-/*!
  * Reader must implement all specific interfaces.
  * Maybe later we'll split mandatory and optional ones.
  */
-class Reader : public modules::Text, 
-	       public modules::Note,
-	       public modules::Link,
-	       public modules::Style,
-	       public modules::Image,
-	       public modules::Structure, 
-	       public modules::List,
-	       public modules::Table,
-	       public modules::Math, 
-	       public modules::Macro
+class Reader : public document::Text, 
+	       //public document::Note,
+	       //public document::Link,
+	       public document::Style,
+	       //public document::Image,
+	       public document::Structure
+	       //public document::List,
+	       //public document::Table,
+	       //public document::Math, 
+	       //public document::Macro
 {
 public:
-	virtual ~Reader ();
+	virtual ~Reader () {}
 
 	// document interface, 
 	// TODO maybe pull out, but this doesn't have a 
@@ -302,48 +271,13 @@ public:
 	virtual void text (const std::string &text) = 0;
 
 	// style interface
-	virtual void pushStyle (modules::Style::Type type) = 0;
+	virtual void pushStyle (document::Style::Type type) = 0;
 	virtual void popStyle () = 0;
 
 	// document structure interface
-	virtual void pushStructure (modules::Structure::Type type) = 0;
+	virtual void pushStructure (document::Structure::Type type) = 0;
 	virtual void pushHeadingStructure (int level) = 0;
 	virtual void popStructure () = 0;
-};
-
-/*
- * \todo Figure out a better name. Calling it trackers for now because 
-	 it keeps track of keystrokes.
- * \todo Should this be in the namespace of the same name?
- */
-class Tracker : public trackers::Style 
-{
-public:
-	virtual ~Tracker ();
-
-	/*!
-	 * This sets the tracker to initial state. 
-	 * \see resume
- 	 */
-	virtual void reset ();
-
-	/*!
-	 * Resume tracking and making formatting predictions.
-	 *
-	 * Between reset() and resume() all content between the 
-	 * start of the block and the cursor position has to be 
-	 * passed to the tracker, so it'll settle in a consistent 
-	 * state before editing is resumed.
-	 *
-	 * While reparsing no predictions will be issued.
-	 *
-	 * The reset, reparse, resume chain has to be run when
-	 * editing is resumed after the caret has been moved.
-	 */
-	virtual void resume ();
-
-
-	// TODO implement trackers	
 };
 
 /*!
@@ -367,14 +301,12 @@ public:
 
 protected:
 	void parseDocument ();
-	void parseParagraph ();
-	void parseBlockquote ();
-	void parseLine ();
-	void parseMarkup ();
-	void parseBold ();
-	void parseItalic ();
-	void parseMonospace ();
-	void parseUnderline ();
+	tokens::Token * parseParagraph (const tokens::Token *first);
+	tokens::Token * parseBlockquote (const tokens::Token *first);
+	tokens::Token * parseLine (const tokens::Token *first);
+	tokens::Token * parseMarkup (const tokens::Token *first);
+	tokens::Token * parseStyle (const tokens::Token *first, tokens::Style::Type type);
+	tokens::Token * parseText (const tokens::Token *first);
 
 private:
 	Reader	&_reader;
@@ -387,16 +319,16 @@ private:
  * \todo Does the writer validate?
  * \todo Implement state machine.
  */
-class Writer : public modules::Text, 
-	       public modules::Note,
-	       public modules::Link,
-	       public modules::Style,
-	       public modules::Image,
-	       public modules::Structure, 
-	       public modules::List,
-	       public modules::Table,
-	       public modules::Math, 
-	       public modules::Macro
+class Writer : public document::Text, 
+	       public document::Note,
+	       public document::Link,
+	       public document::Style,
+	       public document::Image,
+	       public document::Structure, 
+	       public document::List,
+	       public document::Table,
+	       public document::Math, 
+	       public document::Macro
 {
 friend class Sink;
 public:
@@ -404,7 +336,7 @@ public:
 
 	virtual void text (const std::string &text);
 
-	virtual void pushStyle (modules::Style::Type type);
+	virtual void pushStyle (document::Style::Type type);
 	virtual void popStyle ();
 
 	// TODO implement
@@ -413,7 +345,7 @@ private:
 	void setStream (FILE *ostream);
 
 	FILE *_ostream;
-	std::stack<modules::Style::Type> _styleStack;
+	std::stack<document::Style::Type> _styleStack;
 };
 
 /*!

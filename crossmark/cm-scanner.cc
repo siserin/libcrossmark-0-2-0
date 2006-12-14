@@ -154,6 +154,8 @@ Scanner::scanEnd (gunichar c)
 /*!
  * \todo Not eat the newline if an indentation follows, 
  * 	 need to recognise that for blockquote, lists.
+ * \todo Should a newline be replaced by a whitespace under certain circumstances?
+ *	 Otherwise "foo\nbar" ends up as "foobar".
  */
 tokens::Token * 
 Scanner::scanNewline (gboolean &restart)
@@ -192,6 +194,9 @@ Scanner::scanIndent ()
 	return NULL;
 }
 
+/*!
+ * \todo Support all specified word boundaries (whitespace, punctuation, newline).
+ */
 tokens::Token * 
 Scanner::scanStyle (gunichar c2, gunichar &tail)
 {
