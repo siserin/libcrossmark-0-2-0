@@ -51,8 +51,9 @@ public:
 
 	virtual ~Token () {}
 
-	virtual Token::Class getClass () { return Token::BASE; }
-	virtual const gchar * serialize () { return "\n<base />\n"; }
+	virtual Token::Class getClass () const { return Token::BASE; }
+	virtual const gchar * toHtml () const { return "\n<base />\n"; }
+	virtual const gchar * toString () const { return NULL; }
 
 protected:
 	Token () {}
@@ -68,8 +69,9 @@ public:
 
 	virtual ~Start () {}
 
-	virtual Token::Class getClass () { return Token::START; }
-	virtual const gchar * serialize () { return "<html><body>\n"; }
+	virtual Token::Class getClass () const { return Token::START; }
+	virtual const gchar * toHtml () const { return "<html><body>\n"; }
+	virtual const gchar * toString () const { return NULL; }
 };
 
 /*!
@@ -82,8 +84,9 @@ public:
 
 	virtual ~End () {}
 
-	virtual Token::Class getClass () { return Token::END; }
-	virtual const gchar * serialize () { return "\n</body></html>\n"; }
+	virtual Token::Class getClass () const { return Token::END; }
+	virtual const gchar * toHtml () const { return "\n</body></html>\n"; }
+	virtual const gchar * toString () const { return NULL; }
 };
 
 /*!
@@ -106,8 +109,9 @@ public:
 
 	virtual const std::string &getString () { return _text; }
 
-	virtual Token::Class getClass () { return Token::TEXT; }
-	virtual const gchar * serialize () { return _text.c_str (); }
+	virtual Token::Class getClass () const { return Token::TEXT; }
+	virtual const gchar * toHtml () const { return _text.c_str (); }
+	virtual const gchar * toString () const { return _text.c_str (); }
 private:
 	std::string _text;
 };
@@ -121,8 +125,12 @@ public:
 	Indent () {}
 	virtual ~Indent () {}
 
-	virtual Token::Class getClass () { return Token::INDENT; }
-	virtual const gchar * serialize () { return "<indent />"; }
+	virtual Token::Class getClass () const { return Token::INDENT; }
+	virtual const gchar * toHtml () const { return "<indent />"; }
+	/*
+	 * \todo Might become an issue with whitespace-indentation.
+	 */
+	virtual const gchar * toString () const { return "\t"; }
 };
 
 /*!
@@ -131,6 +139,8 @@ public:
 class Style : public Token
 {
 public:
+	// don't change order
+	// see document::Style::Type
 	enum Type {
 		ASTERISK, 
 		SLASH,
@@ -143,29 +153,44 @@ public:
 		RIGHT
 	};
 
-	Style (Type type_, Pos pos_)
-	  : type (type_), 
-	    pos (pos_)
-	{}
+	Style (Type type, Pos pos)
+	  : _type (type), 
+	    _pos (pos)
+	{
+		if (_type == ASTERISK && _pos == LEFT) _text = " *"; 
+		else if (_type == ASTERISK && _pos == RIGHT) _text = "* ";
+		else if (_type == SLASH && _pos == LEFT) _text = " /";
+		else if (_type == SLASH && _pos == RIGHT) _text = "/ ";
+		else if (_type == BACKTICK && _pos == LEFT) _text = " `";
+		else if (_type == BACKTICK && _pos == RIGHT) _text = "` ";
+		else if (_type == UNDERSCORE && _pos == LEFT) _text = " _";
+		else if (_type == UNDERSCORE && _pos == RIGHT) _text = " _";
+		else g_assert (FALSE);
+	}
 
 	virtual ~Style () {}
 
-	virtual Token::Class getClass () { return Token::STYLE; }
-	virtual const gchar * serialize ()
+	virtual Type getType () const { return _type; }
+	virtual Pos getPos () const { return _pos; }
+	virtual Token::Class getClass () const { return Token::STYLE; }
+	virtual const gchar * toHtml ()
 	{
-		if (type == ASTERISK && pos == LEFT) return "<b>"; 
-		if (type == ASTERISK && pos == RIGHT) return "</b>"; 
-		if (type == SLASH && pos == LEFT) return "<i>"; 
-		if (type == SLASH && pos == RIGHT) return "</i>"; 
-		if (type == BACKTICK && pos == LEFT) return "<code>"; 
-		if (type == BACKTICK && pos == RIGHT) return "</code>"; 
-		if (type == UNDERSCORE && pos == LEFT) return "<u>"; 
-		if (type == UNDERSCORE && pos == RIGHT) return "</u>";
-		g_assert (FALSE);
+		if (_type == ASTERISK && _pos == LEFT) return "<b>"; 
+		else if (_type == ASTERISK && _pos == RIGHT) return "</b>"; 
+		else if (_type == SLASH && _pos == LEFT) return "<i>"; 
+		else if (_type == SLASH && _pos == RIGHT) return "</i>"; 
+		else if (_type == BACKTICK && _pos == LEFT) return "<code>"; 
+		else if (_type == BACKTICK && _pos == RIGHT) return "</code>"; 
+		else if (_type == UNDERSCORE && _pos == LEFT) return "<u>"; 
+		else if (_type == UNDERSCORE && _pos == RIGHT) return "</u>";
+		else g_assert (FALSE);
 	}
+	virtual const gchar * toString () const { return _text.c_str (); }
 
-	Type type;
-	Pos pos;
+private:
+	Type		_type;
+	Pos		_pos;
+	std::string 	_text;
 };
 
 /*!
@@ -178,8 +203,8 @@ public:
 
 	virtual ~Newline () {}
 
-	virtual Token::Class getClass () { return Token::NEWLINE; }
-	virtual const gchar * serialize () { return "<br />"; }
+	virtual Token::Class getClass () const { return Token::NEWLINE; }
+	virtual const gchar * toHtml () const { return "<br />"; }
 };
 
 /*!
@@ -192,8 +217,8 @@ public:
 
 	virtual ~Paragraph () {}
 
-	virtual Token::Class getClass () { return Token::PARAGRAPH; }
-	virtual const gchar * serialize () { return "<paragraph />"; }
+	virtual Token::Class getClass () const { return Token::PARAGRAPH; }
+	virtual const gchar * toHtml () const { return "<paragraph />"; }
 };
 
 }; // namespace tokens

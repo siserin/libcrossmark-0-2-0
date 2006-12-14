@@ -31,21 +31,21 @@ Writer::text (const std::string &text)
 }
 
 void 
-Writer::pushStyle (modules::Style::Type type)
+Writer::pushStyle (document::Style::Type type)
 {
 	g_assert (_ostream);
 
 	switch (type) {
-	case modules::Style::BOLD:
+	case document::Style::BOLD:
 		fputc ('*', _ostream);
 		break;
-	case modules::Style::ITALIC:
+	case document::Style::ITALIC:
 		fputc ('/', _ostream);
 		break;
-	case modules::Style::MONOSPACE:
+	case document::Style::MONOSPACE:
 		fputc ('`', _ostream);
 		break;
-	case modules::Style::UNDERLINE:
+	case document::Style::UNDERLINE:
 		fputc ('_', _ostream);
 		break;
 	default:
@@ -62,16 +62,16 @@ Writer::popStyle ()
 		  !_styleStack.empty ());
 
 	switch (_styleStack.top ()) {
-	case modules::Style::BOLD:
+	case document::Style::BOLD:
 		fputc ('*', _ostream);
 		break;
-	case modules::Style::ITALIC:
+	case document::Style::ITALIC:
 		fputc ('/', _ostream);
 		break;
-	case modules::Style::MONOSPACE:
+	case document::Style::MONOSPACE:
 		fputc ('`', _ostream);
 		break;
-	case modules::Style::UNDERLINE:
+	case document::Style::UNDERLINE:
 		fputc ('_', _ostream);
 		break;
 	default:

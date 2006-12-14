@@ -46,7 +46,7 @@
  */
 namespace trackers {
 
-class Style : public modules::Style
+class Style : public document::Style
 {
 public:
 	virtual ~Style ();
