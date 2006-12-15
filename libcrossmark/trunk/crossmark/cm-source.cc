@@ -17,8 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
 #include "crossmark.hh"
-#include "cm-scanner.hh"
+#include "cm-scanner-private.hh"
 
 #if 0
 //#ifdef DEBUG

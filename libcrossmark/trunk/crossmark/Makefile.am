@@ -28,12 +28,13 @@ libcrossmark_1_includedir = $(includedir)/libcrossmark-1/crossmark
 libcrossmark_1_include_HEADERS = \
 	crossmark.hh \
 	cm-document.hh \
-	cm-stream.hh \
-	cm-tracker.hh
+	cm-stream.hh
 
 noinst_HEADERS = \
-	cm-scanner.hh \
-	cm-stdio-stream.hh
+	cm-gsf-stream-private.hh \
+	cm-scanner-private.hh \
+	cm-stdio-stream-private.hh \
+	cm-tracker.hh
 
 AM_CPPFLAGS = \
 	$(DEBUG_CXXFLAGS) \
@@ -57,7 +58,15 @@ libcrossmark_1_la_SOURCES = \
 	cm-sink.cc \
 	cm-source.cc \
 	cm-stdio-stream.cc \
+	cm-stream.cc \
 	cm-writer.cc
+
+gsf_sources = \
+	cm-gsf-stream.cc
+
+if HAVE_LIBGSF
+libcrossmark_1_la_SOURCES += $(gsf_sources)
+endif
 
 if OS_WIN32
 @LIBCROSSMARK_WIN32_RESOURCE@ : libcrossmark.rc

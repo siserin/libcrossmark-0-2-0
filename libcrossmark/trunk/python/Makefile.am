@@ -1,0 +1,34 @@
+
+AM_CPPFLAGS = \
+	$(PYTHON_INCLUDES) \
+	$(DEPS_CFLAGS) \
+	-I$(top_srcdir)
+
+pkgpyexecdir = @pyexecdir@
+pkgpyexec_DATA = crossmark.py
+pkgpyexec_LTLIBRARIES = crossmark.la
+
+crossmark_la_LDFLAGS = \
+	-module \
+	-avoid-version
+
+crossmark_la_LIBADD = \
+	$(DEPS_LIBS) \
+	../crossmark/libcrossmark-1.la
+
+crossmark_la_SOURCES = \
+	crossmark_wrap.cxx
+
+crossmark_wrap.cxx: 
+	$(SWIG) -c++ -python $(srcdir)/crossmark.swig
+
+BUILT_SOURCES = \
+	crossmark_wrap.cxx
+
+EXTRA_DIST = \
+	crossmark.swig \
+	$(pkgpyexec_DATA)
+
+DISTCLEANFILES = \
+	crossmark_wrap.cxx \
+	crossmark.py

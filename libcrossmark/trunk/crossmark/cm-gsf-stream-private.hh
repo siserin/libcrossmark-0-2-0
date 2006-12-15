@@ -17,11 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CM_STDIO_STREAM_HH
-#define CM_STDIO_STREAM_HH
+#ifndef CM_GSF_STREAM_PRIVATE_HH
+#define CM_GSF_STREAM_PRIVATE_HH
 
 #include <glib.h>
-#include <stdio.h>
+#include <gsf/gsf.h>
+#include <gsf/gsf-input-textline.h>
 #include <string>
 #include <crossmark/cm-stream.hh>
 
@@ -32,34 +33,39 @@ namespace streams {
 /*!
  * This class is for testing and not guaranteed to be UTF-8 compliant.
  */
-class StdInput : public Input 
+class GsfInput : public Input 
 {
 public:
-	StdInput (const std::string &file);
-	virtual ~StdInput ();
+	GsfInput (const std::string &file);
+	virtual ~GsfInput ();
 	virtual gunichar getChar ();
 
 protected:
-	FILE *_istream;
+	GsfInputTextline *_input;
+
+private:
+	guint8 		*_line;
+	const guint8 	*_iter;
+	guint   	 _len;
 };
 
 /*!
  * This class is for testing and not guaranteed to be UTF-8 compliant.
  */
-class StdOutput : public Output
+class GsfOutput : public Output
 {
 public:
-	StdOutput (const  std::string &file);
-	virtual ~StdOutput ();
+	GsfOutput (const  std::string &file);
+	virtual ~GsfOutput ();
 	virtual void write (gunichar c);
 	virtual void write (const gchar *s);
 
 protected:
-	FILE *_ostream;
+	GsfOutput *_output;
 };
 
 }; // namespace streams
 
 }; // namespace crossmark
 
-#endif // CM_STDIO_STREAM_HH
+#endif // CM_GSF_STREAM_PRIVATE_HH

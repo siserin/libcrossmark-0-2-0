@@ -17,34 +17,49 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <iostream>
-#include <string>
+#ifndef CM_STDIO_STREAM_PRIVATE_HH
+#define CM_STDIO_STREAM_PRIVATE_HH
+
+#include <glib.h>
 #include <stdio.h>
-#include <crossmark/cm-scanner-private.hh>
+#include <string>
+#include <crossmark/cm-stream.hh>
 
-using namespace crossmark;
+namespace crossmark {
 
-int
-main (int 	  argc, 
-      char 	**argv)
+namespace streams {
+
+/*!
+ * This class is for testing and not guaranteed to be UTF-8 compliant.
+ */
+class StdInput : public Input 
 {
-	if (argc < 2) {
-		std::cerr << "Need filename\n" << std::endl;
-		return 1;
-	}
+public:
+	StdInput (const std::string &file);
+	virtual ~StdInput ();
+	virtual gunichar getChar ();
 
-	std::string file (argv[1]);
-	Scanner scanner (file);
+protected:
+	FILE *_istream;
+};
 
-	tokens::Token *token = NULL;
-	do {
-		if (token)
-			delete token;
-		token = scanner.fetchToken ();
-		std::cout << token->toHtml ();
+/*!
+ * This class is for testing and not guaranteed to be UTF-8 compliant.
+ */
+class StdOutput : public Output
+{
+public:
+	StdOutput (const  std::string &file);
+	virtual ~StdOutput ();
+	virtual void write (gunichar c);
+	virtual void write (const gchar *s);
 
-	} while (!dynamic_cast<tokens::End *> (token));
-	delete token;
+protected:
+	FILE *_ostream;
+};
 
-	return 0;
-}
+}; // namespace streams
+
+}; // namespace crossmark
+
+#endif // CM_STDIO_STREAM_PRIVATE_HH

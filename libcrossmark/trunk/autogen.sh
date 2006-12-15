@@ -28,7 +28,7 @@ libtoolize --force --copy || {
     echo "error: libtoolize failed"
     exit 1
 }
-aclocal $ACLOCAL_FLAGS || {
+aclocal -I . $ACLOCAL_FLAGS || {
     echo "error: aclocal $ACLOCAL_FLAGS failed"
     exit 1
 }

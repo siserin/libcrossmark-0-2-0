@@ -2,7 +2,7 @@ EXTRA_DIST =	doxygen.cfg \
 		footer.html.in \
 		header.html.in
 
-if WITH_LIBCROSSMARK_DOCS
+if BUILD_DOCS
 
 install-data-am:
 	mkdir -p $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html
