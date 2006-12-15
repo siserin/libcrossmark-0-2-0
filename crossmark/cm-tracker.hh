@@ -26,6 +26,8 @@
 #include <string>
 #include <crossmark/crossmark.hh>
 
+namespace crossmark {
+
 /*!
  * The ``editor'' namespace specialises modules so they can be used for
  * automatic input conversion. 
