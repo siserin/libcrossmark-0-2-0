@@ -6,17 +6,17 @@ AM_CPPFLAGS = \
 
 pkgpyexecdir = @pyexecdir@
 pkgpyexec_DATA = crossmark.py
-pkgpyexec_LTLIBRARIES = crossmark.la
+pkgpyexec_LTLIBRARIES = _crossmark.la
 
-crossmark_la_LDFLAGS = \
+_crossmark_la_LDFLAGS = \
 	-module \
 	-avoid-version
 
-crossmark_la_LIBADD = \
+_crossmark_la_LIBADD = \
 	$(DEPS_LIBS) \
 	../crossmark/libcrossmark-1.la
 
-crossmark_la_SOURCES = \
+_crossmark_la_SOURCES = \
 	crossmark_wrap.cxx
 
 crossmark_wrap.cxx: 
