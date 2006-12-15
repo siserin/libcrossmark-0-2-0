@@ -32,7 +32,7 @@ using namespace crossmark;
 Source::Source (const std::string &file, 
 		Reader &reader)
   : _reader (reader),
-    _scanner (* new Scanner (file))
+    _scanner (new Scanner (file))
 {
 
 }
@@ -40,14 +40,14 @@ Source::Source (const std::string &file,
 Source::Source (streams::Input &istream, 
 		Reader &reader)
   : _reader (reader),
-    _scanner (* new Scanner (istream))
+    _scanner (new Scanner (istream))
 {
 
 }
 
 Source::~Source ()
 {
-	delete &_scanner;
+	delete _scanner;
 }
 
 /*
@@ -62,18 +62,21 @@ Source::~Source ()
 
 document   := start newline* ( pbreak | paragraph | blockquote )* end
 paragraph  := line* pbreak
-blockquote := indent line ( newline indent line )* pbreak
-line       := ( text | markup )*
+blockquote := indent line ( indent line )* pbreak
+line       := ( text | markup )* newline
 markup     := bold | italic | monospace | underline
 bold       := style-lb ( text | markup )* style-rb
 italic     := style-li ( text | markup )* style-ri
 monospace  := style-lm ( text | markup )* style-rm
 underline  := style-lu ( text | markup )* style-ru
-*/
+
+ * \todo error handling;
+ */
 gboolean 
 Source::sputter ()
 {
 	parseDocument ();
+	return TRUE;
 }
 
 void 
@@ -85,21 +88,21 @@ Source::parseDocument ()
 
 	_reader.pushDocument ();
 
-	tokens::Token *token = _scanner.fetchToken ();
+	tokens::Token *token = _scanner->fetchToken ();
 	g_assert (token->getClass () == tokens::Token::START);
 	delete token;
 
-	token = _scanner.fetchToken ();
+	token = _scanner->fetchToken ();
 	while (token->getClass () == tokens::Token::NEWLINE) {
 		delete token;
-		token = _scanner.fetchToken ();
+		token = _scanner->fetchToken ();
 	}
 	while (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
 		// ignore empty paragraph at beginning?
 		// _reader.pushStructure (document::Structure::PARAGRAPH);
 		// _reader.popStructure ();
-		token = _scanner.fetchToken ();
+		token = _scanner->fetchToken ();
 	}
 
 	tokens::Token *next;
@@ -154,7 +157,7 @@ Source::parseParagraph (const tokens::Token *first)
 
 	if (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
-		token = _scanner.fetchToken ();
+		token = _scanner->fetchToken ();
 	}
 	return token;
 }
@@ -170,12 +173,12 @@ Source::parseBlockquote (const tokens::Token *first)
 		return const_cast<tokens::Token *> (first);
 	}
 
-	// blockquote := indent line ( newline indent line )* pbreak
+	// blockquote := indent line ( indent line )* pbreak
 	_reader.pushStructure (document::Structure::BLOCKQUOTE);
 
 	g_assert (first->getClass () == tokens::Token::INDENT);
 
-	tokens::Token *token = parseLine (_scanner.fetchToken ());
+	tokens::Token *token = parseLine (_scanner->fetchToken ());
 	if (token->getClass () == tokens::Token::END) {
 		return token;
 	}	
@@ -183,21 +186,17 @@ Source::parseBlockquote (const tokens::Token *first)
 	while (token->getClass () != tokens::Token::PARAGRAPH && 
 	       token->getClass () != tokens::Token::END) {
 
-		g_assert (token->getClass () == tokens::Token::NEWLINE);
-		delete token;
-
-		token = _scanner.fetchToken ();
 		g_assert (token->getClass () == tokens::Token::INDENT);
 		delete token;		
 
-		token = parseLine (_scanner.fetchToken ());		
+		token = parseLine (_scanner->fetchToken ());		
 	}
 
 	_reader.popStructure ();
 
 	if (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
-		token = _scanner.fetchToken ();
+		token = _scanner->fetchToken ();
 	}
 	return token;
 }
@@ -216,7 +215,7 @@ Source::parseLine (const tokens::Token *first)
 		return const_cast<tokens::Token *> (first);
 	}
 
-	// line       := ( text | markup )*
+	// line       := ( text | markup )* newline
 
 	tokens::Token *token;
 	if (first->getClass () == tokens::Token::STYLE) {
@@ -234,7 +233,7 @@ Source::parseLine (const tokens::Token *first)
 			next = parseMarkup (token);
 		} else if (token->getClass () == tokens::Token::INDENT) {
 			_reader.text ("\t");
-			next = _scanner.fetchToken ();
+			next = _scanner->fetchToken ();
 		} else {
 			next = parseText (token);
 		}
@@ -247,7 +246,7 @@ Source::parseLine (const tokens::Token *first)
 
 	if (token->getClass () == tokens::Token::NEWLINE) {
 		delete token;
-		token = _scanner.fetchToken ();
+		token = _scanner->fetchToken ();
 	}
 	return token;
 }
@@ -270,7 +269,7 @@ Source::parseMarkup (const tokens::Token *first)
 
 	style = dynamic_cast<const tokens::Style *> (first);
 	g_assert (style && style->getPos () == tokens::Style::LEFT);
-	next = parseStyle (style, style->getType ());
+	next = parseStyle (style, (document::Style::Type) style->getType ());
 	return next;
 }
 
@@ -279,7 +278,7 @@ Source::parseMarkup (const tokens::Token *first)
  * \todo Abort at newline?
  */
 tokens::Token * 
-Source::parseStyle (const tokens::Token *first, tokens::Style::Type type)
+Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 {
 	TRACE (__FUNCTION__);
 
@@ -294,6 +293,7 @@ Source::parseStyle (const tokens::Token *first, tokens::Style::Type type)
 	// monospace  := style-lm ( text | markup )* style-rm
 	// underline  := style-lu ( text | markup )* style-ru
 
+	tokens::Style::Type type = (tokens::Style::Type) type_;
 	g_assert (type == tokens::Style::ASTERISK || 
 		  type == tokens::Style::SLASH || 
 		  type == tokens::Style::BACKTICK || 
@@ -301,16 +301,16 @@ Source::parseStyle (const tokens::Token *first, tokens::Style::Type type)
 
 	const tokens::Style *style;
 	style = dynamic_cast<const tokens::Style *> (first);
-	g_assert (style && style->getType () == type);
+	g_assert (style &&  style->getType () == type);
 
-	_reader.pushStyle ((document::Style::Type) type);
+	_reader.pushStyle (type_);
 
 	tokens::Token *token;
 	tokens::Token *next;
 
-	token = _scanner.fetchToken ();
+	token = _scanner->fetchToken ();
 	while (!((style = dynamic_cast<const tokens::Style *> (token)) != NULL &&
-	         style->getType () == type && 
+	          style->getType () == type && 
 		 style->getPos () == tokens::Style::RIGHT) && 
 	       token->getClass () != tokens::Token::PARAGRAPH &&
 	       token->getClass () != tokens::Token::END) {
@@ -331,7 +331,7 @@ Source::parseStyle (const tokens::Token *first, tokens::Style::Type type)
 
 	if (token->getClass () == tokens::Token::STYLE) {
 		delete token;
-		token = _scanner.fetchToken ();
+		token = _scanner->fetchToken ();
 	}
 	return token;
 }
@@ -350,8 +350,8 @@ Source::parseText (const tokens::Token *first)
 	g_assert (first->getClass () == tokens::Token::TEXT);
 	const gchar *text = first->toString ();
 	g_assert (text);
-	g_return_val_if_fail (text, _scanner.fetchToken ());
+	g_return_val_if_fail (text, _scanner->fetchToken ());
 	_reader.text (text);
 
-	return _scanner.fetchToken ();
+	return _scanner->fetchToken ();
 }

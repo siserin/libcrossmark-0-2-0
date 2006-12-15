@@ -108,7 +108,7 @@ Scanner::fetchToken ()
 			}
 			_c1 = c2;
 			return text;
-		} else if (_next = scanStyle (c2, tail)) {
+		} else if ((_next = scanStyle (c2, tail)) != NULL) {
 			if (text && tail) {
 				text->append (tail);
 				token = text;
@@ -136,7 +136,7 @@ Scanner::fetchToken ()
 tokens::Token * 
 Scanner::scanEnd ()
 {
-	if (_c1 == EOF) {
+	if (_c1 == (unsigned) EOF) {
 		return new tokens::End ();
 	}
 	return NULL;
@@ -145,7 +145,7 @@ Scanner::scanEnd ()
 tokens::Token * 
 Scanner::scanEnd (gunichar c)
 {
-	if (c == EOF) {
+	if (c == (unsigned) EOF) {
 		return new tokens::End ();
 	}
 	return NULL;
