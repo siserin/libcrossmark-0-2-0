@@ -21,6 +21,7 @@
 #define CM_STREAM_HH
 
 #include <glib.h>
+#include <string>
 
 namespace crossmark {
 
@@ -39,6 +40,18 @@ public:
 	virtual ~Output () {};
 	virtual void write (gunichar c) = 0;
 	virtual void write (const gchar *s) = 0;
+};
+
+class Factory
+{
+public:
+	static Factory &instance ();
+
+	Input * createInput (const std::string &file);
+	Output * createOutput (const std::string &file);
+
+protected:
+	Factory () {}
 };
 
 }; // namespace streams

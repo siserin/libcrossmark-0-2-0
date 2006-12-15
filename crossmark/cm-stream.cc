@@ -17,34 +17,46 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <iostream>
-#include <string>
-#include <stdio.h>
-#include <crossmark/cm-scanner-private.hh>
+#include "config.h"
+#include "cm-stream.hh"
+#include "cm-stdio-stream-private.hh"
+#if HAVE_LIBGSF
+#include <gsf/gsf-utils.h>
+#include "cm-gsf-stream-private.hh"
+#endif
 
 using namespace crossmark;
 
-int
-main (int 	  argc, 
-      char 	**argv)
+streams::Factory &
+streams::Factory::instance ()
 {
-	if (argc < 2) {
-		std::cerr << "Need filename\n" << std::endl;
-		return 1;
+	static streams::Factory::Factory *factory = NULL;
+
+	if (!factory) {
+#if HAVE_LIBGSF
+		gsf_init ();
+#endif
+		factory = new streams::Factory::Factory ();
 	}
 
-	std::string file (argv[1]);
-	Scanner scanner (file);
+	return *factory;
+}
 
-	tokens::Token *token = NULL;
-	do {
-		if (token)
-			delete token;
-		token = scanner.fetchToken ();
-		std::cout << token->toHtml ();
+streams::Input * 
+streams::Factory::createInput (const std::string &file)
+{
+#if HAVE_LIBGSF
+	return new streams::GsfInput (file);
+#else
+	return new streams::StdInput (file);
+#endif
+}
 
-	} while (!dynamic_cast<tokens::End *> (token));
-	delete token;
-
-	return 0;
+/*!
+ * \todo Use libgsf.
+ */
+streams::Output * 
+streams::Factory::createOutput (const std::string &file)
+{
+	return new streams::StdOutput (file);
 }

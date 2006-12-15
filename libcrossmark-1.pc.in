@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: crossmark-1
+Name: libcrossmark-1
 Description: A library for reading and writing Crossmark documents
 Version: @VERSION@
 Requires: @DEPS_PKGS@

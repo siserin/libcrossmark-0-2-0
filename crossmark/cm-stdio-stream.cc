@@ -17,7 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "cm-stdio-stream.hh"
+#include "config.h"
+#include "cm-stdio-stream-private.hh"
 
 using namespace crossmark;
 

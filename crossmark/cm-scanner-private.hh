@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CM_SCANNER_HH
-#define CM_SCANNER_HH
+#ifndef CM_SCANNER_PRIVATE_HH
+#define CM_SCANNER_PRIVATE_HH
 
 #include <string>
 #include <glib.h>
@@ -262,4 +262,4 @@ private:
 
 }; // namespace crossmark
 
-#endif // CM_SCANNER_HH
+#endif // CM_SCANNER_PRIVATE_HH
