@@ -51,7 +51,7 @@ DEPS_PKGS=
 glib_reqs="glib-2.0"
 DEPS_PKGS="$DEPS_PKGS $glib_reqs"
 
-AC_CHECK_PROG(SWIG, swig, swig)
+AC_CHECK_PROG([SWIG], [swig], [swig], [no])
 AC_SUBST(SWIG)
 AC_ARG_VAR(SWIG, Swig interface generator)
 
@@ -84,12 +84,16 @@ AC_ARG_WITH([python],
 ], [
 	cm_cv_python="no"
 ])
-if test "x$cm_cv_python" == "xyes"; then
+if test "x$cm_cv_python" == "xyes" && 
+   test "x$SWIG" != "xno"; then
+
 	AM_PATH_PYTHON(2.3)
 	AM_CHECK_PYTHON_HEADERS(
 	[], [
 		cm_cv_python="no"
 	])
+else 
+	cm_cv_python="no"
 fi
 AM_CONDITIONAL([HAVE_PYTHON], test "x$cm_cv_python" == "xyes")
 
