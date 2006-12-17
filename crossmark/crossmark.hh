@@ -53,7 +53,7 @@ class Reader : public document::Text,
 	       //public document::Link,
 	       public document::Style,
 	       //public document::Image,
-	       public document::Structure
+	       public document::Block
 	       //public document::List,
 	       //public document::Table,
 	       //public document::Math, 
@@ -73,12 +73,12 @@ public:
 
 	// style interface
 	virtual void pushStyle (document::Style::Type type) = 0;
-	virtual void popStyle () = 0;
+	virtual void popStyle (document::Style::Type type) = 0;
 
 	// document structure interface
-	virtual void pushStructure (document::Structure::Type type) = 0;
-	virtual void pushHeadingStructure (int level) = 0;
-	virtual void popStructure () = 0;
+	virtual void pushBlock (document::Block::Type type) = 0;
+	virtual void pushHeading (int level) = 0;
+	virtual void popBlock () = 0;
 };
 
 /*!
@@ -125,7 +125,7 @@ class Writer : public document::Text,
 	       public document::Link,
 	       public document::Style,
 	       public document::Image,
-	       public document::Structure, 
+	       public document::Block, 
 	       public document::List,
 	       public document::Table,
 	       public document::Math, 
@@ -138,7 +138,7 @@ public:
 	virtual void text (const std::string &text);
 
 	virtual void pushStyle (document::Style::Type type);
-	virtual void popStyle ();
+	virtual void popStyle (document::Style::Type type);
 
 	// TODO implement
 
@@ -146,7 +146,6 @@ private:
 	void setStream (FILE *ostream);
 
 	FILE *_ostream;
-	std::stack<document::Style::Type> _styleStack;
 };
 
 /*!

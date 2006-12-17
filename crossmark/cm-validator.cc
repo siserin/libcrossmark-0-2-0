@@ -17,7 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <crossmark/cm-validator-private.hh>
+#include "config.h"
+#include "cm-validator-private.hh"
 
 using namespace crossmark;
 
@@ -53,27 +54,51 @@ Validator::pushStyle (document::Style::Type type)
 }
 
 /*!
+ * For now we don't allow nesting of the same style (e.g. "foo *bar *baz* bar* foo").
  * \todo Cancel style.
  */
 void
 Validator::cancelStyle (document::Style::Type type)
 {
-
+	std::list<validators::methods::Method *>::reverse_iterator iter;
+	validators::methods::PushStyle *pushStyle;
+	validators::methods::PopStyle *popStyle;
+	
+	iter = _methods.rbegin ();
+	while (iter != _methods.rend ()) {
+		if ((*iter)->getClass () == validators::methods::Method::PUSH_STYLE) {
+			pushStyle = dynamic_cast<validators::methods::PushStyle *> (*iter);
+			if (pushStyle->getType () == type) {
+				// TODO replace with text
+				break;
+			}			
+		} else if ((*iter)->getClass () == validators::methods::Method::POP_STYLE) {
+			popStyle = dynamic_cast<validators::methods::PopStyle *> (*iter);
+			if (popStyle->getType () == type) {
+				// hitting upon closed style of same type
+				// no need to go further
+				break;
+			}
+		}
+		iter++;
+	}
 }
 
 /*!
  * \todo Check if style is valid and either pop or cancel it.
+	 Hmm, probably we need to pass the style here too, to correctly
+	 unwind nested 
  */
 void
-Validator::popStyle ()
+Validator::popStyle (document::Style::Type type)
 {
 
 }
 
 void
-Validator::pushStructure (document::Structure::Type type)
+Validator::pushBlock (document::Block::Type type)
 {
-	_methods.push_back (new validators::methods::PushStructure (_reader, type));
+	_methods.push_back (new validators::methods::PushBlock (_reader, type));
 }
 
 /*!
@@ -82,7 +107,7 @@ Validator::pushStructure (document::Structure::Type type)
 	 push a new structure, so push one if we're not into one already.
  */
 void
-Validator::pushHeadingStructure (int level)
+Validator::pushHeading (int level)
 {
 
 }
@@ -91,7 +116,7 @@ Validator::pushHeadingStructure (int level)
  * \todo Cancel pending styles.
  */
 void
-Validator::popStructure ()
+Validator::popBlock ()
 {
 
 }

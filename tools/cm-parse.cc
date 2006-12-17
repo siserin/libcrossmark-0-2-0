@@ -73,7 +73,7 @@ public:
 	
 		std::cout << style;
 	}
-	void popStyle ()
+	void popStyle (document::Style::Type unused)
 	{
 		g_assert (!_styleStack.empty ());
 		std::cout << _styleStack.top ();
@@ -81,16 +81,16 @@ public:
 	}
 
 	// document structure interface
-	void pushStructure (document::Structure::Type type)
+	void pushBlock (document::Block::Type type)
 	{
 		const gchar *structure;
 
 		switch (type) {
-		case document::Structure::BLOCKQUOTE: 
+		case document::Block::BLOCKQUOTE: 
 			structure = "<blockquote>";
 			_structureStack.push ("</blockquote>");
 			break;
-		case document::Structure::PARAGRAPH: 
+		case document::Block::PARAGRAPH: 
 			structure = "<p>";
 			_structureStack.push ("</p>");
 			break;
@@ -100,11 +100,11 @@ public:
 
 		std::cout << structure;
 	}
-	void pushHeadingStructure (int level)
+	void pushHeading (int level)
 	{
 		g_assert (FALSE);
 	}
-	void popStructure ()
+	void popBlock ()
 	{
 		g_assert (!_structureStack.empty ());
 		std::cout << _structureStack.top ();
