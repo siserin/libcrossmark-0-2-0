@@ -237,7 +237,7 @@ AC_OUTPUT([
  crossmark/libcrossmark.rc
  docs/Makefile
  docs/doxygen/Makefile
- docs/doxygen/doxygen.cfg
+ docs/doxygen/Doxyfile
  python/Makefile
  tools/Makefile
 ])

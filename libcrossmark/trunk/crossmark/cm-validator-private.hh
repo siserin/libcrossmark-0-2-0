@@ -21,14 +21,16 @@
 #define CM_VALIDATOR_PRIVATE_HH
 
 #include <list>
-#include <map>
-#include <stack>
 #include <string>
 #include <crossmark/crossmark.hh>
+#include <crossmark/cm-document.hh>
 
 namespace crossmark {
 
 /*!
+ * \internal
+ * \brief Extended document interface for validation.
+ *
  * The ``editor'' namespace specialises modules so they can be used for
  * automatic input conversion. 
  *
@@ -41,17 +43,126 @@ namespace crossmark {
  * is done using the toolbar and (2) resync when the cursor is moved using
  * mouse or keyboard navigation. 
  * For (2) we may just re-parse from the beginning of the block.
- * \see Tracker::resume()
+ * \see Validator::resume()
  * 
  * \todo Figure out a better name. Calling it trackers for now because 
 	 it keeps track of keystrokes.
+ * \todo This may be exported once we're implementing the input method parser.
  */
 namespace validators {
+
+/*!
+ * \internal
+ * \brief Document action proxies.
+ */
+namespace methods {
+
+class Method
+{
+public:
+	Method (Reader &reader)
+	  : _reader (reader)
+	{}
+	virtual ~Method () {}
+	virtual void operator () () = 0;
+
+protected:
+	Reader &_reader;
+};
+
+class Text : public Method
+{
+public:
+	Text (Reader &reader, const gchar *text) 
+	  : Method (reader),
+	    _text (g_strdup (text))
+	{}
+	virtual ~Text () 
+	{
+		g_free (_text);
+	}
+	virtual void operator () (void) { _reader.text (_text); }
+
+private:
+	gchar  *_text;
+};
+
+class PushStyle : public Method
+{
+public:
+	PushStyle (Reader &reader, document::Style::Type type) 
+	  : Method (reader),
+	    _type (type)
+	{}
+	virtual ~PushStyle () {}
+	virtual void operator () (void) { _reader.pushStyle (_type); }
+
+private:
+	document::Style::Type _type;
+};
+
+class PopStyle : public Method
+{
+public:
+	PopStyle (Reader &reader, document::Style::Type type) 
+	  : Method (reader),
+	    _type (type)
+	{}
+	virtual ~PopStyle () {}
+	virtual void operator () (void) { _reader.popStyle (); }
+
+private:
+	document::Style::Type _type;
+};
+
+class PushStructure : public Method
+{
+public:
+	PushStructure (Reader &reader, document::Structure::Type type) 
+	  : Method (reader), 
+	    _type (type)
+	{}
+	virtual ~PushStructure () {}
+	virtual void operator () (void) { _reader.pushStructure (_type); }
+
+private:
+	document::Structure::Type _type;
+};
+
+class PushHeadingStructure : public Method
+{
+public:
+	PushHeadingStructure (Reader &reader, int level) 
+	  : Method (reader),
+	    _level (level)
+	{}
+	virtual ~PushHeadingStructure () {}
+	virtual void operator () (void) { _reader.pushHeadingStructure (_level); }
+
+private:
+	int _level;
+};
+
+class PopStructure : public Method
+{
+public:
+	PopStructure (Reader &reader, document::Structure::Type type) 
+	  : Method (reader),
+	    _type (type)
+	{}
+	virtual ~PopStructure () {}
+	virtual void operator () (void) { _reader.pushStructure (_type); }
+
+private:
+	document::Structure::Type _type;
+};
+
+}; // namespace methods
 
 class Style : public document::Style
 {
 public:
-	virtual ~Style ();
+	virtual ~Style () {}
 
 	virtual void pushStyle (Type type) = 0;
 	virtual void cancelStyle (Type type) = 0;
@@ -61,29 +172,20 @@ public:
 }; // namespace validators
 
 /*
- * \todo Figure out a better name. Calling it trackers for now because 
-	 it keeps track of keystrokes.
- * \todo Should this be in the namespace of the same name?
+ * \todo Pull out this classes' public interface for the <i>input method</i>
  */
-class Validator : public document::Text, 
-		  //public document::Note,
-		  //public document::Link,
-		  public validators::Style,
-		  //public document::Image,
-		  public document::Structure
-		  //public document::List,
-		  //public document::Table,
-		  //public document::Math, 
-		  //public document::Macro
+class Validator : public Reader,
+		  public validators::Style
 {
 public:
-	virtual ~Tracker ();
+	Validator (Reader &reader);
+	virtual ~Validator ();
 
 	/*!
 	 * This sets the tracker to initial state. 
 	 * \see resume
  	 */
-	virtual void reset ();
+	// virtual void reset ();
 
 	/*!
 	 * Resume tracking and making formatting predictions.
@@ -98,24 +200,28 @@ public:
 	 * The reset, reparse, resume chain has to be run when
 	 * editing is resumed after the caret has been moved.
 	 */
-	virtual void resume ();
+	// virtual void resume ();
 
 
-	virtual void pushDocument () = 0;
-	virtual void popDocument () = 0;
+	virtual void pushDocument ();
+	virtual void popDocument ();
 
 	// text interface
-	virtual void text (const std::string &text) = 0;
+	virtual void text (const std::string &text);
 
 	// style interface
-	virtual void pushStyle (document::Style::Type type) = 0;
-	virtual void cancelStyle (Type type) = 0;
-	virtual void popStyle () = 0;
+	virtual void pushStyle (document::Style::Type type);
+	virtual void cancelStyle (document::Style::Type type);
+	virtual void popStyle ();
 
 	// document structure interface
-	virtual void pushStructure (document::Structure::Type type) = 0;
-	virtual void pushHeadingStructure (int level) = 0;
-	virtual void popStructure () = 0;
+	virtual void pushStructure (document::Structure::Type type);
+	virtual void pushHeadingStructure (int level);
+	virtual void popStructure ();
+
+private:
+	Reader &_reader;
+	std::list<validators::methods::Method *> _methods;
 };
 
 };  // namespace crossmark

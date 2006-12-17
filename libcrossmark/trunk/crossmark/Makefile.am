@@ -59,6 +59,7 @@ libcrossmark_1_la_SOURCES = \
 	cm-source.cc \
 	cm-stdio-stream.cc \
 	cm-stream.cc \
+	cm-validator.cc \
 	cm-writer.cc
 
 gsf_sources = \

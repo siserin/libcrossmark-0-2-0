@@ -1,6 +1,7 @@
-EXTRA_DIST =	doxygen.cfg \
-		footer.html.in \
-		header.html.in
+EXTRA_DIST = \
+	Doxyfile.in \
+	footer.html.in \
+	header.html.in
 
 if BUILD_DOCS
 
@@ -16,7 +17,7 @@ uninstall-am:
 all:
 	test -f header.html.in || $(LN_S) $(srcdir)/header.html.in ./
 	test -f footer.html.in || $(LN_S) $(srcdir)/footer.html.in ./
-	doxygen doxygen.cfg
+	doxygen 
 
 else
 

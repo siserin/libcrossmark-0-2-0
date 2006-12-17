@@ -54,6 +54,7 @@ Scanner::~Scanner ()
 
 /*!
  * Fetch the next token from the input file.
+ * \todo Is g_strdup_printf() UTF-8 compliant?
  */
 tokens::Token *
 Scanner::fetchToken ()
@@ -100,6 +101,7 @@ Scanner::fetchToken ()
 
 		//std::cout << "-- '" << _c1 << "' '" << c2 << "'" << std::endl;
 
+		tail = 0;
 		if ((_next = scanEnd (c2))) {
 			if (text) {
 				text->append (_c1);
@@ -123,12 +125,23 @@ Scanner::fetchToken ()
 			}
 			return token;
 		} else {
-			if (text) {
-				text->append (_c1);
+			if (tail) {
+				// both, _c1 and c2 have been consumed
+				if (text) {
+					text->append (tail);
+				} else {
+					text = new tokens::Text (g_strdup_printf ("%c", tail));
+				}
+
 			} else {
-				text = new tokens::Text (g_strdup_printf ("%c", _c1));
+
+				if (text) {
+					text->append (_c1);
+				} else {
+					text = new tokens::Text (g_strdup_printf ("%c", _c1));
+				}
+				_c1 = c2;
 			}
-			_c1 = c2;
 		}
 	}
 }
@@ -238,6 +251,46 @@ Scanner::scanStyle (gunichar c2, gunichar &tail)
 		_c1 = c2;
 		return new tokens::Style (tokens::Style::UNDERSCORE, 
 					  tokens::Style::RIGHT);
+	}
+	// handle escaped tokens as text
+	else if (_c1 == '\\' && c2 == '*') {
+		tail = c2;
+		_c1 = 0;
+		return NULL;
+	} else if (_c1 == '\\' && c2 == '/') {
+		tail = c2;
+		_c1 = 0;
+		return NULL;
+	} else if (_c1 == '\\' && c2 == '`') {
+		tail = c2;
+		_c1 = 0;
+		return NULL;
+	} else if (_c1 == '\\' && c2 == '_') {
+		tail = c2;
+		_c1 = 0;
+		return NULL;
+	}
+	// "centered" style tokens may cancel current style
+	else if (c2 == '*') {
+		tail = _c1;
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::ASTERISK, 
+					  tokens::Style::CENTER);	
+	} else if (c2 == '/') {
+		tail = _c1;
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::SLASH, 
+					  tokens::Style::CENTER);	
+	} else if (c2 == '`') {
+		tail = _c1;
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::BACKTICK, 
+					  tokens::Style::CENTER);
+	} else if (c2 == '_') {
+		tail = _c1;
+		_c1 = 0;
+		return new tokens::Style (tokens::Style::UNDERSCORE, 
+					  tokens::Style::CENTER);
 	}
 	return NULL;
 }
