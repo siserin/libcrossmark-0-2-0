@@ -101,8 +101,8 @@ Source::parseDocument ()
 	while (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
 		// ignore empty paragraph at beginning?
-		// _reader.pushStructure (document::Structure::PARAGRAPH);
-		// _reader.popStructure ();
+		// _reader.pushBlock (document::Block::PARAGRAPH);
+		// _reader.popBlock ();
 		token = _scanner->fetchToken ();
 	}
 
@@ -138,7 +138,7 @@ Source::parseParagraph (const tokens::Token *first)
 	}
 
 	// paragraph  := line* pbreak
-	_reader.pushStructure (document::Structure::PARAGRAPH);
+	_reader.pushBlock (document::Block::PARAGRAPH);
 
 	tokens::Token *token = parseLine (first);
 
@@ -154,7 +154,7 @@ Source::parseParagraph (const tokens::Token *first)
 		token = next;
 	}
 	
-	_reader.popStructure ();
+	_reader.popBlock ();
 
 	if (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
@@ -175,7 +175,7 @@ Source::parseBlockquote (const tokens::Token *first)
 	}
 
 	// blockquote := indent line ( indent line )* pbreak
-	_reader.pushStructure (document::Structure::BLOCKQUOTE);
+	_reader.pushBlock (document::Block::BLOCKQUOTE);
 
 	g_assert (first->getClass () == tokens::Token::INDENT);
 
@@ -193,7 +193,7 @@ Source::parseBlockquote (const tokens::Token *first)
 		token = parseLine (_scanner->fetchToken ());		
 	}
 
-	_reader.popStructure ();
+	_reader.popBlock ();
 
 	if (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
@@ -328,7 +328,7 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 		token = next;
 	}	
 
-	_reader.popStyle ();
+	_reader.popStyle (type_);
 
 	if (token->getClass () == tokens::Token::STYLE) {
 		delete token;

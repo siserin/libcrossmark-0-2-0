@@ -50,19 +50,17 @@ Writer::pushStyle (document::Style::Type type)
 		fputc ('_', _ostream);
 		break;
 	default:
-		g_warning ("%s: _styleStack.top() == %d", 
-			   __FUNCTION__, _styleStack.top());
+		g_warning ("%s: type == %d", 
+			   __FUNCTION__, type);
 	}
-	_styleStack.push (type);
 }
 
 void 
-Writer::popStyle ()
+Writer::popStyle (document::Style::Type type)
 {
-	g_assert (_ostream && 
-		  !_styleStack.empty ());
+	g_assert (_ostream);
 
-	switch (_styleStack.top ()) {
+	switch (type) {
 	case document::Style::BOLD:
 		fputc ('*', _ostream);
 		break;
@@ -76,8 +74,7 @@ Writer::popStyle ()
 		fputc ('_', _ostream);
 		break;
 	default:
-		g_warning ("%s: _styleStack.top() == %d", 
-			   __FUNCTION__, _styleStack.top());
+		g_warning ("%s: type == %d", 
+			   __FUNCTION__, type);
 	}
-	_styleStack.pop ();
 }

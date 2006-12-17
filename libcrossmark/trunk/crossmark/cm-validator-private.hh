@@ -54,17 +54,28 @@ namespace validators {
 /*!
  * \internal
  * \brief Document action proxies.
+ * \todo Templatise the methods.
  */
 namespace methods {
 
 class Method
 {
 public:
+	enum Class {
+		TEXT,
+		PUSH_STYLE, 
+		POP_STYLE,
+		PUSH_BLOCK,
+		PUSH_HEADING,
+		POP_BLOCK
+	};
+
 	Method (Reader &reader)
 	  : _reader (reader)
 	{}
 	virtual ~Method () {}
 	virtual void operator () () = 0;
+	virtual Method::Class getClass () const = 0;
 
 protected:
 	Reader &_reader;
@@ -82,6 +93,7 @@ public:
 		g_free (_text);
 	}
 	virtual void operator () (void) { _reader.text (_text); }
+	virtual Method::Class getClass () const { return Method::TEXT; }
 
 private:
 	gchar  *_text;
@@ -96,6 +108,8 @@ public:
 	{}
 	virtual ~PushStyle () {}
 	virtual void operator () (void) { _reader.pushStyle (_type); }
+	virtual Method::Class getClass () const { return Method::PUSH_STYLE; }
+	virtual document::Style::Type getType () const { return _type; }
 
 private:
 	document::Style::Type _type;
@@ -109,52 +123,57 @@ public:
 	    _type (type)
 	{}
 	virtual ~PopStyle () {}
-	virtual void operator () (void) { _reader.popStyle (); }
+	virtual void operator () (void) { _reader.popStyle (_type); }
+	virtual Method::Class getClass () const { return Method::POP_STYLE; }
+	virtual document::Style::Type getType () const { return _type; }
 
 private:
 	document::Style::Type _type;
 };
 
-class PushStructure : public Method
+class PushBlock : public Method
 {
 public:
-	PushStructure (Reader &reader, document::Structure::Type type) 
+	PushBlock (Reader &reader, document::Block::Type type) 
 	  : Method (reader), 
 	    _type (type)
 	{}
-	virtual ~PushStructure () {}
-	virtual void operator () (void) { _reader.pushStructure (_type); }
+	virtual ~PushBlock () {}
+	virtual void operator () (void) { _reader.pushBlock (_type); }
+	virtual Method::Class getClass () const { return Method::PUSH_BLOCK; }
 
 private:
-	document::Structure::Type _type;
+	document::Block::Type _type;
 };
 
-class PushHeadingStructure : public Method
+class PushHeading : public Method
 {
 public:
-	PushHeadingStructure (Reader &reader, int level) 
+	PushHeading (Reader &reader, int level) 
 	  : Method (reader),
 	    _level (level)
 	{}
-	virtual ~PushHeadingStructure () {}
-	virtual void operator () (void) { _reader.pushHeadingStructure (_level); }
+	virtual ~PushHeading () {}
+	virtual void operator () (void) { _reader.pushHeading (_level); }
+	virtual Method::Class getClass () const { return Method::PUSH_HEADING; }
 
 private:
 	int _level;
 };
 
-class PopStructure : public Method
+class PopBlock : public Method
 {
 public:
-	PopStructure (Reader &reader, document::Structure::Type type) 
+	PopBlock (Reader &reader, document::Block::Type type) 
 	  : Method (reader),
 	    _type (type)
 	{}
-	virtual ~PopStructure () {}
-	virtual void operator () (void) { _reader.pushStructure (_type); }
+	virtual ~PopBlock () {}
+	virtual void operator () (void) { _reader.pushBlock (_type); }
+	virtual Method::Class getClass () const { return Method::POP_BLOCK; }
 
 private:
-	document::Structure::Type _type;
+	document::Block::Type _type;
 };
 
 }; // namespace methods
@@ -166,7 +185,7 @@ public:
 
 	virtual void pushStyle (Type type) = 0;
 	virtual void cancelStyle (Type type) = 0;
-	virtual void popStyle () = 0;
+	virtual void popStyle (Type type) = 0;
 };
 
 }; // namespace validators
@@ -212,12 +231,12 @@ public:
 	// style interface
 	virtual void pushStyle (document::Style::Type type);
 	virtual void cancelStyle (document::Style::Type type);
-	virtual void popStyle ();
+	virtual void popStyle (document::Style::Type type);
 
 	// document structure interface
-	virtual void pushStructure (document::Structure::Type type);
-	virtual void pushHeadingStructure (int level);
-	virtual void popStructure ();
+	virtual void pushBlock (document::Block::Type type);
+	virtual void pushHeading (int level);
+	virtual void popBlock ();
 
 private:
 	Reader &_reader;

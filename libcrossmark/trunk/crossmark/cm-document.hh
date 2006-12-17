@@ -118,7 +118,7 @@ public:
 	virtual ~Style () {}
 
 	virtual void pushStyle (Type type) = 0;
-	virtual void popStyle () = 0;
+	virtual void popStyle (Type type) = 0;
 };
 
 /*!
@@ -144,7 +144,7 @@ public:
 /*!
  * Document outline interface for reader and writer implementations.
  */
-class Structure 
+class Block 
 {
 public:
 	enum Type {
@@ -153,11 +153,11 @@ public:
 		HEADING
 	};
 
-	virtual ~Structure () {}
+	virtual ~Block () {}
 
-	virtual void pushStructure (Type type) = 0;
-	virtual void pushHeadingStructure (int level) = 0;
-	virtual void popStructure () = 0;
+	virtual void pushBlock (Type type) = 0;
+	virtual void pushHeading (int level) = 0;
+	virtual void popBlock () = 0;
 };
 
 /*!

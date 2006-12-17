@@ -42,7 +42,6 @@ class Token
 {
 public:
 	enum Class {
-		BASE,
 		START,
 		END,
 		TEXT,
@@ -54,9 +53,9 @@ public:
 
 	virtual ~Token () {}
 
-	virtual Token::Class getClass () const { return Token::BASE; }
-	virtual const gchar * toHtml () const { return "\n<base />\n"; }
-	virtual const gchar * toString () const { return NULL; }
+	virtual Token::Class getClass () const = 0;
+	virtual const gchar * toHtml () const = 0;
+	virtual const gchar * toString () const = 0;
 
 protected:
 	Token () {}
@@ -129,7 +128,7 @@ public:
 	virtual ~Indent () {}
 
 	virtual Token::Class getClass () const { return Token::INDENT; }
-	virtual const gchar * toHtml () const { return "<indent />"; }
+	virtual const gchar * toHtml () const { return "\t&emsp;"; }
 	/*
 	 * \todo Might become an issue with whitespace-indentation.
 	 */
@@ -177,7 +176,7 @@ public:
 	virtual Type getType () const { return _type; }
 	virtual Pos getPos () const { return _pos; }
 	virtual Token::Class getClass () const { return Token::STYLE; }
-	virtual const gchar * toHtml ()
+	virtual const gchar * toHtml () const
 	{
 		if (_type == ASTERISK && _pos == LEFT) return "<b>"; 
 		else if (_type == ASTERISK && _pos == RIGHT) return "</b>"; 
@@ -208,7 +207,8 @@ public:
 	virtual ~Newline () {}
 
 	virtual Token::Class getClass () const { return Token::NEWLINE; }
-	virtual const gchar * toHtml () const { return "<br />"; }
+	virtual const gchar * toHtml () const { return "<br />\n"; }
+	virtual const gchar * toString () const { return "\n"; }	
 };
 
 /*!
@@ -222,7 +222,8 @@ public:
 	virtual ~Paragraph () {}
 
 	virtual Token::Class getClass () const { return Token::PARAGRAPH; }
-	virtual const gchar * toHtml () const { return "<paragraph />"; }
+	virtual const gchar * toHtml () const { return "<br /><br />\n\n"; }
+	virtual const gchar * toString () const { return "\n\n"; }
 };
 
 }; // namespace tokens
