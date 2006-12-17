@@ -28,6 +28,8 @@
 namespace crossmark {
 
 /*!
+ * \brief Interface to crossmark documents.
+ * 
  * Each module provides an interface for a specific aspect of the crossmark format.
  */
 namespace document {

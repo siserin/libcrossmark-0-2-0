@@ -27,6 +27,9 @@
 namespace crossmark {
 
 /*!
+ * \internal
+ * \brief Tokens recognised by the scanner.
+ *
  * This namespace contains the various token types recognised by the 
  * scanner.
  */
@@ -150,6 +153,7 @@ public:
 
 	enum Pos {
 		LEFT,
+		CENTER,
 		RIGHT
 	};
 
@@ -224,6 +228,7 @@ public:
 }; // namespace tokens
 
 /*!
+ * \internal
  * Scanner.
  *
  * Yeah, this is flawed, but I'm trying to treat markup stuff 
