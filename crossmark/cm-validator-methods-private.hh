@@ -87,6 +87,26 @@ public:
 	virtual void operator () (void) { _reader.text (_text); }
 	virtual Method::Class getClass () const { return Method::TEXT; }
 
+	static Text * fallback (Document &reader, document::Style::Type type) 
+	{ 
+		switch (type) {
+		case document::Style::BOLD:
+			return new Text (reader, "*");
+			break;
+		case document::Style::ITALIC:
+			return new Text (reader, "/");
+			break;
+		case document::Style::MONOSPACE:
+			return new Text (reader, "`");
+			break;
+		case document::Style::UNDERLINE:
+			return new Text (reader, "_");
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+	}
+
 private:
 	gchar  *_text;
 };
@@ -106,6 +126,7 @@ public:
 	virtual void operator () (void) { _reader.pushStyle (_type); }
 	virtual Method::Class getClass () const { return Method::PUSH_STYLE; }
 	virtual document::Style::Type getType () const { return _type; }
+	virtual Text * createFallback () { return Text::fallback (_reader, _type); }
 
 private:
 	document::Style::Type _type;
@@ -126,6 +147,7 @@ public:
 	virtual void operator () (void) { _reader.popStyle (_type); }
 	virtual Method::Class getClass () const { return Method::POP_STYLE; }
 	virtual document::Style::Type getType () const { return _type; }
+	virtual Text * createFallback () { return Text::fallback (_reader, _type); }
 
 private:
 	document::Style::Type _type;

@@ -65,7 +65,7 @@ public:
 class Factory
 {
 public:
-	static Factory &instance ();
+	static Factory & instance ();
 
 	Input * createInput (const std::string &file);
 	Output * createOutput (const std::string &file);
