@@ -47,6 +47,9 @@ Validator::text (const std::string &text)
 	_methods.push_back (new validators::methods::Text (_reader, text.c_str ()));
 }
 
+/*!
+ * \todo Check if we're already in style of that type and add fallback instead if yes.
+ */
 void
 Validator::pushStyle (document::Style::Type type)
 {
@@ -55,7 +58,6 @@ Validator::pushStyle (document::Style::Type type)
 
 /*!
  * For now we don't allow nesting of the same style (e.g. "foo *bar *baz* bar* foo").
- * \todo Cancel style.
  */
 void
 Validator::cancelStyle (document::Style::Type type)
@@ -66,17 +68,21 @@ Validator::cancelStyle (document::Style::Type type)
 	
 	iter = _methods.rbegin ();
 	while (iter != _methods.rend ()) {
+		// search backwards until start of style and cancel it
 		if ((*iter)->getClass () == validators::methods::Method::PUSH_STYLE) {
 			pushStyle = dynamic_cast<validators::methods::PushStyle *> (*iter);
 			if (pushStyle->getType () == type) {
-				// TODO replace with text
+				std::list<validators::methods::Method *>::iterator ins = _methods.erase (iter.base ());
+				validators::methods::Method *fallback = pushStyle->createFallback ();
+				_methods.insert (ins, fallback);
+				delete pushStyle;
 				break;
 			}			
 		} else if ((*iter)->getClass () == validators::methods::Method::POP_STYLE) {
 			popStyle = dynamic_cast<validators::methods::PopStyle *> (*iter);
 			if (popStyle->getType () == type) {
 				// hitting upon closed style of same type
-				// no need to go further
+				// no need to go further or do anything.
 				break;
 			}
 		}

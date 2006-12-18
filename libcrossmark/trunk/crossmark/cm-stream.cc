@@ -30,13 +30,13 @@ using namespace crossmark;
 streams::Factory &
 streams::Factory::instance ()
 {
-	static streams::Factory::Factory *factory = NULL;
+	static streams::Factory *factory = NULL;
 
 	if (!factory) {
 #if HAVE_LIBGSF
 		gsf_init ();
 #endif
-		factory = new streams::Factory::Factory ();
+		factory = new streams::Factory ();
 	}
 
 	return *factory;

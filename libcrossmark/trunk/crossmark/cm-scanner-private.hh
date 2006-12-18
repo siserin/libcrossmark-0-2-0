@@ -26,6 +26,7 @@
 #ifndef CM_SCANNER_PRIVATE_HH
 #define CM_SCANNER_PRIVATE_HH
 
+#include <list>
 #include <string>
 #include <glib.h>
 #include <crossmark/cm-stream.hh>
@@ -230,6 +231,37 @@ public:
 	virtual Token::Class getClass () const { return Token::PARAGRAPH; }
 	virtual const gchar * toHtml () const { return "<br /><br />\n\n"; }
 	virtual const gchar * toString () const { return "\n\n"; }
+};
+
+/*!
+ * \brief Token factory interface.
+ */
+class FactoryInterface
+{
+public:
+	virtual Token * createToken (Token::Class klass) const = 0;
+};
+
+/*!
+ * \brief Token factory.
+ */
+class Factory : public FactoryInterface
+{
+public:
+	virtual ~Factory () {}
+
+	static Factory & instance ();
+
+	virtual void hook (const FactoryInterface *factory);
+	virtual void unhook (const FactoryInterface *factory);
+
+	virtual Token * createToken (Token::Class klass) const;
+
+protected:
+	Factory ();
+
+private:
+	std::list<const FactoryInterface *> _factories;
 };
 
 }; // namespace tokens

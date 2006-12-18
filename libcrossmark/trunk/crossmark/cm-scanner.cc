@@ -294,3 +294,72 @@ Scanner::scanStyle (gunichar c2, gunichar &tail)
 	}
 	return NULL;
 }
+
+tokens::Factory &
+tokens::Factory::instance ()
+{
+	static tokens::Factory *factory = NULL;
+
+	if (!factory) {
+		factory = new tokens::Factory ();
+	}
+
+	return *factory;
+
+}
+
+tokens::Factory::Factory ()
+{
+	_factories.push_back (this);
+}
+
+void 
+tokens::Factory::hook (const FactoryInterface *factory)
+{
+	_factories.push_back (this);
+}
+
+/*!
+ * \todo Implement.
+ */
+void 
+tokens::Factory::unhook (const FactoryInterface *factory)
+{
+/*
+	std::list<const tokens::FactoryInterface *>::reverse_iterator iter;
+
+	iter = _factories.rbegin ();
+	while (iter != _factories.rend ()) {
+		if (*iter == factory) {
+			_factories.erase (iter);
+			break;
+		}
+		iter++;
+	}
+*/
+}
+
+/*!
+ * \todo Implement.
+ */
+tokens::Token *
+tokens::Factory::createToken (tokens::Token::Class klass) const
+{
+/*
+	std::list<const tokens::FactoryInterface *>::reverse_iterator iter;
+	tokens::Token *token;
+
+	token = NULL;
+	iter = _factories.rbegin ();
+	while (iter != _factories.rend ()) {
+		if ((token = iter->createToken (klass)) != NULL) {
+			return token;
+		}
+		iter++;
+	}
+
+	// The builtin factory, which is tried last must be able to 
+	// create all token types.
+	g_assert_not_reached ();
+*/
+}
