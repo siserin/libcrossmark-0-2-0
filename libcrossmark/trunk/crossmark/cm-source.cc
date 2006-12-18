@@ -31,7 +31,7 @@
 using namespace crossmark;
 
 Source::Source (const std::string &file, 
-		Reader &reader)
+		Document &reader)
   : _reader (reader),
     _scanner (new Scanner (file))
 {
@@ -39,7 +39,7 @@ Source::Source (const std::string &file,
 }
 
 Source::Source (streams::Input &istream, 
-		Reader &reader)
+		Document &reader)
   : _reader (reader),
     _scanner (new Scanner (istream))
 {

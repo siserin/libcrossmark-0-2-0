@@ -17,6 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*!
+ * \file crossmark.hh
+ * \brief Crossmark main include.
+ */
+
 #ifndef CROSSMARK_HH
 #define CROSSMARK_HH
 
@@ -29,7 +34,7 @@
  * \brief Toplevel crossmark namespace. 
  * 
  * \todo Maybe use glib::ustring instead of std::string and glib::TimeVal?
- * \todo Pass errors to the Reader, return them from Source::sputter() or even both?
+ * \todo Pass errors to the Document, return them from Source::sputter() or even both?
  * \todo Not quite happy with citations, e.g. the sample from the v4 spec. Since crossmark
 	 parsers must not handle macros parsing would be up to the application. Or does
 	 that not hold for builtin macros?
@@ -45,53 +50,16 @@ namespace tokens {
 class Scanner;
 
 /*!
- * Reader must implement all specific interfaces.
- * Maybe later we'll split mandatory and optional ones.
- */
-class Reader : public document::Text, 
-	       //public document::Note,
-	       //public document::Link,
-	       public document::Style,
-	       //public document::Image,
-	       public document::Block
-	       //public document::List,
-	       //public document::Table,
-	       //public document::Math, 
-	       //public document::Macro
-{
-public:
-	virtual ~Reader () {}
-
-	// document interface, 
-	// TODO maybe pull out, but this doesn't have a 
-	// crossmark counterpart
-	virtual void pushDocument () = 0;
-	virtual void popDocument () = 0;
-
-	// text interface
-	virtual void text (const std::string &text) = 0;
-
-	// style interface
-	virtual void pushStyle (document::Style::Type type) = 0;
-	virtual void popStyle (document::Style::Type type) = 0;
-
-	// document structure interface
-	virtual void pushBlock (document::Block::Type type) = 0;
-	virtual void pushHeading (int level) = 0;
-	virtual void popBlock () = 0;
-};
-
-/*!
- * Source is mainly a wrapper for opening and closing files or streams to read from.
+ * \brief Crossmark parser implementation.
  */
 class Source 
 {
 public:
 	Source (const std::string &file, 
-		Reader &reader);
+		Document &reader);
 
 	Source (streams::Input &istream, 
-		Reader &reader);
+		Document &reader);
 
 	virtual ~Source ();
 
@@ -110,26 +78,19 @@ protected:
 	tokens::Token * parseText (const tokens::Token *first);
 
 private:
-	Reader	&_reader;
-	Scanner *_scanner;
+	Document &_reader;
+	Scanner  *_scanner;
 };
 
 /*!
- * Writer must implement all specific interfaces.
- * Maybe later we'll split mandatory and optional ones.
+ * \brief Writer must implement all specific document interfaces.
+ *
+ * \note Maybe later we'll split mandatory and optional ones.
+ *
  * \todo Does the writer validate?
  * \todo Implement state machine.
  */
-class Writer : public document::Text, 
-	       public document::Note,
-	       public document::Link,
-	       public document::Style,
-	       public document::Image,
-	       public document::Block, 
-	       public document::List,
-	       public document::Table,
-	       public document::Math, 
-	       public document::Macro
+class Writer : public Document
 {
 friend class Sink;
 public:
@@ -149,7 +110,7 @@ private:
 };
 
 /*!
- * Sink is mainly a wrapper for opening and closing files or streams to write to.
+ * \brief Wrapper for opening and closing files or streams to write to.
  */
 class Sink
 {

@@ -24,7 +24,7 @@
 
 using namespace crossmark;
 
-class HtmlConverter : public crossmark::Reader
+class HtmlConverter : public crossmark::Document
 {
 public:
 	~HtmlConverter () {}

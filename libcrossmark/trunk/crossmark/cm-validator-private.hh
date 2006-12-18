@@ -17,6 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*!
+ * \file cm-validator-private.hh
+ * \brief Crossmark validator.
+ * \internal
+ */
+
 #ifndef CM_VALIDATOR_PRIVATE_HH
 #define CM_VALIDATOR_PRIVATE_HH
 
@@ -24,6 +30,7 @@
 #include <string>
 #include <crossmark/crossmark.hh>
 #include <crossmark/cm-document.hh>
+#include <crossmark/cm-validator-methods-private.hh>
 
 namespace crossmark {
 
@@ -52,132 +59,9 @@ namespace crossmark {
 namespace validators {
 
 /*!
- * \internal
- * \brief Document action proxies.
- * \todo Templatise the methods.
+ * \internal 
+ * \brief Specialised text styling interface that can cancel styles.
  */
-namespace methods {
-
-class Method
-{
-public:
-	enum Class {
-		TEXT,
-		PUSH_STYLE, 
-		POP_STYLE,
-		PUSH_BLOCK,
-		PUSH_HEADING,
-		POP_BLOCK
-	};
-
-	Method (Reader &reader)
-	  : _reader (reader)
-	{}
-	virtual ~Method () {}
-	virtual void operator () () = 0;
-	virtual Method::Class getClass () const = 0;
-
-protected:
-	Reader &_reader;
-};
-
-class Text : public Method
-{
-public:
-	Text (Reader &reader, const gchar *text) 
-	  : Method (reader),
-	    _text (g_strdup (text))
-	{}
-	virtual ~Text () 
-	{
-		g_free (_text);
-	}
-	virtual void operator () (void) { _reader.text (_text); }
-	virtual Method::Class getClass () const { return Method::TEXT; }
-
-private:
-	gchar  *_text;
-};
-
-class PushStyle : public Method
-{
-public:
-	PushStyle (Reader &reader, document::Style::Type type) 
-	  : Method (reader),
-	    _type (type)
-	{}
-	virtual ~PushStyle () {}
-	virtual void operator () (void) { _reader.pushStyle (_type); }
-	virtual Method::Class getClass () const { return Method::PUSH_STYLE; }
-	virtual document::Style::Type getType () const { return _type; }
-
-private:
-	document::Style::Type _type;
-};
-
-class PopStyle : public Method
-{
-public:
-	PopStyle (Reader &reader, document::Style::Type type) 
-	  : Method (reader),
-	    _type (type)
-	{}
-	virtual ~PopStyle () {}
-	virtual void operator () (void) { _reader.popStyle (_type); }
-	virtual Method::Class getClass () const { return Method::POP_STYLE; }
-	virtual document::Style::Type getType () const { return _type; }
-
-private:
-	document::Style::Type _type;
-};
-
-class PushBlock : public Method
-{
-public:
-	PushBlock (Reader &reader, document::Block::Type type) 
-	  : Method (reader), 
-	    _type (type)
-	{}
-	virtual ~PushBlock () {}
-	virtual void operator () (void) { _reader.pushBlock (_type); }
-	virtual Method::Class getClass () const { return Method::PUSH_BLOCK; }
-
-private:
-	document::Block::Type _type;
-};
-
-class PushHeading : public Method
-{
-public:
-	PushHeading (Reader &reader, int level) 
-	  : Method (reader),
-	    _level (level)
-	{}
-	virtual ~PushHeading () {}
-	virtual void operator () (void) { _reader.pushHeading (_level); }
-	virtual Method::Class getClass () const { return Method::PUSH_HEADING; }
-
-private:
-	int _level;
-};
-
-class PopBlock : public Method
-{
-public:
-	PopBlock (Reader &reader, document::Block::Type type) 
-	  : Method (reader),
-	    _type (type)
-	{}
-	virtual ~PopBlock () {}
-	virtual void operator () (void) { _reader.pushBlock (_type); }
-	virtual Method::Class getClass () const { return Method::POP_BLOCK; }
-
-private:
-	document::Block::Type _type;
-};
-
-}; // namespace methods
-
 class Style : public document::Style
 {
 public:
@@ -191,13 +75,16 @@ public:
 }; // namespace validators
 
 /*
- * \todo Pull out this classes' public interface for the <i>input method</i>
+ * \internal
+ * \brief Extended crossmark::Document interface that is used between parser and validator.
+ *
+ * \todo Pull out this classes' public interface for the <i>input method</i>.
  */
-class Validator : public Reader,
+class Validator : public Document,
 		  public validators::Style
 {
 public:
-	Validator (Reader &reader);
+	Validator (Document &reader);
 	virtual ~Validator ();
 
 	/*!
@@ -239,7 +126,7 @@ public:
 	virtual void popBlock ();
 
 private:
-	Reader &_reader;
+	Document &_reader;
 	std::list<validators::methods::Method *> _methods;
 };
 

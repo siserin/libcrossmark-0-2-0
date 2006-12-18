@@ -17,6 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*!
+ * \file cm-document.hh
+ * \brief Crossmark document interfaces.
+ */
+
 #ifndef CM_DOCUMENT_HH
 #define CM_DOCUMENT_HH
 
@@ -35,7 +40,8 @@ namespace crossmark {
 namespace document {
 
 /*!
- * Content interface for reader and writer implementations.
+ * \brief Text interface for reader and writer implementations.
+ *
  * This is the only way to pass text data.
  */
 class Text 
@@ -47,7 +53,7 @@ public:
 };
 
 /*!
- * Note and annotation interface.
+ * \brief Note and annotation interface.
  */
 class Note
 {
@@ -68,7 +74,7 @@ public:
 };
 
 /*!
- * Hyperlink interface for reader and writer implementations.
+ * \brief Hyperlink interface.
  */
 class Link
 {
@@ -101,7 +107,7 @@ public:
 };
 
 /*!
- * Text styling interface for reader and writer implementations.
+ * \brief Text styling interface.
  */
 class Style
 {
@@ -122,8 +128,8 @@ public:
 };
 
 /*!
- * Image interface for reader and writer implementations.
- * \todo Are images always stored externally, like in HTML?
+ * \brief Image interface for reader and writer implementations.
+ *
  * \todo Pre-parse optional attributes like geo?
  * \todo If the "details" files contains exif, how will it be marked? Custom macro?
  */
@@ -142,7 +148,7 @@ public:
 };
 
 /*!
- * Document outline interface for reader and writer implementations.
+ * \brief Document outline interface.
  */
 class Block 
 {
@@ -161,7 +167,8 @@ public:
 };
 
 /*!
- * List interface.
+ * \brief List interface.
+ *
  * \todo Need to pass numbering/bullet type, maybe other params for lists? 
  */
 class List 
@@ -182,7 +189,7 @@ public:
 };
 
 /*!
- * Table interface.
+ * \brief Table interface.
  */
 class Table 
 {
@@ -203,7 +210,8 @@ public:
 };
 
 /*!
- * Math interface.
+ * \brief Math interface.
+ *
  * \todo Possible to use itex?
  * \todo Make compile-time optional
  */
@@ -215,7 +223,7 @@ public:
 };
 
 /*!
- * Generic macro interface.
+ * \brief Generic macro interface.
  */
 class Macro 
 {
@@ -231,6 +239,44 @@ public:
 };
 
 }; // namespace document
+
+/*!
+ * \brief Document must implement all specific document interfaces.
+ *
+ * \note Maybe later we'll split mandatory and optional ones.
+ */
+class Document : public document::Text, 
+		 //public document::Note,
+		 //public document::Link,
+		 public document::Style,
+		 //public document::Image,
+		 public document::Block
+		 //public document::List,
+		 //public document::Table,
+		 //public document::Math, 
+		 //public document::Macro
+{
+public:
+	virtual ~Document () {}
+
+	// document interface, 
+	// TODO maybe pull out, but this doesn't have a 
+	// crossmark counterpart
+	virtual void pushDocument () = 0;
+	virtual void popDocument () = 0;
+
+	// text interface
+	virtual void text (const std::string &text) = 0;
+
+	// style interface
+	virtual void pushStyle (document::Style::Type type) = 0;
+	virtual void popStyle (document::Style::Type type) = 0;
+
+	// document structure interface
+	virtual void pushBlock (document::Block::Type type) = 0;
+	virtual void pushHeading (int level) = 0;
+	virtual void popBlock () = 0;
+};
 
 };  // namespace crossmark
 

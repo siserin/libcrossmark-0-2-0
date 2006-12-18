@@ -17,6 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*!
+ * \file cm-scanner-private.hh
+ * \brief Crossmark scanner.
+ * \internal
+ */
+
 #ifndef CM_SCANNER_PRIVATE_HH
 #define CM_SCANNER_PRIVATE_HH
 
@@ -36,7 +42,7 @@ namespace crossmark {
 namespace tokens {
 
 /*!
- * Abstract base class.
+ * \brief Abstract token base class.
  */
 class Token
 {
@@ -62,7 +68,7 @@ protected:
 };
 
 /*!
- * Start-of-file.
+ * \brief Start-of-file.
  */
 class Start : public Token
 {
@@ -77,7 +83,7 @@ public:
 };
 
 /*!
- * End-of-file.
+ * \brief End-of-file.
  */
 class End : public Token
 {
@@ -92,7 +98,7 @@ public:
 };
 
 /*!
- * Text token.
+ * \brief Text token.
  */
 class Text : public Token
 {
@@ -119,7 +125,7 @@ private:
 };
 
 /*!
- * Indentation token.
+ * \brief Indentation token.
  */
 class Indent : public Token
 {
@@ -136,7 +142,7 @@ public:
 };
 
 /*!
- * Style token.
+ * \brief Style token.
  */
 class Style : public Token
 {
@@ -197,7 +203,7 @@ private:
 };
 
 /*!
- * Paragraph break.
+ * \brief Newline token.
  */
 class Newline : public Token
 {
@@ -212,7 +218,7 @@ public:
 };
 
 /*!
- * Paragraph break.
+ * \brief Paragraph break.
  */
 class Paragraph : public Token
 {
@@ -230,18 +236,18 @@ public:
 
 /*!
  * \internal
- * Scanner.
- *
- * Yeah, this is flawed, but I'm trying to treat markup stuff 
- * as a single character (by using lookahead).
- * {charset}    := {UTF-8} \ {" *", "* ", " /", "/ ", " `", "` ", " _", "_ "}
+ * \brief The scanner provides token-based input.
  *
  * Initial scanner grammar
- * 0 means start of file
- * token      := paragraph | style | text | sof | eof
- * paragraph  := '\n' '\n' '\n'*
- * style      := " *" | "* " | " /" | "/ " | " `" | "` " | " _" | "_ "
- * text       := {charset}*
+ * Yeah, this is flawed, but I'm trying to treat markup stuff 
+ * as a single character (by using lookahead).
+ * \verbatim
+   {charset}  := {UTF-8} \ {" *", "* ", " /", "/ ", " `", "` ", " _", "_ "}
+   token      := paragraph | style | text | sof | eof
+   paragraph  := '\n' '\n' '\n'*
+   style      := " *" | "* " | " /" | "/ " | " `" | "` " | " _" | "_ "
+   text       := {charset}*
+   \endverbatim
  */
 class Scanner
 {

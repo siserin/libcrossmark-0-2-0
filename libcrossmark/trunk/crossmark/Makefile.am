@@ -34,7 +34,8 @@ noinst_HEADERS = \
 	cm-gsf-stream-private.hh \
 	cm-scanner-private.hh \
 	cm-stdio-stream-private.hh \
-	cm-validator-private.hh
+	cm-validator-private.hh \
+	cm-validator-methods-private.hh
 
 AM_CPPFLAGS = \
 	$(DEBUG_CXXFLAGS) \

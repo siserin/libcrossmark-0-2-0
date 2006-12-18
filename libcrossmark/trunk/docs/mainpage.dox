@@ -1,0 +1,12 @@
+/*!
+
+\mainpage 
+
+\li \ref release-notes
+\li \ref hacking
+\li \ref authors
+\li \ref todo
+
+\include README
+
+*/
