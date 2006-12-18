@@ -287,7 +287,7 @@ HIDE_IN_BODY_DOCS      = NO
 # to NO (the default) then the documentation will be excluded. 
 # Set it to YES to include the internal documentation.
 
-INTERNAL_DOCS          = NO
+INTERNAL_DOCS          = @INTERNAL_DOCS@
 
 # If the CASE_SENSE_NAMES tag is set to NO then Doxygen will only generate 
 # file names in lower-case letters. If set to YES upper-case letters are also 
@@ -459,7 +459,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = @top_srcdir@/crossmark
+INPUT                  = @top_srcdir@/crossmark @top_srcdir@/docs
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -468,7 +468,7 @@ INPUT                  = @top_srcdir@/crossmark
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx 
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py
 
-FILE_PATTERNS          = 
+FILE_PATTERNS          = *.cc *.hh *.dox
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
 # should be searched for input files as well. Possible values are YES and NO. 
@@ -500,7 +500,7 @@ EXCLUDE_PATTERNS       =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = 
+EXAMPLE_PATH           = @top_srcdir@ @top_srcdir@/docs
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

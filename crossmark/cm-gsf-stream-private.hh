@@ -17,6 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*!
+ * \file cm-gsf-stream-private.hh
+ * \brief Crossmark libgsf support.
+ * \internal
+ */
+
 #ifndef CM_GSF_STREAM_PRIVATE_HH
 #define CM_GSF_STREAM_PRIVATE_HH
 
@@ -31,7 +37,8 @@ namespace crossmark {
 namespace streams {
 
 /*!
- * This class is for testing and not guaranteed to be UTF-8 compliant.
+ * \internal
+ * \brief UTF-8 compliant input stream.
  */
 class GsfInput : public Input 
 {
@@ -50,7 +57,8 @@ private:
 };
 
 /*!
- * This class is for testing and not guaranteed to be UTF-8 compliant.
+ * \internal
+ * \brief UTF-8 compliant output stream.
  */
 class GsfOutput : public Output
 {

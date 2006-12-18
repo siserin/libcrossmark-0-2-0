@@ -17,6 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*!
+ * \file cm-stream.hh
+ * \brief Crossmark stream interfaces.
+ */
+
 #ifndef CM_STREAM_HH
 #define CM_STREAM_HH
 
@@ -25,8 +30,14 @@
 
 namespace crossmark {
 
+/*!
+ * \brief Input- and output-streams for reading and writing documents.
+ */
 namespace streams {
 
+/*!
+ * \brief Interface for input streams.
+ */
 class Input 
 {
 public:
@@ -34,6 +45,9 @@ public:
 	virtual gunichar getChar () = 0;
 };
 
+/*!
+ * \brief Interface for output streams.
+ */
 class Output 
 {
 public:
@@ -42,6 +56,12 @@ public:
 	virtual void write (const gchar *s) = 0;
 };
 
+/*!
+ * \internal
+ * \brief Stream creation factory.
+ *
+ * \note Maybe some day it will be possible to hook this factory as a library consumer.
+ */
 class Factory
 {
 public:

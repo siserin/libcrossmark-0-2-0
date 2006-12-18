@@ -105,6 +105,15 @@ AC_ARG_ENABLE([docs],
 	cm_cv_docs="yes"
 ])
 
+AC_ARG_ENABLE([internal-docs], 
+[AS_HELP_STRING([--enable-internal-docs], [build internal documentation (requires doxygen)])],
+[
+	cm_cv_internal_docs="$enableval"
+	cm_cv_docs="$enableval"
+], [
+	cm_cv_internal_docs="no"
+])
+
 #
 # Build settings
 #
@@ -122,9 +131,17 @@ if test "x$cm_cv_docs" = "xyes" && \
 	popd
 else
 	cm_cv_docs="no"
+	cm_cv_internal_docs="no"
 fi
 AM_CONDITIONAL(BUILD_DOCS, test "x$cm_cv_docs" = "xyes")
 AC_SUBST(DOXYGEN_STRIP_PATH)
+
+if test "x$cm_cv_internal_docs" == "xyes"; then
+	INTERNAL_DOCS="YES"
+else
+	INTERNAL_DOCS="NO"
+fi
+AC_SUBST(INTERNAL_DOCS)
 
 PKG_CHECK_MODULES([DEPS], [ $DEPS_PKGS ])
 
@@ -248,5 +265,6 @@ echo "
 (todo)  Python bindings:               ${cm_cv_python}
             installing to:             ${pyexecdir}
         Build documentation:           ${cm_cv_docs}
+            internal docs:             ${cm_cv_internal_docs}
         Debugging support:             ${debug}
 "

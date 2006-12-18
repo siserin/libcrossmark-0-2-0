@@ -17,6 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*!
+ * \file cm-stdio-stream-private.hh
+ * \brief Basic I/O streams.
+ * \internal
+ */
+
 #ifndef CM_STDIO_STREAM_PRIVATE_HH
 #define CM_STDIO_STREAM_PRIVATE_HH
 
@@ -30,7 +36,10 @@ namespace crossmark {
 namespace streams {
 
 /*!
- * This class is for testing and not guaranteed to be UTF-8 compliant.
+ * \internal
+ * \brief Basic input stream.
+ *
+ * \warning This class is for testing and not guaranteed to be UTF-8 compliant.
  */
 class StdInput : public Input 
 {
@@ -44,7 +53,10 @@ protected:
 };
 
 /*!
- * This class is for testing and not guaranteed to be UTF-8 compliant.
+ * \internal
+ * \brief Basic output stream.
+ *
+ * \warning This class is for testing and not guaranteed to be UTF-8 compliant.
  */
 class StdOutput : public Output
 {

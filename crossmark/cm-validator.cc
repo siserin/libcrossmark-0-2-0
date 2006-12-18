@@ -22,7 +22,7 @@
 
 using namespace crossmark;
 
-Validator::Validator (Reader &reader)
+Validator::Validator (Document &reader)
   : _reader (reader)
 {}
 
