@@ -143,21 +143,14 @@ Validator::popStyle (document::Style::Type type)
 	_isUnderline = (_isUnderline && type == document::Style::UNDERLINE) ? FALSE : _isUnderline;
 }
 
+/*!
+ * \todo Transform the current structure into a heading structure if type is 
+	 a heading type and we're in a block already.
+ */
 void
 Validator::pushBlock (document::Block::Type type)
 {
 	_methods.push_back (new validators::methods::PushBlock (_reader, type));
-}
-
-/*!
- * \todo Transform the current structure into a heading structure.
-	 Maybe this should be named more clearly. For H2, H3 we need to 
-	 push a new structure, so push one if we're not into one already.
- */
-void
-Validator::pushHeading (int level)
-{
-
 }
 
 /*!

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "crossmark.hh"
 #include "cm-scanner-private.hh"
+#include "cm-validator-private.hh"
 
 #if 0
 //#ifdef DEBUG
@@ -32,19 +33,15 @@ using namespace crossmark;
 
 Source::Source (const std::string &file, 
 		Document &reader)
-  : _reader (reader),
-    _scanner (new Scanner (file))
-{
-
-}
+  : _scanner (new Scanner (file)),
+    _validator (new Validator (reader))
+{}
 
 Source::Source (streams::Input &istream, 
 		Document &reader)
-  : _reader (reader),
-    _scanner (new Scanner (istream))
-{
-
-}
+  : _scanner (new Scanner (istream)),
+    _validator (new Validator (reader))
+{}
 
 Source::~Source ()
 {
@@ -87,7 +84,7 @@ Source::parseDocument ()
 
 	// document   := start newline* ( paragraph | blockquote )* end
 
-	_reader.pushDocument ();
+	_validator->pushDocument ();
 
 	tokens::Token *token = _scanner->fetchToken ();
 	g_assert (token->getClass () == tokens::Token::START);
@@ -101,8 +98,8 @@ Source::parseDocument ()
 	while (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
 		// ignore empty paragraph at beginning?
-		// _reader.pushBlock (document::Block::PARAGRAPH);
-		// _reader.popBlock ();
+		// _validator->pushBlock (document::Block::PARAGRAPH);
+		// _validator->popBlock ();
 		token = _scanner->fetchToken ();
 	}
 
@@ -124,7 +121,7 @@ Source::parseDocument ()
 	}
 	delete token;
 
-	_reader.popDocument ();
+	_validator->popDocument ();
 }
 
 tokens::Token * 
@@ -138,7 +135,7 @@ Source::parseParagraph (const tokens::Token *first)
 	}
 
 	// paragraph  := line* pbreak
-	_reader.pushBlock (document::Block::PARAGRAPH);
+	_validator->pushBlock (document::Block::PARAGRAPH);
 
 	tokens::Token *token = parseLine (first);
 
@@ -154,7 +151,7 @@ Source::parseParagraph (const tokens::Token *first)
 		token = next;
 	}
 	
-	_reader.popBlock ();
+	_validator->popBlock ();
 
 	if (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
@@ -175,7 +172,7 @@ Source::parseBlockquote (const tokens::Token *first)
 	}
 
 	// blockquote := indent line ( indent line )* pbreak
-	_reader.pushBlock (document::Block::BLOCKQUOTE);
+	_validator->pushBlock (document::Block::BLOCKQUOTE);
 
 	g_assert (first->getClass () == tokens::Token::INDENT);
 
@@ -193,7 +190,7 @@ Source::parseBlockquote (const tokens::Token *first)
 		token = parseLine (_scanner->fetchToken ());		
 	}
 
-	_reader.popBlock ();
+	_validator->popBlock ();
 
 	if (token->getClass () == tokens::Token::PARAGRAPH) {
 		delete token;
@@ -233,7 +230,7 @@ Source::parseLine (const tokens::Token *first)
 		if (token->getClass () == tokens::Token::STYLE) {
 			next = parseMarkup (token);
 		} else if (token->getClass () == tokens::Token::INDENT) {
-			_reader.text ("\t");
+			_validator->text ("\t");
 			next = _scanner->fetchToken ();
 		} else {
 			next = parseText (token);
@@ -304,7 +301,7 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 	style = dynamic_cast<const tokens::Style *> (first);
 	g_assert (style &&  style->getType () == type);
 
-	_reader.pushStyle (type_);
+	_validator->pushStyle (type_);
 
 	tokens::Token *token;
 	tokens::Token *next;
@@ -312,11 +309,15 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 	token = _scanner->fetchToken ();
 	while (!((style = dynamic_cast<const tokens::Style *> (token)) != NULL &&
 	          style->getType () == type && 
-		 style->getPos () == tokens::Style::RIGHT) && 
+		  style->getPos () == tokens::Style::RIGHT) && 
 	       token->getClass () != tokens::Token::PARAGRAPH &&
 	       token->getClass () != tokens::Token::END) {
 
-		if (token->getClass () == tokens::Token::STYLE) {
+/* TODO
+		if (token->getClass () == tokens::Token::STYLE && 
+		    style->getPos () == tokens::Style::CENTER) {
+			_validator->cancelStyle (style->getType ());
+		} else */ if (token->getClass () == tokens::Token::STYLE) {
 			next = parseMarkup (token);
 		} else {
 			next = parseText (token);
@@ -328,7 +329,7 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 		token = next;
 	}	
 
-	_reader.popStyle (type_);
+	_validator->popStyle (type_);
 
 	if (token->getClass () == tokens::Token::STYLE) {
 		delete token;
@@ -352,7 +353,7 @@ Source::parseText (const tokens::Token *first)
 	const gchar *text = first->toString ();
 	g_assert (text);
 	g_return_val_if_fail (text, _scanner->fetchToken ());
-	_reader.text (text);
+	_validator->text (text);
 
 	return _scanner->fetchToken ();
 }

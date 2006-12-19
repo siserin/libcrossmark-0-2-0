@@ -122,7 +122,6 @@ public:
 
 	// document structure interface
 	virtual void pushBlock (document::Block::Type type);
-	virtual void pushHeading (int level);
 	virtual void popBlock ();
 
 private:
