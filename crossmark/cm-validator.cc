@@ -23,7 +23,11 @@
 using namespace crossmark;
 
 Validator::Validator (Document &reader)
-  : _reader (reader)
+  : _reader (reader), 
+    _isBold (FALSE),
+    _isItalic (FALSE),
+    _isMonospace (FALSE),
+    _isUnderline (FALSE)
 {}
 
 Validator::~Validator ()
@@ -49,11 +53,31 @@ Validator::text (const std::string &text)
 
 /*!
  * \todo Check if we're already in style of that type and add fallback instead if yes.
+	 Wait! First we need to know which style is "stronger", the first or the second.
+	 If it was the second we'd just add the fallback for a nested pushStyle.
  */
 void
 Validator::pushStyle (document::Style::Type type)
 {
-	_methods.push_back (new validators::methods::PushStyle (_reader, type));
+	validators::methods::Method *method;
+
+	if (_isBold && type == document::Style::BOLD ||
+	    _isItalic && type == document::Style::ITALIC ||
+	    _isMonospace && type == document::Style::MONOSPACE ||
+	    _isUnderline && type == document::Style::UNDERLINE) {
+
+		method = validators::methods::Text::fallback (_reader, type);
+
+	} else {
+		method = new validators::methods::PushStyle (_reader, type);
+	}
+
+	_methods.push_back (method);
+
+	_isBold = type == document::Style::BOLD;
+	_isItalic = type == document::Style::ITALIC;
+	_isMonospace = type == document::Style::MONOSPACE;
+	_isUnderline = type == document::Style::UNDERLINE;
 }
 
 /*!
@@ -98,7 +122,25 @@ Validator::cancelStyle (document::Style::Type type)
 void
 Validator::popStyle (document::Style::Type type)
 {
+	validators::methods::Method *method;
 
+	if (_isBold && type == document::Style::BOLD ||
+	    _isItalic && type == document::Style::ITALIC ||
+	    _isMonospace && type == document::Style::MONOSPACE ||
+	    _isUnderline && type == document::Style::UNDERLINE) {
+
+		method = new validators::methods::PopStyle (_reader, type);
+
+	} else {
+		method = validators::methods::Text::fallback (_reader, type);
+	}
+
+	_methods.push_back (method);
+
+	_isBold = (_isBold && type == document::Style::BOLD) ? FALSE : _isBold;
+	_isItalic = (_isItalic && type == document::Style::ITALIC) ? FALSE : _isItalic;
+	_isMonospace = (_isMonospace && type == document::Style::MONOSPACE) ? FALSE : _isMonospace;
+	_isUnderline = (_isUnderline && type == document::Style::UNDERLINE) ? FALSE : _isUnderline;
 }
 
 void
@@ -124,5 +166,21 @@ Validator::pushHeading (int level)
 void
 Validator::popBlock ()
 {
+	cancelStyle (document::Style::BOLD);
+	cancelStyle (document::Style::ITALIC);
+	cancelStyle (document::Style::MONOSPACE);
+	cancelStyle (document::Style::UNDERLINE);
 
+	std::list<validators::methods::Method *>::iterator iter;
+	validators::methods::Method *method;
+	iter = _methods.begin ();
+	while (iter != _methods.end ()) {
+		method = *iter;
+		(*method) ();
+		delete method;
+		iter++;
+	}
+	_reader.popBlock ();
+
+	_methods.clear ();
 }

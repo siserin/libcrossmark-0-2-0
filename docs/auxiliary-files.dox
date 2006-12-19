@@ -9,4 +9,9 @@
 
 \include HACKING
 
+
+\page copying License
+
+\include COPYING
+
 */
