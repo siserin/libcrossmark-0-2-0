@@ -13,11 +13,11 @@ VS_VERSION_INFO VERSIONINFO
     BEGIN
       BLOCK "040904B0"
       BEGIN
-	VALUE "CompanyName", "Marc Maurer"
+	VALUE "CompanyName", "AbiSource"
 	VALUE "FileDescription", "libcrossmark"
 	VALUE "FileVersion", "@CROSSMARK_MAJOR_VERSION@.@CROSSMARK_MINOR_VERSION@.@CROSSMARK_MICRO_VERSION@.BUILDNUMBER"
-	VALUE "InternalName", "libwpd-1"
-	VALUE "LegalCopyright", "Copyright (C) 2006 Marc Maurer"
+	VALUE "InternalName", "libcrossmark-1"
+	VALUE "LegalCopyright", "Copyright (C) 2006 Robert Staudinger"
 	VALUE "OriginalFilename", "libcrossmark-1-@LT_CURRENT_MINUS_AGE@.dll"
 	VALUE "ProductName", "libcrossmark"
 	VALUE "ProductVersion", "@CROSSMARK_MAJOR_VERSION@.@CROSSMARK_MINOR_VERSION@.@CROSSMARK_MICRO_VERSION@"

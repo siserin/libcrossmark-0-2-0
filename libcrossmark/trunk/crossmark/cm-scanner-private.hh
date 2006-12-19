@@ -75,7 +75,6 @@ class Start : public Token
 {
 public:
 	Start () {}
-
 	virtual ~Start () {}
 
 	virtual Token::Class getClass () const { return Token::START; }
@@ -90,7 +89,6 @@ class End : public Token
 {
 public:
 	End () {}
-
 	virtual ~End () {}
 
 	virtual Token::Class getClass () const { return Token::END; }
@@ -210,7 +208,6 @@ class Newline : public Token
 {
 public:
 	Newline () {}
-
 	virtual ~Newline () {}
 
 	virtual Token::Class getClass () const { return Token::NEWLINE; }
@@ -225,7 +222,6 @@ class Paragraph : public Token
 {
 public:
 	Paragraph () {}
-
 	virtual ~Paragraph () {}
 
 	virtual Token::Class getClass () const { return Token::PARAGRAPH; }
@@ -236,32 +232,44 @@ public:
 /*!
  * \brief Token factory interface.
  */
-class FactoryInterface
+class FactoryIface
 {
 public:
-	virtual Token * createToken (Token::Class klass) const = 0;
+	virtual Token * createTokenImpl (Token::Class klass) const = 0;
+	virtual Style * createStyleTokenImpl (Style::Type type, Style::Pos pos) const = 0;
+	virtual Text * createTextTokenImpl (const gchar *text) const = 0;
 };
 
 /*!
  * \brief Token factory.
+ *
+ * \todo Use Factory to create tokens, then get rid of Token::toHtml()
+	 and hook factory from cm-scan.
  */
-class Factory : public FactoryInterface
+class Factory : public FactoryIface
 {
 public:
 	virtual ~Factory () {}
 
 	static Factory & instance ();
 
-	virtual void hook (const FactoryInterface *factory);
-	virtual void unhook (const FactoryInterface *factory);
+	virtual void hook (const FactoryIface *factory);
+	virtual void unhook (const FactoryIface *factory);
 
 	virtual Token * createToken (Token::Class klass) const;
+	virtual Style * createStyleToken (Style::Type type, Style::Pos pos) const;
+	virtual Text * createTextToken (const gchar *text) const;
+
+	// token factory
+	virtual Token * createTokenImpl (Token::Class klass) const;
+	virtual Style * createStyleTokenImpl (Style::Type type, Style::Pos pos) const;
+	virtual Text * createTextTokenImpl (const gchar *text) const;
 
 protected:
 	Factory ();
 
 private:
-	std::list<const FactoryInterface *> _factories;
+	std::list<const FactoryIface *> _factories;
 };
 
 }; // namespace tokens

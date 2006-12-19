@@ -33,7 +33,7 @@ Scanner::Scanner (const std::string &file)
     _next (NULL),
     _c1 (0)
 {
-	_next = new tokens::Start ();
+	_next = tokens::Factory::instance().createToken (tokens::Token::START);
 }
 
 Scanner::Scanner (streams::Input &istream)
@@ -42,7 +42,7 @@ Scanner::Scanner (streams::Input &istream)
     _next (NULL),
     _c1 (0)
 {
-	_next = new tokens::Start ();
+	_next = tokens::Factory::instance().createToken (tokens::Token::START);
 }
 
 Scanner::~Scanner ()
@@ -314,29 +314,27 @@ tokens::Factory::Factory ()
 }
 
 void 
-tokens::Factory::hook (const FactoryInterface *factory)
+tokens::Factory::hook (const FactoryIface *factory)
 {
-	_factories.push_back (this);
+	_factories.push_back (factory);
 }
 
 /*!
  * \todo Implement.
  */
 void 
-tokens::Factory::unhook (const FactoryInterface *factory)
+tokens::Factory::unhook (const FactoryIface *factory)
 {
-/*
-	std::list<const tokens::FactoryInterface *>::reverse_iterator iter;
+	std::list<const tokens::FactoryIface *>::reverse_iterator iter;
 
 	iter = _factories.rbegin ();
 	while (iter != _factories.rend ()) {
 		if (*iter == factory) {
-			_factories.erase (iter);
+			_factories.erase (iter.base ());
 			break;
 		}
 		iter++;
 	}
-*/
 }
 
 /*!
@@ -345,21 +343,93 @@ tokens::Factory::unhook (const FactoryInterface *factory)
 tokens::Token *
 tokens::Factory::createToken (tokens::Token::Class klass) const
 {
-/*
-	std::list<const tokens::FactoryInterface *>::reverse_iterator iter;
+	std::list<const tokens::FactoryIface *>::const_reverse_iterator iter;
 	tokens::Token *token;
 
-	token = NULL;
 	iter = _factories.rbegin ();
 	while (iter != _factories.rend ()) {
-		if ((token = iter->createToken (klass)) != NULL) {
+		if ((token = (*iter)->createTokenImpl (klass)) != NULL) {
 			return token;
 		}
 		iter++;
 	}
 
-	// The builtin factory, which is tried last must be able to 
-	// create all token types.
+	// the builtin factory which is tried last
+	// must be able to handle all types
 	g_assert_not_reached ();
-*/
+}
+
+tokens::Style * 
+tokens::Factory::createStyleToken (tokens::Style::Type type, tokens::Style::Pos pos) const
+{
+	std::list<const tokens::FactoryIface *>::const_reverse_iterator iter;
+	tokens::Style *token;
+
+	iter = _factories.rbegin ();
+	while (iter != _factories.rend ()) {
+		if ((token = (*iter)->createStyleTokenImpl (type, pos)) != NULL) {
+			return token;
+		}
+		iter++;
+	}
+
+	// the builtin factory which is tried last
+	// must be able to handle all types
+	g_assert_not_reached ();
+}
+
+tokens::Text * 
+tokens::Factory::createTextToken (const gchar *text) const
+{
+	std::list<const tokens::FactoryIface *>::const_reverse_iterator iter;
+	tokens::Text *token;
+
+	iter = _factories.rbegin ();
+	while (iter != _factories.rend ()) {
+		if ((token = (*iter)->createTextTokenImpl (text)) != NULL) {
+			return token;
+		}
+		iter++;
+	}
+
+	// the builtin factory which is tried last
+	// must be able to handle all types
+	g_assert_not_reached ();
+}
+
+tokens::Token *
+tokens::Factory::createTokenImpl (tokens::Token::Class klass) const
+{
+	switch (klass) {
+	case tokens::Token::START: 
+		return new tokens::Start ();
+		break;
+	case tokens::Token::END: 
+		return new tokens::End ();
+		break;
+	case tokens::Token::INDENT: 
+		return new tokens::Indent ();
+		break;
+	case tokens::Token::NEWLINE: 
+		return new tokens::Newline ();
+		break;
+	case tokens::Token::PARAGRAPH: 
+		return new tokens::Paragraph ();
+		break;
+	default:
+		g_assert_not_reached ();
+		return NULL;
+	}
+}
+
+tokens::Style * 
+tokens::Factory::createStyleTokenImpl (tokens::Style::Type type, tokens::Style::Pos pos) const
+{
+	return new tokens::Style (type, pos);
+}
+
+tokens::Text * 
+tokens::Factory::createTextTokenImpl (const gchar *text) const
+{
+	return new tokens::Text (text);
 }
