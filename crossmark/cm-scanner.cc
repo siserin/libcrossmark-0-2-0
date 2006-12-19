@@ -271,24 +271,23 @@ Scanner::scanStyle (gunichar c2, gunichar &tail)
 		return NULL;
 	}
 	// "centered" style tokens may cancel current style
-	else if (c2 == '*') {
-		tail = _c1;
-		_c1 = 0;
+	// scanning only for incorrect lead-out here because if
+	// the lead in was valid it would have been consumed 
+	// as style token already.
+	else if (_c1 == '*' && c2 != ' ') {
+		_c1 = c2;
 		return new tokens::Style (tokens::Style::ASTERISK, 
 					  tokens::Style::CENTER);	
-	} else if (c2 == '/') {
-		tail = _c1;
-		_c1 = 0;
+	} else if (_c1 == '/' && c2 != ' ') {
+		_c1 = c2;
 		return new tokens::Style (tokens::Style::SLASH, 
 					  tokens::Style::CENTER);	
-	} else if (c2 == '`') {
-		tail = _c1;
-		_c1 = 0;
+	} else if (_c1 == '`' && c2 != ' ') {
+		_c1 = c2;
 		return new tokens::Style (tokens::Style::BACKTICK, 
 					  tokens::Style::CENTER);
-	} else if (c2 == '_') {
-		tail = _c1;
-		_c1 = 0;
+	} else if (_c1 == '_' && c2 != ' ') {
+		_c1 = c2;
 		return new tokens::Style (tokens::Style::UNDERSCORE, 
 					  tokens::Style::CENTER);
 	}
