@@ -126,8 +126,13 @@ public:
 	virtual void popBlock ();
 
 private:
-	Document &_reader;
 	std::list<validators::methods::Method *> _methods;
+	Document &_reader;
+
+	gboolean _isBold;
+	gboolean _isItalic;
+	gboolean _isMonospace;
+	gboolean _isUnderline;
 };
 
 };  // namespace crossmark

@@ -235,6 +235,8 @@ public:
 class FactoryIface
 {
 public:
+	virtual ~FactoryIface () {}
+
 	virtual Token * createTokenImpl (Token::Class klass) const = 0;
 	virtual Style * createStyleTokenImpl (Style::Type type, Style::Pos pos) const = 0;
 	virtual Text * createTextTokenImpl (const gchar *text) const = 0;
