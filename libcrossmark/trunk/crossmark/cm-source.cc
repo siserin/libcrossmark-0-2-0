@@ -22,9 +22,9 @@
 #include "cm-scanner-private.hh"
 #include "cm-validator-private.hh"
 
-#if 0
-//#ifdef DEBUG
-#define TRACE(M) fprintf(stderr, M);fprintf(stderr, "\n");
+//if 0
+#ifdef DEBUG
+#define TRACE(M) fprintf(stderr,"Source::");fprintf(stderr,M);fprintf(stderr,"\n");
 #else
 #define TRACE(M)
 #endif
@@ -266,8 +266,14 @@ Source::parseMarkup (const tokens::Token *first)
 	tokens::Token 	    *next;
 
 	style = dynamic_cast<const tokens::Style *> (first);
-	g_assert (style && style->getPos () == tokens::Style::LEFT);
-	next = parseStyle (style, (document::Style::Type) style->getType ());
+	if (style->getClass () == tokens::Token::STYLE && 
+	    style->getPos () == tokens::Style::CENTER) {
+		_validator->cancelStyle ((document::Style::Type) style->getType ());
+		next = _scanner->fetchToken ();
+	} else {
+		g_assert (style && style->getPos () == tokens::Style::LEFT);
+		next = parseStyle (style, (document::Style::Type) style->getType ());
+	}
 	return next;
 }
 
@@ -313,11 +319,7 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 	       token->getClass () != tokens::Token::PARAGRAPH &&
 	       token->getClass () != tokens::Token::END) {
 
-/* TODO
-		if (token->getClass () == tokens::Token::STYLE && 
-		    style->getPos () == tokens::Style::CENTER) {
-			_validator->cancelStyle (style->getType ());
-		} else */ if (token->getClass () == tokens::Token::STYLE) {
+		if (token->getClass () == tokens::Token::STYLE) {
 			next = parseMarkup (token);
 		} else {
 			next = parseText (token);

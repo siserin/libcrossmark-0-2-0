@@ -20,6 +20,13 @@
 #include "config.h"
 #include "cm-validator-private.hh"
 
+//if 0
+#ifdef DEBUG
+#define TRACE(M) fprintf(stderr,"Validator::");fprintf(stderr,M);fprintf(stderr,"\n");
+#else
+#define TRACE(M)
+#endif
+
 using namespace crossmark;
 
 Validator::Validator (Document &reader)
@@ -36,18 +43,24 @@ Validator::~Validator ()
 void
 Validator::pushDocument ()
 {
+	TRACE (__FUNCTION__);
+
 	_reader.pushDocument ();
 }
 
 void
 Validator::popDocument ()
 {
+	TRACE (__FUNCTION__);
+
 	_reader.popDocument ();
 }
 
 void
 Validator::text (const std::string &text)
 {
+	TRACE (__FUNCTION__);
+
 	_methods.push_back (new validators::methods::Text (_reader, text.c_str ()));
 }
 
@@ -59,6 +72,8 @@ Validator::text (const std::string &text)
 void
 Validator::pushStyle (document::Style::Type type)
 {
+	TRACE (__FUNCTION__);
+
 	validators::methods::Method *method;
 
 	if (_isBold && type == document::Style::BOLD ||
@@ -86,31 +101,37 @@ Validator::pushStyle (document::Style::Type type)
 void
 Validator::cancelStyle (document::Style::Type type)
 {
-	std::list<validators::methods::Method *>::reverse_iterator iter;
+	TRACE (__FUNCTION__);
+
+	std::list<validators::methods::Method *>::reverse_iterator riter;
+	std::list<validators::methods::Method *>::iterator iter;
 	validators::methods::PushStyle *pushStyle;
 	validators::methods::PopStyle *popStyle;
 	
-	iter = _methods.rbegin ();
-	while (iter != _methods.rend ()) {
+	riter = _methods.rbegin ();
+	while (riter != _methods.rend ()) {
 		// search backwards until start of style and cancel it
-		if ((*iter)->getClass () == validators::methods::Method::PUSH_STYLE) {
-			pushStyle = dynamic_cast<validators::methods::PushStyle *> (*iter);
+		if ((*riter)->getClass () == validators::methods::Method::PUSH_STYLE) {
+			pushStyle = dynamic_cast<validators::methods::PushStyle *> (*riter);
 			if (pushStyle->getType () == type) {
-				std::list<validators::methods::Method *>::iterator ins = _methods.erase (iter.base ());
+// TODO this doesn't work, e.g. with scanner-06.cm
+// probably because of using the reverse iterator 
 				validators::methods::Method *fallback = pushStyle->createFallback ();
-				_methods.insert (ins, fallback);
-				delete pushStyle;
+				iter = riter.base ();
+				iter = _methods.erase (iter);
+				_methods.insert (iter, fallback);
+// TODO				delete pushStyle;
 				break;
 			}			
-		} else if ((*iter)->getClass () == validators::methods::Method::POP_STYLE) {
-			popStyle = dynamic_cast<validators::methods::PopStyle *> (*iter);
+		} else if ((*riter)->getClass () == validators::methods::Method::POP_STYLE) {
+			popStyle = dynamic_cast<validators::methods::PopStyle *> (*riter);
 			if (popStyle->getType () == type) {
 				// hitting upon closed style of same type
 				// no need to go further or do anything.
 				break;
 			}
 		}
-		iter++;
+		riter++;
 	}
 }
 
@@ -122,6 +143,8 @@ Validator::cancelStyle (document::Style::Type type)
 void
 Validator::popStyle (document::Style::Type type)
 {
+	TRACE (__FUNCTION__);
+
 	validators::methods::Method *method;
 
 	if (_isBold && type == document::Style::BOLD ||
@@ -150,6 +173,8 @@ Validator::popStyle (document::Style::Type type)
 void
 Validator::pushBlock (document::Block::Type type)
 {
+	TRACE (__FUNCTION__);
+
 	_methods.push_back (new validators::methods::PushBlock (_reader, type));
 }
 
@@ -159,6 +184,8 @@ Validator::pushBlock (document::Block::Type type)
 void
 Validator::popBlock ()
 {
+	TRACE (__FUNCTION__);
+
 	cancelStyle (document::Style::BOLD);
 	cancelStyle (document::Style::ITALIC);
 	cancelStyle (document::Style::MONOSPACE);
