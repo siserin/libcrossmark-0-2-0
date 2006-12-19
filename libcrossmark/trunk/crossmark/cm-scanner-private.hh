@@ -166,12 +166,16 @@ public:
 	    _pos (pos)
 	{
 		if (_type == ASTERISK && _pos == LEFT) _text = " *"; 
+		else if (_type == ASTERISK && _pos == CENTER) _text = "*";
 		else if (_type == ASTERISK && _pos == RIGHT) _text = "* ";
 		else if (_type == SLASH && _pos == LEFT) _text = " /";
+		else if (_type == SLASH && _pos == CENTER) _text = "/";
 		else if (_type == SLASH && _pos == RIGHT) _text = "/ ";
 		else if (_type == BACKTICK && _pos == LEFT) _text = " `";
+		else if (_type == BACKTICK && _pos == CENTER) _text = "`";
 		else if (_type == BACKTICK && _pos == RIGHT) _text = "` ";
 		else if (_type == UNDERSCORE && _pos == LEFT) _text = " _";
+		else if (_type == UNDERSCORE && _pos == CENTER) _text = "_";
 		else if (_type == UNDERSCORE && _pos == RIGHT) _text = " _";
 		else g_assert (FALSE);
 	}
@@ -184,12 +188,16 @@ public:
 	virtual const gchar * toHtml () const
 	{
 		if (_type == ASTERISK && _pos == LEFT) return "<b>"; 
+		else if (_type == ASTERISK && _pos == CENTER) return "*"; 
 		else if (_type == ASTERISK && _pos == RIGHT) return "</b>"; 
 		else if (_type == SLASH && _pos == LEFT) return "<i>"; 
+		else if (_type == SLASH && _pos == CENTER) return "*"; 
 		else if (_type == SLASH && _pos == RIGHT) return "</i>"; 
 		else if (_type == BACKTICK && _pos == LEFT) return "<code>"; 
+		else if (_type == BACKTICK && _pos == CENTER) return "`"; 
 		else if (_type == BACKTICK && _pos == RIGHT) return "</code>"; 
 		else if (_type == UNDERSCORE && _pos == LEFT) return "<u>"; 
+		else if (_type == UNDERSCORE && _pos == CENTER) return "_";
 		else if (_type == UNDERSCORE && _pos == RIGHT) return "</u>";
 		else g_assert (FALSE);
 	}
