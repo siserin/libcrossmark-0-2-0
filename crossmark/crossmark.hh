@@ -48,6 +48,7 @@ namespace tokens {
 	class Token;
 };
 class Scanner;
+class Validator;
 
 /*!
  * \brief Crossmark parser implementation.
@@ -78,8 +79,8 @@ protected:
 	tokens::Token * parseText (const tokens::Token *first);
 
 private:
-	Document &_reader;
-	Scanner  *_scanner;
+	Scanner   *_scanner;
+	Validator *_validator;
 };
 
 /*!

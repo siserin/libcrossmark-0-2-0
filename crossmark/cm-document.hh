@@ -154,15 +154,17 @@ class Block
 {
 public:
 	enum Type {
-		BLOCKQUOTE,
-		PARAGRAPH,
-		HEADING
+		BLOCKQUOTE = -1,
+		PARAGRAPH = 0,
+		HEADING_1 = 1,
+		HEADING_2 = 2,
+		HEADING_3 = 3,
+		HEADING_4 = 4,
 	};
 
 	virtual ~Block () {}
 
 	virtual void pushBlock (Type type) = 0;
-	virtual void pushHeading (int level) = 0;
 	virtual void popBlock () = 0;
 };
 
@@ -274,7 +276,6 @@ public:
 
 	// document structure interface
 	virtual void pushBlock (document::Block::Type type) = 0;
-	virtual void pushHeading (int level) = 0;
 	virtual void popBlock () = 0;
 };
 

@@ -54,7 +54,6 @@ public:
 		PUSH_STYLE, 
 		POP_STYLE,
 		PUSH_BLOCK,
-		PUSH_HEADING,
 		POP_BLOCK
 	};
 
@@ -170,25 +169,6 @@ public:
 
 private:
 	document::Block::Type _type;
-};
-
-/*!
- * \internal 
- * \brief Buffered "push heading" call.
- */
-class PushHeading : public Method
-{
-public:
-	PushHeading (Document &reader, int level) 
-	  : Method (reader),
-	    _level (level)
-	{}
-	virtual ~PushHeading () {}
-	virtual void operator () (void) { _reader.pushHeading (_level); }
-	virtual Method::Class getClass () const { return Method::PUSH_HEADING; }
-
-private:
-	int _level;
 };
 
 /*!
