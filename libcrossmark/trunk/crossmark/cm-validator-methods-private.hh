@@ -74,6 +74,7 @@ protected:
  */
 class Text : public Method
 {
+friend class ::crossmark::Validator; // DEBUG
 public:
 	Text (Document &reader, const gchar *text) 
 	  : Method (reader),

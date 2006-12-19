@@ -132,6 +132,9 @@ private:
 	gboolean _isItalic;
 	gboolean _isMonospace;
 	gboolean _isUnderline;
+
+	// DEBUG
+	void dump (const char * indent = "");
 };
 
 };  // namespace crossmark
