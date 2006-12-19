@@ -22,8 +22,8 @@
 #include "cm-scanner-private.hh"
 #include "cm-validator-private.hh"
 
-//if 0
-#ifdef DEBUG
+#if 0
+//#ifdef DEBUG
 #define TRACE(M) fprintf(stderr,"Source::");fprintf(stderr,M);fprintf(stderr,"\n");
 #else
 #define TRACE(M)

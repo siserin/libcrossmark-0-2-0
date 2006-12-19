@@ -275,18 +275,22 @@ Scanner::scanStyle (gunichar c2, gunichar &tail)
 	// the lead in was valid it would have been consumed 
 	// as style token already.
 	else if (_c1 == '*' && c2 != ' ') {
+		tail = _c1;
 		_c1 = c2;
 		return new tokens::Style (tokens::Style::ASTERISK, 
 					  tokens::Style::CENTER);	
 	} else if (_c1 == '/' && c2 != ' ') {
+		tail = _c1;
 		_c1 = c2;
 		return new tokens::Style (tokens::Style::SLASH, 
 					  tokens::Style::CENTER);	
 	} else if (_c1 == '`' && c2 != ' ') {
+		tail = _c1;
 		_c1 = c2;
 		return new tokens::Style (tokens::Style::BACKTICK, 
 					  tokens::Style::CENTER);
 	} else if (_c1 == '_' && c2 != ' ') {
+		tail = _c1;
 		_c1 = c2;
 		return new tokens::Style (tokens::Style::UNDERSCORE, 
 					  tokens::Style::CENTER);
