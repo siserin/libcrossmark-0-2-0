@@ -29,6 +29,7 @@
 #include <list>
 #include <string>
 #include <glib.h>
+#include <crossmark/cm-features.hh>
 #include <crossmark/cm-stream.hh>
 
 namespace crossmark {
@@ -303,7 +304,7 @@ class Scanner
 {
 public: 
 	Scanner (const std::string &file);
-	Scanner (streams::Input &istream);
+	Scanner (stream::Input &istream);
 	virtual ~Scanner ();
 
 	virtual tokens::Token * fetchToken ();
@@ -316,7 +317,7 @@ protected:
 	virtual tokens::Token * scanStyle (gunichar c2, gunichar &tail);
 
 private:
-	streams::Input	&_istream;
+	stream::Input	&_istream;
 	gboolean	 _ownStream;
 	tokens::Token 	*_next;
 	gunichar	 _c1;

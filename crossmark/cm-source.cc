@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
 #include "crossmark.hh"
 #include "cm-scanner-private.hh"
 #include "cm-validator-private.hh"
@@ -37,7 +36,7 @@ Source::Source (const std::string &file,
     _validator (new Validator (reader))
 {}
 
-Source::Source (streams::Input &istream, 
+Source::Source (stream::Input &istream, 
 		Document &reader)
   : _scanner (new Scanner (istream)),
     _validator (new Validator (reader))

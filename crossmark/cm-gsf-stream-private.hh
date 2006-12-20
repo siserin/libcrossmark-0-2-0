@@ -28,13 +28,13 @@
 
 #include <glib.h>
 #include <gsf/gsf.h>
-#include <gsf/gsf-input-textline.h>
 #include <string>
+#include <crossmark/cm-features.hh>
 #include <crossmark/cm-stream.hh>
 
 namespace crossmark {
 
-namespace streams {
+namespace stream {
 
 /*!
  * \internal
@@ -44,16 +44,12 @@ class GsfInput : public Input
 {
 public:
 	GsfInput (const std::string &file);
+	GsfInput (::GsfInput *input);
 	virtual ~GsfInput ();
 	virtual gunichar getChar ();
 
-protected:
-	GsfInputTextline *_input;
-
 private:
-	guint8 		*_line;
-	const guint8 	*_iter;
-	guint   	 _len;
+	::GsfInput *_input;
 };
 
 /*!
@@ -64,15 +60,16 @@ class GsfOutput : public Output
 {
 public:
 	GsfOutput (const  std::string &file);
+	GsfOutput (::GsfOutput *output);
 	virtual ~GsfOutput ();
-	virtual void write (gunichar c);
-	virtual void write (const gchar *s);
+	virtual gboolean write (gunichar c);
+	virtual gboolean write (const gchar *s);
 
 protected:
-	GsfOutput *_output;
+	::GsfOutput *_output;
 };
 
-}; // namespace streams
+}; // namespace stream
 
 }; // namespace crossmark
 

@@ -20,15 +20,15 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <string>
-#include "config.h"
 #include "cm-scanner-private.hh"
+#include "cm-stream-private.hh"
 // debug
 #include <iostream>
 
 using namespace crossmark;
 
 Scanner::Scanner (const std::string &file)
-  : _istream (* streams::Factory::instance().createInput (file)),
+  : _istream (* stream::Factory::instance().createInput (file)),
     _ownStream (FALSE),
     _next (NULL),
     _c1 (0)
@@ -36,7 +36,7 @@ Scanner::Scanner (const std::string &file)
 	_next = tokens::Factory::instance().createToken (tokens::Token::START);
 }
 
-Scanner::Scanner (streams::Input &istream)
+Scanner::Scanner (stream::Input &istream)
   : _istream (istream),
     _ownStream (TRUE),
     _next (NULL),

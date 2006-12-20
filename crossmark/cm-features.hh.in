@@ -17,46 +17,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "cm-stream-private.hh"
-#include "cm-stdio-stream-private.hh"
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-#include <gsf/gsf-utils.h>
-#include "cm-gsf-stream-private.hh"
-#endif
-
-using namespace crossmark;
-using namespace crossmark::stream;
-
-Factory &
-Factory::instance ()
-{
-	static Factory *factory = NULL;
-
-	if (!factory) {
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-		gsf_init ();
-#endif
-		factory = new Factory ();
-	}
-
-	return *factory;
-}
-
-Input * 
-Factory::createInput (const std::string &file)
-{
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-	return new GsfInput (file);
-#else
-	return new StdInput (file);
-#endif
-}
-
 /*!
- * \todo Use libgsf.
+ * \file cm-features.hh
+ * \brief Features definition of the installed libcrossmark.
+ * 
+ * This is a manually maintained subset of config.h
  */
-Output * 
-Factory::createOutput (const std::string &file)
-{
-	return new StdOutput (file);
-}
+
+#ifndef CM_FEATURES_HH
+#define CM_FEATURES_HH
+
+/* Define if you are using libgsf */
+#undef LIBCROSSMARK_FEATURE_LIBGSF
+
+#endif /* CM_FEATURES_HH */

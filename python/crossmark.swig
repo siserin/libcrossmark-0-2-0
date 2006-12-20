@@ -1,4 +1,4 @@
 %module crossmark
 %{
-#include "../crossmark/crossmark.hh"
+#include "crossmark/crossmark.hh"
 %}

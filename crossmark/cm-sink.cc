@@ -18,7 +18,6 @@
  */
 
 #include <fstream>
-#include "config.h"
 #include "crossmark.hh"
 
 using namespace crossmark;

@@ -2,6 +2,7 @@
 AC_INIT(crossmark/crossmark.hh)
 
 AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(crossmark/cm-features.hh)
 
 CROSSMARK_MAJOR_VERSION=0
 CROSSMARK_MINOR_VERSION=1
@@ -47,7 +48,7 @@ DEPS_CFLAGS=
 DEPS_LIBS=
 DEPS_PKGS=
 
-# TODO require certain glib version
+# TODO require certain glib version?
 glib_reqs="glib-2.0"
 DEPS_PKGS="$DEPS_PKGS $glib_reqs"
 
@@ -63,7 +64,8 @@ AC_ARG_VAR(DOXYGEN, Doxygen doc generator)
 # Build options
 #
 
-libgsf_reqs="libgsf-1 >= 1.14.5"
+# TODO require certain libgsf version?
+libgsf_reqs="libgsf-1"
 AC_ARG_WITH([libgsf], 
 [AS_HELP_STRING([--with-libgsf], [use libgsf for I/O])],
 [
@@ -74,6 +76,7 @@ AC_ARG_WITH([libgsf],
 if test "x$cm_cv_libgsf" == "xyes"; then
 	DEPS_PKGS="$DEPS_PKGS $libgsf_reqs"
 	AC_DEFINE([HAVE_LIBGSF], [1], [Define if you are using libgsf])
+	AC_DEFINE([LIBCROSSMARK_FEATURE_LIBGSF], [1], [Define if you are using libgsf])
 fi
 AM_CONDITIONAL([HAVE_LIBGSF], test "x$cm_cv_libgsf" == "xyes")
 
@@ -197,7 +200,7 @@ AC_ARG_ENABLE([debug],
 [
 	case "${enableval}" in
 	   yes)	debug=true ;
-		DEBUG_CXXFLAGS="-DDEBUG -g" ;;
+		DEBUG_CXXFLAGS="-DDEBUG -O0 -g" ;;
 	    no)	debug=false ;
 		DEBUG_CXXFLAGS="-DNDEBUG" ;;
 	     *)	AC_MSG_ERROR(bad value ${enableval} for --enable-debug) ;;
