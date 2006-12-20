@@ -152,6 +152,27 @@ AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_LIBS)
 AC_SUBST(DEPS_PKGS)
 
+## from libgsf
+## this should come after `AC_PROG_CC'
+CXXFLAGS="$CXXFLAGS $WARN_CXXFLAGS -DG_DISABLE_DEPRECATED"
+if test "$GCC" = "yes"; then
+	for option in -Wno-system-headers -Wfloat-equal -Wpointer-arith -Wwrite-strings -Wsign-compare -Wformat -Winline -Wundef -W -Wmissing-noreturn -Wmissing-format-attribute; do
+		SAVE_CXXFLAGS="$CXXFLAGS"
+		CXXFLAGS="$CXXFLAGS $option"
+		AC_MSG_CHECKING([whether gcc understands $option])
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [])],
+			has_option=yes,
+			has_option=no)
+		if test $has_option = no; then
+		  CXXFLAGS="$SAVE_CXXFLAGS"
+		fi
+		AC_MSG_RESULT($has_option)
+		unset has_option
+		unset SAVE_CXXFLAGS
+	done
+	unset option
+fi
+
 #
 # Portability
 #
