@@ -56,7 +56,8 @@ public:
 		INDENT,
 		STYLE,
 		NEWLINE,
-		PARAGRAPH
+		PARAGRAPH,
+		HEADING
 	};
 
 	virtual ~Token () {}
@@ -239,6 +240,56 @@ public:
 };
 
 /*!
+ * \brief Heading.
+ */
+class Heading : public Token
+{
+public:
+	enum Type {
+		HEADING_1 = 1,
+		HEADING_2,
+		HEADING_3,
+		HEADING_4
+	};
+
+	Heading (Type type) 
+	  : _type (type)
+	{
+		switch (_type) {
+		case HEADING_1:
+			_html = "<h1>";
+			_text = "<h>";
+			break;
+		case HEADING_2:
+			_html = "<h2>";
+			_text = "<hh>";		
+			break;
+		case HEADING_3:
+			_html = "<h3>";
+			_text = "<hhh>";		
+			break;
+		case HEADING_4:
+			_html = "<h4>";
+			_text = "<hhhh>";		
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+	}
+	virtual ~Heading () {}
+
+	virtual Token::Class getClass () const { return Token::HEADING; }
+	virtual Heading::Type getType () const { return _type; }
+	virtual gchar const * toHtml () const { return _html; }
+	virtual gchar const * toString () const { return _text; }
+
+private:
+	Type         _type;
+	gchar const *_html;
+	gchar const *_text;
+};
+
+/*!
  * \brief Token factory interface.
  */
 class FactoryIface
@@ -296,6 +347,10 @@ private:
    {charset}  := {UTF-8} \ {" *", "* ", " /", "/ ", " `", "` ", " _", "_ "}
    token      := paragraph | style | text | sof | eof
    paragraph  := '\n' '\n' '\n'*
+   h1         := '\n' "=" "="*
+   h2         := '\n' "-" "-"*
+   h3         := '\n' "===" " "
+   h4         := '\n' "====" " "
    style      := " *" | "* " | " /" | "/ " | " `" | "` " | " _" | "_ "
    text       := {charset}*
    \endverbatim
