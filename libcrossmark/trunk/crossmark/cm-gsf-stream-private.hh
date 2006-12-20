@@ -63,7 +63,7 @@ public:
 	GsfOutput (::GsfOutput *output);
 	virtual ~GsfOutput ();
 	virtual gboolean write (gunichar c);
-	virtual gboolean write (const gchar *s);
+	virtual gboolean write (gchar const *s);
 
 protected:
 	::GsfOutput *_output;

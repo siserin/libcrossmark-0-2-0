@@ -100,7 +100,7 @@ class Text : public Method
 {
 friend class ::crossmark::Validator; // DEBUG
 public:
-	Text (Document &reader, const gchar *text) 
+	Text (Document &reader, gchar const *text) 
 	  : Method (reader),
 	    _text (g_strdup (text))
 	{}

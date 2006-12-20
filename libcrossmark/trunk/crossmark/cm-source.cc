@@ -382,7 +382,7 @@ Source::parseText (const tokens::Token *first)
 	}
 
 	g_assert (first->getClass () == tokens::Token::TEXT);
-	const gchar *text = first->toString ();
+	gchar const *text = first->toString ();
 	g_assert (text);
 	g_return_val_if_fail (text, _scanner->fetchToken ());
 	_validator->text (text);

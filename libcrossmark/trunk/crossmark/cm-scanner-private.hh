@@ -62,8 +62,8 @@ public:
 	virtual ~Token () {}
 
 	virtual Token::Class getClass () const = 0;
-	virtual const gchar * toHtml () const = 0;
-	virtual const gchar * toString () const = 0;
+	virtual gchar const * toHtml () const = 0;
+	virtual gchar const * toString () const = 0;
 
 protected:
 	Token () {}
@@ -79,8 +79,8 @@ public:
 	virtual ~Start () {}
 
 	virtual Token::Class getClass () const { return Token::START; }
-	virtual const gchar * toHtml () const { return "<html><body>\n"; }
-	virtual const gchar * toString () const { return NULL; }
+	virtual gchar const * toHtml () const { return "<html><body>\n"; }
+	virtual gchar const * toString () const { return NULL; }
 };
 
 /*!
@@ -93,8 +93,8 @@ public:
 	virtual ~End () {}
 
 	virtual Token::Class getClass () const { return Token::END; }
-	virtual const gchar * toHtml () const { return "\n</body></html>\n"; }
-	virtual const gchar * toString () const { return NULL; }
+	virtual gchar const * toHtml () const { return "\n</body></html>\n"; }
+	virtual gchar const * toString () const { return NULL; }
 };
 
 /*!
@@ -103,7 +103,7 @@ public:
 class Text : public Token
 {
 public:
-	Text (const gchar *text)
+	Text (gchar const *text)
 	  : _text (text)
 	{
 		g_assert (text);
@@ -113,13 +113,13 @@ public:
 
 	virtual void append (gunichar c) { _text.append (1, c); }
 
-	virtual const gchar * getBuffer () { return _text.c_str (); }
+	virtual gchar const * getBuffer () { return _text.c_str (); }
 
 	virtual const std::string &getString () { return _text; }
 
 	virtual Token::Class getClass () const { return Token::TEXT; }
-	virtual const gchar * toHtml () const { return _text.c_str (); }
-	virtual const gchar * toString () const { return _text.c_str (); }
+	virtual gchar const * toHtml () const { return _text.c_str (); }
+	virtual gchar const * toString () const { return _text.c_str (); }
 private:
 	std::string _text;
 };
@@ -134,11 +134,11 @@ public:
 	virtual ~Indent () {}
 
 	virtual Token::Class getClass () const { return Token::INDENT; }
-	virtual const gchar * toHtml () const { return "\t&emsp;"; }
+	virtual gchar const * toHtml () const { return "\t&emsp;"; }
 	/*
 	 * \todo Might become an issue with whitespace-indentation.
 	 */
-	virtual const gchar * toString () const { return "\t"; }
+	virtual gchar const * toString () const { return "\t"; }
 };
 
 /*!
@@ -186,7 +186,7 @@ public:
 	virtual Type getType () const { return _type; }
 	virtual Pos getPos () const { return _pos; }
 	virtual Token::Class getClass () const { return Token::STYLE; }
-	virtual const gchar * toHtml () const
+	virtual gchar const * toHtml () const
 	{
 		if (_type == ASTERISK && _pos == LEFT) return "<b>"; 
 		else if (_type == ASTERISK && _pos == CENTER) return "*"; 
@@ -202,7 +202,7 @@ public:
 		else if (_type == UNDERSCORE && _pos == RIGHT) return "</u>";
 		else g_assert (FALSE);
 	}
-	virtual const gchar * toString () const { return _text.c_str (); }
+	virtual gchar const * toString () const { return _text.c_str (); }
 
 private:
 	Type		_type;
@@ -220,8 +220,8 @@ public:
 	virtual ~Newline () {}
 
 	virtual Token::Class getClass () const { return Token::NEWLINE; }
-	virtual const gchar * toHtml () const { return "<br />\n"; }
-	virtual const gchar * toString () const { return "\n"; }	
+	virtual gchar const * toHtml () const { return "<br />\n"; }
+	virtual gchar const * toString () const { return "\n"; }	
 };
 
 /*!
@@ -234,8 +234,8 @@ public:
 	virtual ~Paragraph () {}
 
 	virtual Token::Class getClass () const { return Token::PARAGRAPH; }
-	virtual const gchar * toHtml () const { return "<br /><br />\n\n"; }
-	virtual const gchar * toString () const { return "\n\n"; }
+	virtual gchar const * toHtml () const { return "<br /><br />\n\n"; }
+	virtual gchar const * toString () const { return "\n\n"; }
 };
 
 /*!
@@ -248,7 +248,7 @@ public:
 
 	virtual Token * createTokenImpl (Token::Class klass) const = 0;
 	virtual Style * createStyleTokenImpl (Style::Type type, Style::Pos pos) const = 0;
-	virtual Text * createTextTokenImpl (const gchar *text) const = 0;
+	virtual Text * createTextTokenImpl (gchar const *text) const = 0;
 };
 
 /*!
@@ -269,12 +269,12 @@ public:
 
 	virtual Token * createToken (Token::Class klass) const;
 	virtual Style * createStyleToken (Style::Type type, Style::Pos pos) const;
-	virtual Text * createTextToken (const gchar *text) const;
+	virtual Text * createTextToken (gchar const *text) const;
 
 	// token factory
 	virtual Token * createTokenImpl (Token::Class klass) const;
 	virtual Style * createStyleTokenImpl (Style::Type type, Style::Pos pos) const;
-	virtual Text * createTextTokenImpl (const gchar *text) const;
+	virtual Text * createTextTokenImpl (gchar const *text) const;
 
 protected:
 	Factory ();
