@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "crossmark.hh"
+#include "cm-source.hh"
 #include "cm-scanner-private.hh"
 #include "cm-validator-private.hh"
 

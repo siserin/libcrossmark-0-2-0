@@ -26,10 +26,10 @@
 #ifndef CM_VALIDATOR_PRIVATE_HH
 #define CM_VALIDATOR_PRIVATE_HH
 
+#include <glib.h>
 #include <list>
 #include <string>
 #include <crossmark/cm-features.hh>
-#include <crossmark/crossmark.hh>
 #include <crossmark/cm-document.hh>
 
 namespace crossmark {
@@ -56,6 +56,8 @@ namespace crossmark {
 	 it keeps track of keystrokes.
  * \todo This may be exported once we're implementing the input method parser.
  */
+
+class Validator;
 
 /*!
  * \internal
