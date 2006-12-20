@@ -34,8 +34,8 @@ noinst_HEADERS = \
 	cm-gsf-stream-private.hh \
 	cm-scanner-private.hh \
 	cm-stdio-stream-private.hh \
-	cm-validator-private.hh \
-	cm-validator-methods-private.hh
+	cm-stream-private.hh \
+	cm-validator-private.hh
 
 AM_CPPFLAGS = \
 	$(DEBUG_CXXFLAGS) \
@@ -81,8 +81,12 @@ install-data-local: install-libtool-import-lib
 uninstall-local: uninstall-libtool-import-lib
 
 EXTRA_DIST = \
+	cm-features.hh.in \
 	libcrossmark.rc.in
 
 # These may be in the builddir too
 BUILD_EXTRA_DIST = \
 	libcrossmark.rc 
+
+DISTCLEANFILES = \
+	cm-features.hh

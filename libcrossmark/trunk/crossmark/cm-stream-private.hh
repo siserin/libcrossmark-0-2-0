@@ -18,16 +18,13 @@
  */
 
 /*!
- * \file cm-stdio-stream-private.hh
- * \brief Basic I/O streams.
- * \internal
+ * \file cm-stream-private.hh
+ * \brief Private crossmark stream interfaces.
  */
 
-#ifndef CM_STDIO_STREAM_PRIVATE_HH
-#define CM_STDIO_STREAM_PRIVATE_HH
+#ifndef CM_STREAM_PRIVATE_HH
+#define CM_STREAM_PRIVATE_HH
 
-#include <glib.h>
-#include <stdio.h>
 #include <string>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-stream.hh>
@@ -38,45 +35,24 @@ namespace stream {
 
 /*!
  * \internal
- * \brief Basic input stream.
+ * \brief Stream creation factory.
  *
- * \warning This class is for testing and not guaranteed to be UTF-8 compliant.
+ * \note Maybe some day it will be possible to hook this factory as a library consumer.
  */
-class StdInput : public Input 
+class Factory
 {
 public:
-	StdInput (const std::string &file);
-	StdInput (FILE *istream);
-	virtual ~StdInput ();
-	virtual gunichar getChar ();
+	static Factory & instance ();
+
+	Input * createInput (const std::string &file);
+	Output * createOutput (const std::string &file);
 
 protected:
-	FILE     *_istream;
-	gboolean  _ownStream;
+	Factory () {}
 };
 
-/*!
- * \internal
- * \brief Basic output stream.
- *
- * \warning This class is for testing and not guaranteed to be UTF-8 compliant.
- */
-class StdOutput : public Output
-{
-public:
-	StdOutput (const  std::string &file);
-	StdOutput (FILE *ostream);
-	virtual ~StdOutput ();
-	virtual gboolean write (gunichar c);
-	virtual gboolean write (const gchar *s);
-
-protected:
-	FILE     *_ostream;
-	gboolean  _ownStream;
-};
-
-}; // namespace streams
+}; // namespace stream
 
 }; // namespace crossmark
 
-#endif // CM_STDIO_STREAM_PRIVATE_HH
+#endif // CM_STREAM_PRIVATE_HH

@@ -28,13 +28,13 @@
 
 #include <list>
 #include <string>
+#include <crossmark/cm-features.hh>
 #include <crossmark/crossmark.hh>
 #include <crossmark/cm-document.hh>
-#include <crossmark/cm-validator-methods-private.hh>
 
 namespace crossmark {
 
-/*!
+/*
  * \internal
  * \brief Extended document interface for validation.
  *
@@ -56,23 +56,164 @@ namespace crossmark {
 	 it keeps track of keystrokes.
  * \todo This may be exported once we're implementing the input method parser.
  */
-namespace validators {
+
+/*!
+ * \internal
+ * \brief Document action proxies.
+ * \todo Templatise the methods.
+ */
+namespace validator {
 
 /*!
  * \internal 
- * \brief Specialised text styling interface that can cancel styles.
+ * \brief Base interface for buffered calls to a document reader.
  */
-class Style : public document::Style
+class Method
 {
 public:
-	virtual ~Style () {}
+	enum Class {
+		TEXT,
+		PUSH_STYLE, 
+		POP_STYLE,
+		PUSH_BLOCK,
+		POP_BLOCK
+	};
 
-	virtual void pushStyle (Type type) = 0;
-	virtual void cancelStyle (Type type) = 0;
-	virtual void popStyle (Type type) = 0;
+	Method (Document &reader)
+	  : _reader (reader)
+	{}
+	virtual ~Method () {}
+	virtual void operator () () = 0;
+	virtual Method::Class getClass () const = 0;
+
+protected:
+	Document &_reader;
 };
 
-}; // namespace validators
+/*!
+ * \internal 
+ * \brief Buffered "text" call.
+ */
+class Text : public Method
+{
+friend class ::crossmark::Validator; // DEBUG
+public:
+	Text (Document &reader, const gchar *text) 
+	  : Method (reader),
+	    _text (g_strdup (text))
+	{}
+	virtual ~Text () 
+	{
+		g_free (_text);
+	}
+	virtual void operator () (void) { _reader.text (_text); }
+	virtual Method::Class getClass () const { return Method::TEXT; }
+
+	static Text * fallback (Document &reader, document::Style::Type type) 
+	{ 
+		switch (type) {
+		case document::Style::BOLD:
+			return new Text (reader, "*");
+			break;
+		case document::Style::ITALIC:
+			return new Text (reader, "/");
+			break;
+		case document::Style::MONOSPACE:
+			return new Text (reader, "`");
+			break;
+		case document::Style::UNDERLINE:
+			return new Text (reader, "_");
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+	}
+
+private:
+	gchar  *_text;
+};
+
+/*!
+ * \internal 
+ * \brief Buffered "push style" call.
+ */
+class PushStyle : public Method
+{
+public:
+	PushStyle (Document &reader, document::Style::Type type) 
+	  : Method (reader),
+	    _type (type)
+	{}
+	virtual ~PushStyle () {}
+	virtual void operator () (void) { _reader.pushStyle (_type); }
+	virtual Method::Class getClass () const { return Method::PUSH_STYLE; }
+	virtual document::Style::Type getType () const { return _type; }
+	virtual Text * createFallback () { return Text::fallback (_reader, _type); }
+
+private:
+	document::Style::Type _type;
+};
+
+/*!
+ * \internal 
+ * \brief Buffered "pop style" call.
+ */
+class PopStyle : public Method
+{
+public:
+	PopStyle (Document &reader, document::Style::Type type) 
+	  : Method (reader),
+	    _type (type)
+	{}
+	virtual ~PopStyle () {}
+	virtual void operator () (void) { _reader.popStyle (_type); }
+	virtual Method::Class getClass () const { return Method::POP_STYLE; }
+	virtual document::Style::Type getType () const { return _type; }
+	virtual Text * createFallback () { return Text::fallback (_reader, _type); }
+
+private:
+	document::Style::Type _type;
+};
+
+/*!
+ * \internal 
+ * \brief Buffered "push block" call.
+ */
+class PushBlock : public Method
+{
+public:
+	PushBlock (Document &reader, document::Block::Type type) 
+	  : Method (reader), 
+	    _type (type)
+	{}
+	virtual ~PushBlock () {}
+	virtual void operator () (void) { _reader.pushBlock (_type); }
+	virtual Method::Class getClass () const { return Method::PUSH_BLOCK; }
+
+private:
+	document::Block::Type _type;
+};
+
+/*!
+ * \internal 
+ * \brief Buffered "pop block" call.
+ */
+class PopBlock : public Method
+{
+public:
+	PopBlock (Document &reader, document::Block::Type type) 
+	  : Method (reader),
+	    _type (type)
+	{}
+	virtual ~PopBlock () {}
+	virtual void operator () (void) { _reader.pushBlock (_type); }
+	virtual Method::Class getClass () const { return Method::POP_BLOCK; }
+
+private:
+	document::Block::Type _type;
+};
+
+}; // namespace validator
 
 /*
  * \internal
@@ -80,8 +221,7 @@ public:
  *
  * \todo Pull out this classes' public interface for the <i>input method</i>.
  */
-class Validator : public Document,
-		  public validators::Style
+class Validator : public Document
 {
 public:
 	Validator (Document &reader);
@@ -125,7 +265,7 @@ public:
 	virtual void popBlock ();
 
 private:
-	std::list<validators::methods::Method *> _methods;
+	std::list<validator::Method *> _methods;
 	Document &_reader;
 
 	gboolean _isBold;

@@ -17,29 +17,56 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
 #include "cm-stdio-stream-private.hh"
 
 using namespace crossmark;
+using namespace crossmark::stream;
 
 
 
-streams::StdInput::StdInput (const std::string &file)
+/*!
+ * Create input from a FILE*.
+ */
+Input * 
+createStdInput (FILE *istream)
+{
+	return new StdInput (istream);
+}
+
+/*!
+ * Create output from a FILE*.
+ */
+Output * 
+createStdOutput (FILE *ostream)
+{
+	return new StdOutput (ostream);
+}
+
+
+
+StdInput::StdInput (const std::string &file)
+  : _ownStream (TRUE)
 {
 	_istream = fopen (file.c_str (), "r");
 	g_assert (_istream);
 }
 
-streams::StdInput::~StdInput ()
+StdInput::StdInput (FILE *istream)
+  : _istream (istream),
+    _ownStream (FALSE)
 {
-	if (_istream) {
+	g_assert (_istream);
+}
+
+StdInput::~StdInput ()
+{
+	if (_ownStream && _istream) {
 		fclose (_istream);
-		_istream = NULL;
 	}
 }
 
 gunichar
-streams::StdInput::getChar ()
+StdInput::getChar ()
 {
 	g_assert (_istream);
 
@@ -48,30 +75,38 @@ streams::StdInput::getChar ()
 
 
 
-streams::StdOutput::StdOutput (const std::string &file)
+StdOutput::StdOutput (const std::string &file)
+  : _ownStream (TRUE)
 {
 	_ostream = fopen (file.c_str (), "r");
 	g_assert (_ostream);
 }
 
-streams::StdOutput::~StdOutput ()
+StdOutput::StdOutput (FILE *ostream)
+  : _ostream (ostream),
+    _ownStream (FALSE)
 {
-	if (_ostream) {
+	g_assert (_ostream);
+}
+
+StdOutput::~StdOutput ()
+{
+	if (_ownStream && _ostream) {
 		fclose (_ostream);
 		_ostream = NULL;
 	}
 }
 
-void 
-streams::StdOutput::write (gunichar c)
+gboolean 
+StdOutput::write (gunichar c)
 {
 	g_assert (_ostream);
-	putc (c, _ostream);
+	return EOF == fputc (c, _ostream);
 }
 
-void 
-streams::StdOutput::write (const gchar *s)
+gboolean 
+StdOutput::write (const gchar *s)
 {
 	g_assert (_ostream);
-	fputs (s, _ostream);
+	return EOF == fputs (s, _ostream);
 }

@@ -18,110 +18,178 @@
  */
 
 #include <gsf/gsf-input-stdio.h>
-#include "config.h"
+#include <gsf/gsf-output-stdio.h>
 #include "cm-gsf-stream-private.hh"
 
 using namespace crossmark;
 
 // Stolen from glib's gutf8.c
-#define UTF8_LENGTH(Char)              \
-  ((Char) < 0x80 ? 1 :                 \
-   ((Char) < 0x800 ? 2 :               \
-    ((Char) < 0x10000 ? 3 :            \
-     ((Char) < 0x200000 ? 4 :          \
-      ((Char) < 0x4000000 ? 5 : 6)))))
+#define UTF8_COMPUTE(Char, Mask, Len)					      \
+  if (Char < 128)							      \
+    {									      \
+      Len = 1;								      \
+      Mask = 0x7f;							      \
+    }									      \
+  else if ((Char & 0xe0) == 0xc0)					      \
+    {									      \
+      Len = 2;								      \
+      Mask = 0x1f;							      \
+    }									      \
+  else if ((Char & 0xf0) == 0xe0)					      \
+    {									      \
+      Len = 3;								      \
+      Mask = 0x0f;							      \
+    }									      \
+  else if ((Char & 0xf8) == 0xf0)					      \
+    {									      \
+      Len = 4;								      \
+      Mask = 0x07;							      \
+    }									      \
+  else if ((Char & 0xfc) == 0xf8)					      \
+    {									      \
+      Len = 5;								      \
+      Mask = 0x03;							      \
+    }									      \
+  else if ((Char & 0xfe) == 0xfc)					      \
+    {									      \
+      Len = 6;								      \
+      Mask = 0x01;							      \
+    }									      \
+  else									      \
+    Len = -1;
+
+
+
+/*!
+ * Create input from a GsfInput.
+ */
+stream::Input * 
+stream::createGsfInput (::GsfInput *input)
+{
+	return new stream::GsfInput (input);
+}
+
+/*!
+ * Create output from a GsfInput.
+ */
+stream::Output * 
+stream::createGsfOutput (::GsfOutput *output)
+{
+	return new stream::GsfOutput (output);
+}
+
+
 
 /*!
  * \todo Use exceptions.
  */
-streams::GsfInput::GsfInput (const std::string &file)
-  : _line (NULL), 
-    _iter (NULL)
+stream::GsfInput::GsfInput (const std::string &file)
 {
-	::GsfInput *input;
 	GError	 *error;
 
 	error = NULL;
-	input = gsf_input_stdio_new (file.c_str (), &error);
+	_input = gsf_input_stdio_new (file.c_str (), &error);
 	if (error) {
 		g_warning (error->message);
 		g_error_free (error);
 		return;
 	}
 
-printf ("eof: %d\n", gsf_input_eof (input));
-	_input = (GsfInputTextline *) gsf_input_textline_new (input);
-printf ("eof: %d\n", gsf_input_eof ((::GsfInput *) _input));
-	gboolean ret = gsf_input_seek ((::GsfInput *) _input, 0, G_SEEK_SET);
-printf ("eof: %d (%d)\n", gsf_input_eof ((::GsfInput *) _input), ret);
-
 	g_assert (_input);
-	g_object_unref (G_OBJECT (input));
 }
 
-streams::GsfInput::~GsfInput ()
+stream::GsfInput::GsfInput (::GsfInput *input)
+  : _input (input)
+{
+	g_assert (_input);
+	g_object_ref (G_OBJECT (input));
+}
+
+stream::GsfInput::~GsfInput ()
 {
 	if (_input) {
 		g_object_unref (G_OBJECT (_input));
-	}
-
-	if (_line) {
-		g_free (_line);
 	}
 }
 
 /*!
  * \todo Use g_utf8_get_char_validated() ?
+ * \todo This needs a gsf-savvy hand and some error handling.
  */
 gunichar
-streams::GsfInput::getChar ()
+stream::GsfInput::getChar ()
 {
-	gunichar c;
+	guint8        buf[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+	guint8 const *iter;
+	int 	      mask;
+	int           len;
 
 	g_assert (_input);
 
-	if (_line &&
-	    _iter == _line + _len) {
-		g_free (_line);
-		_line = NULL;
+	if (gsf_input_eof (_input)) {
+		return (unsigned) EOF;
 	}
 
-	if (!_line ||
-	    _iter == _line + _len) {
-		if (gsf_input_eof ((::GsfInput *) _input)) {
-			return (unsigned) EOF;
-		}
-		_line = gsf_input_textline_utf8_gets (_input);
-		_iter = 0;
-		_len = strlen ((const gchar *) _line);
+	iter = gsf_input_read (_input, 1, buf);
+	mask = 0;
+	UTF8_COMPUTE (*iter, mask, len);
+	if (len > 1) {
+		// read remaining bytes
+		iter = gsf_input_read (_input, len - 1, buf + 1);
 	}
-
-	c = g_utf8_get_char ((const gchar *) _iter);
-	_iter += UTF8_LENGTH (c);
-	return c;
+	
+	return g_utf8_get_char ((const gchar *) buf);
 }
+
 
 
 /*!
  * \todo Implement.
  */
-streams::GsfOutput::GsfOutput (const std::string &file)
+stream::GsfOutput::GsfOutput (const std::string &file)
 {
-	g_assert (FALSE);
+	GError	 *error;
+
+	error = NULL;
+	_output = gsf_output_stdio_new (file.c_str (), &error);
+	if (error) {
+		g_warning (error->message);
+		g_error_free (error);
+		return;
+	}
+
+	g_assert (_output);
 }
 
-streams::GsfOutput::~GsfOutput ()
+stream::GsfOutput::GsfOutput (::GsfOutput *output)
+  : _output (output)
 {
+	g_assert (_output);
+	g_object_ref (G_OBJECT (_output));
 }
 
-void 
-streams::GsfOutput::write (gunichar c)
+stream::GsfOutput::~GsfOutput ()
 {
-
+	if (_output) {
+		g_object_unref (G_OBJECT (_output));
+	}
 }
 
-void 
-streams::GsfOutput::write (const gchar *s)
+gboolean 
+stream::GsfOutput::write (gunichar c)
 {
+	gchar buf[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+	gint  n_bytes;
 
+	n_bytes = g_unichar_to_utf8 (c, buf);
+	if (n_bytes) {
+		return gsf_output_puts (_output, buf);
+	}
+	return FALSE;
+}
+
+gboolean 
+stream::GsfOutput::write (const gchar *s)
+{
+	return gsf_output_puts (_output, s);
 }

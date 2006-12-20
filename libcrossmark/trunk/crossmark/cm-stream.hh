@@ -26,14 +26,20 @@
 #define CM_STREAM_HH
 
 #include <glib.h>
+#include <stdio.h>
 #include <string>
+#include <crossmark/cm-features.hh>
+#ifdef LIBCROSSMARK_FEATURE_LIBGSF
+#include <gsf/gsf-input.h>
+#include <gsf/gsf-output.h>
+#endif
 
 namespace crossmark {
 
 /*!
  * \brief Input- and output-streams for reading and writing documents.
  */
-namespace streams {
+namespace stream {
 
 /*!
  * \brief Interface for input streams.
@@ -52,29 +58,19 @@ class Output
 {
 public:
 	virtual ~Output () {};
-	virtual void write (gunichar c) = 0;
-	virtual void write (const gchar *s) = 0;
+	virtual gboolean write (gunichar c) = 0;
+	virtual gboolean write (const gchar *s) = 0;
 };
 
-/*!
- * \internal
- * \brief Stream creation factory.
- *
- * \note Maybe some day it will be possible to hook this factory as a library consumer.
- */
-class Factory
-{
-public:
-	static Factory & instance ();
+Input * createStdInput (FILE *istream);
+Input * createStdOutput (FILE *ostream);
 
-	Input * createInput (const std::string &file);
-	Output * createOutput (const std::string &file);
+#ifdef LIBCROSSMARK_FEATURE_LIBGSF
+Input * createGsfInput (::GsfInput *input);
+Output * createGsfOutput (::GsfOutput *output);
+#endif
 
-protected:
-	Factory () {}
-};
-
-}; // namespace streams
+}; // namespace stream
 
 }; // namespace crossmark
 

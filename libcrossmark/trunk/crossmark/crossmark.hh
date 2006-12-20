@@ -27,6 +27,7 @@
 
 #include <stack>
 #include <string>
+#include <crossmark/cm-features.hh>
 #include <crossmark/cm-document.hh>
 #include <crossmark/cm-stream.hh>
 
@@ -59,7 +60,7 @@ public:
 	Source (const std::string &file, 
 		Document &reader);
 
-	Source (streams::Input &istream, 
+	Source (stream::Input &istream, 
 		Document &reader);
 
 	virtual ~Source ();

@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
 #include "cm-validator-private.hh"
 // DEBUG
 #include <iostream>
@@ -33,6 +32,7 @@
 #endif
 
 using namespace crossmark;
+using namespace crossmark::validator;
 
 Validator::Validator (Document &reader)
   : _reader (reader), 
@@ -66,7 +66,7 @@ Validator::text (const std::string &text)
 {
 	TRACE (__FUNCTION__);
 
-	_methods.push_front (new validators::methods::Text (_reader, text.c_str ()));
+	_methods.push_front (new validator::Text (_reader, text.c_str ()));
 }
 
 /*!
@@ -79,17 +79,17 @@ Validator::pushStyle (document::Style::Type type)
 {
 	TRACE (__FUNCTION__);
 
-	validators::methods::Method *method;
+	Method *method;
 
 	if (_isBold && type == document::Style::BOLD ||
 	    _isItalic && type == document::Style::ITALIC ||
 	    _isMonospace && type == document::Style::MONOSPACE ||
 	    _isUnderline && type == document::Style::UNDERLINE) {
 
-		method = validators::methods::Text::fallback (_reader, type);
+		method = validator::Text::fallback (_reader, type);
 
 	} else {
-		method = new validators::methods::PushStyle (_reader, type);
+		method = new PushStyle (_reader, type);
 	}
 
 	_methods.push_front (method);
@@ -110,15 +110,15 @@ Validator::cancelStyle (document::Style::Type type)
 
 	_dump();
 
-	std::list<validators::methods::Method *>::iterator iter;
-	validators::methods::PushStyle *pushStyle;
-	validators::methods::PopStyle *popStyle;
+	std::list<Method *>::iterator iter;
+	PushStyle *pushStyle;
+	PopStyle *popStyle;
 	
 	iter = _methods.begin ();
 	while (iter != _methods.end ()) {
 		// search backwards until start of style and cancel it
-		if ((*iter)->getClass () == validators::methods::Method::PUSH_STYLE) {
-			pushStyle = dynamic_cast<validators::methods::PushStyle *> (*iter);
+		if ((*iter)->getClass () == Method::PUSH_STYLE) {
+			pushStyle = dynamic_cast<PushStyle *> (*iter);
 			if (pushStyle->getType () == type) {
 				iter = _methods.erase (iter);
 				_methods.insert (iter, pushStyle->createFallback ());
@@ -129,8 +129,8 @@ Validator::cancelStyle (document::Style::Type type)
 				_isUnderline = (_isUnderline && type == document::Style::UNDERLINE) ? FALSE : _isUnderline;
 				break;
 			}			
-		} else if ((*iter)->getClass () == validators::methods::Method::POP_STYLE) {
-			popStyle = dynamic_cast<validators::methods::PopStyle *> (*iter);
+		} else if ((*iter)->getClass () == Method::POP_STYLE) {
+			popStyle = dynamic_cast<PopStyle *> (*iter);
 			if (popStyle->getType () == type) {
 				// hitting upon closed style of same type
 				// no need to go further or do anything.
@@ -153,18 +153,18 @@ Validator::popStyle (document::Style::Type type)
 {
 	TRACE (__FUNCTION__);
 
-	validators::methods::Method *method;
+	Method *method;
 
 	if (_isBold && type == document::Style::BOLD ||
 	    _isItalic && type == document::Style::ITALIC ||
 	    _isMonospace && type == document::Style::MONOSPACE ||
 	    _isUnderline && type == document::Style::UNDERLINE) {
 
-		method = new validators::methods::PopStyle (_reader, type);
+		method = new PopStyle (_reader, type);
 
 	} else {
 		// TODO maybe use cancelStyle() here?
-		method = validators::methods::Text::fallback (_reader, type);
+		method = validator::Text::fallback (_reader, type);
 	}
 
 	_methods.push_front (method);
@@ -184,7 +184,7 @@ Validator::pushBlock (document::Block::Type type)
 {
 	TRACE (__FUNCTION__);
 
-	_methods.push_front (new validators::methods::PushBlock (_reader, type));
+	_methods.push_front (new PushBlock (_reader, type));
 }
 
 /*!
@@ -200,8 +200,8 @@ Validator::popBlock ()
 	cancelStyle (document::Style::MONOSPACE);
 	cancelStyle (document::Style::UNDERLINE);
 
-	std::list<validators::methods::Method *>::reverse_iterator riter;
-	validators::methods::Method *method;
+	std::list<Method *>::reverse_iterator riter;
+	Method *method;
 	riter = _methods.rbegin ();
 	while (riter != _methods.rend ()) {
 		method = *riter;
@@ -218,21 +218,21 @@ Validator::popBlock ()
 void
 Validator::dump (const char * indent)
 {
-	std::list<validators::methods::Method *>::reverse_iterator riter;
+	std::list<Method *>::reverse_iterator riter;
 	
 	riter = _methods.rbegin ();
 	while (riter != _methods.rend ()) {
 		std::cout << indent << (*riter)->getClass ();
-		if ((*riter)->getClass () == validators::methods::Method::PUSH_STYLE) {
+		if ((*riter)->getClass () == Method::PUSH_STYLE) {
 			std::cout << " <style>" << std::endl;
-		} else if ((*riter)->getClass () == validators::methods::Method::POP_STYLE) {
+		} else if ((*riter)->getClass () == Method::POP_STYLE) {
 			std::cout << " </style>" << std::endl;
-		} else if ((*riter)->getClass () == validators::methods::Method::PUSH_BLOCK) {
+		} else if ((*riter)->getClass () == Method::PUSH_BLOCK) {
 			std::cout << " <block>" << std::endl;
-		} else if ((*riter)->getClass () == validators::methods::Method::POP_BLOCK) {
+		} else if ((*riter)->getClass () == Method::POP_BLOCK) {
 			std::cout << " </block>" << std::endl;
-		} else if ((*riter)->getClass () == validators::methods::Method::TEXT) {
-			validators::methods::Text *text = dynamic_cast<validators::methods::Text *> (*riter);
+		} else if ((*riter)->getClass () == Method::TEXT) {
+			validator::Text *text = dynamic_cast<validator::Text *> (*riter);
 			std::cout << " \"" << text->_text << "\"" << std::endl;
 		} else {
 			std::cout << std::endl;

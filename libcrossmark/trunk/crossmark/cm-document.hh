@@ -29,6 +29,7 @@
 #include <map>
 #include <stack>
 #include <string>
+#include <crossmark/cm-features.hh>
 
 namespace crossmark {
 

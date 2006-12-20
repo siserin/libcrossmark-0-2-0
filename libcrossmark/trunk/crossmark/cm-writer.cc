@@ -18,7 +18,6 @@
  */
 
 #include <glib.h>
-#include "config.h"
 #include "crossmark.hh"
 
 using namespace crossmark;
