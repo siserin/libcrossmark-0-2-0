@@ -23,11 +23,11 @@ using namespace crossmark;
 
 /*!
  * \todo Implement.
- */
 Sink::Sink (const std::string &file, 
 		       Writer &writer)
 {
 }
+ */
 
 /*!
  * \todo Implement.

@@ -276,7 +276,7 @@ private:
 	gboolean _isUnderline;
 
 	// DEBUG
-	void dump (const char * indent = "");
+	void dump (gchar const * indent = "");
 };
 
 };  // namespace crossmark
