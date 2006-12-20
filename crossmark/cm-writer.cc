@@ -22,6 +22,9 @@
 
 using namespace crossmark;
 
+/*!
+ * \sa Document::text()
+ */
 void 
 Writer::text (const std::string &text)
 {
@@ -30,6 +33,9 @@ Writer::text (const std::string &text)
 	fputs (text.c_str (), _ostream);
 }
 
+/*!
+ * \sa Document::pushStyle()
+ */
 void 
 Writer::pushStyle (document::Style::Type type)
 {
@@ -54,6 +60,9 @@ Writer::pushStyle (document::Style::Type type)
 	}
 }
 
+/*!
+ * \sa Document::popStyle()
+ */
 void 
 Writer::popStyle (document::Style::Type type)
 {

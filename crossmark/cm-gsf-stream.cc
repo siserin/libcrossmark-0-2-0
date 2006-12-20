@@ -24,6 +24,8 @@
 
 using namespace crossmark;
 
+
+
 /*!
  * Create input from a GsfInput.
  */
@@ -34,7 +36,7 @@ stream::createGsfInput (::GsfInput *input)
 }
 
 /*!
- * Create output from a GsfInput.
+ * Create output from a GsfOutput.
  */
 stream::Output * 
 stream::createGsfOutput (::GsfOutput *output)
@@ -45,6 +47,8 @@ stream::createGsfOutput (::GsfOutput *output)
 
 
 /*!
+ * Create input from file.
+ *
  * \todo Use exceptions.
  */
 stream::GsfInput::GsfInput (const std::string &file)
@@ -62,6 +66,11 @@ stream::GsfInput::GsfInput (const std::string &file)
 	g_assert (_input);
 }
 
+/*!
+ * Create input from gsf input.
+ *
+ * \todo Use exceptions.
+ */
 stream::GsfInput::GsfInput (::GsfInput *input)
   : _input (input)
 {
@@ -69,6 +78,9 @@ stream::GsfInput::GsfInput (::GsfInput *input)
 	g_object_ref (G_OBJECT (input));
 }
 
+/*!
+ * Dtor.
+ */
 stream::GsfInput::~GsfInput ()
 {
 	if (_input) {
@@ -77,6 +89,7 @@ stream::GsfInput::~GsfInput ()
 }
 
 /*!
+ * \sa stream::Input::getChar()
  * \todo Use g_utf8_get_char_validated() ?
  * \todo This needs a gsf-savvy hand and some error handling.
  */
@@ -107,7 +120,9 @@ stream::GsfInput::getChar ()
 
 
 /*!
- * \todo Implement.
+ * Create output to file.
+ *
+ * \todo Use exceptions.
  */
 stream::GsfOutput::GsfOutput (const std::string &file)
 {
@@ -124,6 +139,11 @@ stream::GsfOutput::GsfOutput (const std::string &file)
 	g_assert (_output);
 }
 
+/*!
+ * Create output to gsf output.
+ *
+ * \todo Use exceptions.
+ */
 stream::GsfOutput::GsfOutput (::GsfOutput *output)
   : _output (output)
 {
@@ -131,6 +151,9 @@ stream::GsfOutput::GsfOutput (::GsfOutput *output)
 	g_object_ref (G_OBJECT (_output));
 }
 
+/*!
+ * Dtor.
+ */
 stream::GsfOutput::~GsfOutput ()
 {
 	if (_output) {
@@ -138,6 +161,9 @@ stream::GsfOutput::~GsfOutput ()
 	}
 }
 
+/*!
+ * \sa stream::Output::write(gunichar)
+ */
 gboolean 
 stream::GsfOutput::write (gunichar c)
 {
@@ -151,6 +177,9 @@ stream::GsfOutput::write (gunichar c)
 	return FALSE;
 }
 
+/*!
+ * \sa stream::Output::write(const gchar *)
+ */
 gboolean 
 stream::GsfOutput::write (const gchar *s)
 {
