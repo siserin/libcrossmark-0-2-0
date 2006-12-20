@@ -16,6 +16,10 @@ blank line. However, if you need to create code sections, e.g. because
 two ore more different classes are implemented in a single source file,
 separate them with three blank lines.
 
+Order of includes: 1) system includes in alphabetical order, 
+2) cm-features.hh (only in headers), 3) (only in source files) the
+corresponding header, 4) project includes in alphabetical order.
+
 Documentation
 -------------
 
