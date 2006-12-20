@@ -36,6 +36,7 @@ noinst_HEADERS = \
 	cm-gsf-stream-private.hh \
 	cm-scanner-private.hh \
 	cm-stdio-stream-private.hh \
+	cm-string-private.hh \
 	cm-stream-private.hh \
 	cm-validator-private.hh
 

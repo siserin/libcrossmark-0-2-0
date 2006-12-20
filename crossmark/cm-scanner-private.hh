@@ -31,6 +31,7 @@
 #include <glib.h>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-stream.hh>
+#include <crossmark/cm-string-private.hh>
 
 namespace crossmark {
 
@@ -112,7 +113,7 @@ public:
 
 	virtual ~Text () {}
 
-	virtual void append (gunichar c) { _text.append (1, c); }
+	virtual void append (gunichar c) { _text.append (c); }
 
 	virtual gchar const * getBuffer () { return _text.c_str (); }
 
@@ -122,7 +123,7 @@ public:
 	virtual gchar const * toHtml () const { return _text.c_str (); }
 	virtual gchar const * toString () const { return _text.c_str (); }
 private:
-	std::string _text;
+	String _text;
 };
 
 /*!
