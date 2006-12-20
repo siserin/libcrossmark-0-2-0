@@ -286,7 +286,7 @@ AC_OUTPUT([
 echo "
     Configuration
         Use libgsf:                    ${cm_cv_libgsf}
-(todo)  Python bindings:               ${cm_cv_python}
+        Python bindings:               ${cm_cv_python} (not implemented)
             installing to:             ${pyexecdir}
         Build documentation:           ${cm_cv_docs}
             internal docs:             ${cm_cv_internal_docs}

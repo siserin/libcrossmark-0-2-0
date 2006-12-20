@@ -243,7 +243,7 @@ Validator::popBlock ()
  * \note This is used for debugging purpose only.
  */
 void
-Validator::dump (const char * indent)
+Validator::dump (gchar const * indent)
 {
 	std::list<Method *>::reverse_iterator riter;
 	
