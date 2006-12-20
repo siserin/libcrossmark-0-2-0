@@ -18,6 +18,7 @@
  */
 
 #include "cm-stdio-stream-private.hh"
+#include "cm-stream-private.hh"
 
 using namespace crossmark;
 using namespace crossmark::stream;
@@ -68,9 +69,20 @@ StdInput::~StdInput ()
 gunichar
 StdInput::getChar ()
 {
+	gchar        buf[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+	int 	     mask;
+	int          len;
+
 	g_assert (_istream);
 
-	return getc (_istream);
+	buf[0] = getc (_istream);
+	mask = 0;
+	UTF8_COMPUTE (buf[0], mask, len);
+	if (len > 1) {
+		fread (buf + 1, sizeof (gchar), len - 1, _istream);
+	}
+	
+	return g_utf8_get_char ((const gchar *) buf);
 }
 
 
@@ -100,8 +112,16 @@ StdOutput::~StdOutput ()
 gboolean 
 StdOutput::write (gunichar c)
 {
+	gchar buf[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+	gint  n_bytes;
+
 	g_assert (_ostream);
-	return EOF == fputc (c, _ostream);
+
+	n_bytes = g_unichar_to_utf8 (c, buf);
+	if (n_bytes) {
+		return EOF == fputs (buf, _ostream);
+	}
+	return FALSE;
 }
 
 gboolean 
