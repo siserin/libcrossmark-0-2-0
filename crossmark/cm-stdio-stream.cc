@@ -99,7 +99,7 @@ StdInput::getChar ()
 		fread (buf + 1, sizeof (gchar), len - 1, _istream);
 	}
 	
-	return g_utf8_get_char ((const gchar *) buf);
+	return g_utf8_get_char ((gchar const *) buf);
 }
 
 
@@ -158,10 +158,10 @@ StdOutput::write (gunichar c)
 }
 
 /*!
- * \sa stream::Output::write(const gchar *)
+ * \sa stream::Output::write(gchar const *)
  */
 gboolean 
-StdOutput::write (const gchar *s)
+StdOutput::write (gchar const *s)
 {
 	g_assert (_ostream);
 	return EOF == fputs (s, _ostream);

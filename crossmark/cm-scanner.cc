@@ -416,7 +416,7 @@ tokens::Factory::createStyleToken (tokens::Style::Type type, tokens::Style::Pos 
  * Request a text from the factory.
  */
 tokens::Text * 
-tokens::Factory::createTextToken (const gchar *text) const
+tokens::Factory::createTextToken (gchar const *text) const
 {
 	std::list<const tokens::FactoryIface *>::const_reverse_iterator iter;
 	tokens::Text *token;
@@ -475,7 +475,7 @@ tokens::Factory::createStyleTokenImpl (tokens::Style::Type type, tokens::Style::
  * Default text token creation impl.
  */
 tokens::Text * 
-tokens::Factory::createTextTokenImpl (const gchar *text) const
+tokens::Factory::createTextTokenImpl (gchar const *text) const
 {
 	return new tokens::Text (text);
 }

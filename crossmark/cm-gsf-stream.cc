@@ -114,7 +114,7 @@ stream::GsfInput::getChar ()
 		gsf_input_read (_input, len - 1, buf + 1);
 	}
 	
-	return g_utf8_get_char ((const gchar *) buf);
+	return g_utf8_get_char ((gchar const *) buf);
 }
 
 
@@ -178,10 +178,10 @@ stream::GsfOutput::write (gunichar c)
 }
 
 /*!
- * \sa stream::Output::write(const gchar *)
+ * \sa stream::Output::write(gchar const *)
  */
 gboolean 
-stream::GsfOutput::write (const gchar *s)
+stream::GsfOutput::write (gchar const *s)
 {
 	return gsf_output_puts (_output, s);
 }

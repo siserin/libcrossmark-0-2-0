@@ -59,7 +59,7 @@ class Output
 public:
 	virtual ~Output () {};
 	virtual gboolean write (gunichar c) = 0;
-	virtual gboolean write (const gchar *s) = 0;
+	virtual gboolean write (gchar const *s) = 0;
 };
 
 Input * createStdInput (FILE *istream);

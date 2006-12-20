@@ -68,7 +68,7 @@ public:
 	StdOutput (FILE *ostream);
 	virtual ~StdOutput ();
 	virtual gboolean write (gunichar c);
-	virtual gboolean write (const gchar *s);
+	virtual gboolean write (gchar const *s);
 
 protected:
 	FILE     *_ostream;
