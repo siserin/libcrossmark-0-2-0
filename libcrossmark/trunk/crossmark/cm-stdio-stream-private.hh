@@ -75,7 +75,7 @@ protected:
 	gboolean  _ownStream;
 };
 
-}; // namespace streams
+}; // namespace stream
 
 }; // namespace crossmark
 

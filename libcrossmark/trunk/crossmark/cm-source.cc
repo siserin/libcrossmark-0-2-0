@@ -30,18 +30,27 @@
 
 using namespace crossmark;
 
+/*!
+ * Create a source for filename and reader.
+ */
 Source::Source (const std::string &file, 
 		Document &reader)
   : _scanner (new Scanner (file)),
     _validator (new Validator (reader))
 {}
 
+/*!
+ * Create a source input stream and reader.
+ */
 Source::Source (stream::Input &istream, 
 		Document &reader)
   : _scanner (new Scanner (istream)),
     _validator (new Validator (reader))
 {}
 
+/*!
+ * Dtor.
+ */
 Source::~Source ()
 {
 	delete _scanner;
@@ -66,7 +75,11 @@ bold       := style-lb ( text | markup )* style-rb
 italic     := style-li ( text | markup )* style-ri
 monospace  := style-lm ( text | markup )* style-rm
 underline  := style-lu ( text | markup )* style-ru
+*/
 
+/*!
+ * Read document, this caused call reader methods to be called.
+ *
  * \todo error handling;
  */
 gboolean 
@@ -76,6 +89,9 @@ Source::sputter ()
 	return TRUE;
 }
 
+/*!
+ * Toplevel parsing method.
+ */
 void 
 Source::parseDocument ()
 {
@@ -123,6 +139,9 @@ Source::parseDocument ()
 	_validator->popDocument ();
 }
 
+/*!
+ * Parse a paragraph.
+ */
 tokens::Token * 
 Source::parseParagraph (const tokens::Token *first)
 {
@@ -159,6 +178,9 @@ Source::parseParagraph (const tokens::Token *first)
 	return token;
 }
 
+/*!
+ * Parse a blockquote.
+ */
 tokens::Token * 
 Source::parseBlockquote (const tokens::Token *first)
 {
@@ -199,6 +221,8 @@ Source::parseBlockquote (const tokens::Token *first)
 }
 
 /*!
+ * Parse a line.
+ *
  * \todo What to do with tabs in running text?
  */
 tokens::Token * 
@@ -248,6 +272,9 @@ Source::parseLine (const tokens::Token *first)
 	return token;
 }
 
+/*!
+ * Parse styled text "markup".
+ */
 tokens::Token * 
 Source::parseMarkup (const tokens::Token *first)
 {
@@ -278,6 +305,7 @@ Source::parseMarkup (const tokens::Token *first)
 
 /*!
  * This is a generalisation of parseBold(), parseItalic(), parseMonospace(), parseUnderline().
+ *
  * \todo Abort at newline?
  */
 tokens::Token * 
@@ -339,6 +367,9 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 	return token;
 }
 
+/*!
+ * Parse plain text.
+ */
 tokens::Token * 
 Source::parseText (const tokens::Token *first)
 {

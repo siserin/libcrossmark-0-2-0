@@ -11,6 +11,11 @@ While 80 character wide terminals are hardly used nowadays we are
 still restricting lines of code to not be any wider. This prevents 
 deep nesting of constructs.
 
+Generally, separate blocks of code or different methods with a single 
+blank line. However, if you need to create code sections, e.g. because 
+two ore more different classes are implemented in a single source file,
+separate them with three blank lines.
+
 Documentation
 -------------
 
@@ -19,6 +24,12 @@ short paragraph per method should be enough, except you are doing
 seriously fancy stuff. Build with --enable-internal-docs to have all
 documentation included in the doxygen output (written to 
 docs/doxygen/html).
+
+Some guidelines:
+
+# Each header gets a brief file documentation.
+# Document namespaces and classes in the header files.
+# Document methods and functions in the implementation.
 
 Auxiliary documentation, like this very file for example, are 
 written in crossmark markup. Do not exceed a line-length of 72 

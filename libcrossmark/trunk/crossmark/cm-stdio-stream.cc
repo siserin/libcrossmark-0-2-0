@@ -45,6 +45,11 @@ createStdOutput (FILE *ostream)
 
 
 
+/*!
+ * Create input from file.
+ *
+ * \todo Use exceptions.
+ */
 StdInput::StdInput (const std::string &file)
   : _ownStream (TRUE)
 {
@@ -52,6 +57,11 @@ StdInput::StdInput (const std::string &file)
 	g_assert (_istream);
 }
 
+/*!
+ * Create input from stream.
+ *
+ * \todo Use exceptions.
+ */
 StdInput::StdInput (FILE *istream)
   : _istream (istream),
     _ownStream (FALSE)
@@ -59,6 +69,9 @@ StdInput::StdInput (FILE *istream)
 	g_assert (_istream);
 }
 
+/*!
+ * Dtor.
+ */
 StdInput::~StdInput ()
 {
 	if (_ownStream && _istream) {
@@ -66,6 +79,10 @@ StdInput::~StdInput ()
 	}
 }
 
+/*!
+ * \sa stream::Input::getChar()
+ * \todo Use g_utf8_get_char_validated() ?
+ */
 gunichar
 StdInput::getChar ()
 {
@@ -87,6 +104,11 @@ StdInput::getChar ()
 
 
 
+/*!
+ * Create output to file.
+ *
+ * \todo Use exceptions.
+ */
 StdOutput::StdOutput (const std::string &file)
   : _ownStream (TRUE)
 {
@@ -94,6 +116,11 @@ StdOutput::StdOutput (const std::string &file)
 	g_assert (_ostream);
 }
 
+/*!
+ * Create output to stream.
+ *
+ * \todo Use exceptions.
+ */
 StdOutput::StdOutput (FILE *ostream)
   : _ostream (ostream),
     _ownStream (FALSE)
@@ -101,6 +128,9 @@ StdOutput::StdOutput (FILE *ostream)
 	g_assert (_ostream);
 }
 
+/*!
+ * Dtor.
+ */
 StdOutput::~StdOutput ()
 {
 	if (_ownStream && _ostream) {
@@ -109,6 +139,9 @@ StdOutput::~StdOutput ()
 	}
 }
 
+/*!
+ * \sa stream::Output::write(gunichar)
+ */
 gboolean 
 StdOutput::write (gunichar c)
 {
@@ -124,6 +157,9 @@ StdOutput::write (gunichar c)
 	return FALSE;
 }
 
+/*!
+ * \sa stream::Output::write(const gchar *)
+ */
 gboolean 
 StdOutput::write (const gchar *s)
 {

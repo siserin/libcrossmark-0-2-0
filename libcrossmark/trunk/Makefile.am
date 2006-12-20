@@ -8,6 +8,7 @@ SUBDIRS += python
 endif
 
 EXTRA_DIST = \
+	tests 			\
 	AUTHORS			\
 	COPYING			\
 	HACKING			\
@@ -18,6 +19,11 @@ EXTRA_DIST = \
 
 distclean-local:
 	rm -rf *.cache *~
+
+dist-hook:
+	rm -rf `find $(distdir)/tests -name '\.svn'`
+	rm -rf `find $(distdir)/tests -name '*~'`
+	rm -rf `find $(distdir)/tests -name '*_'`
 
 #if BUILD_DOCS
 #install-data-local:

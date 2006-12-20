@@ -34,6 +34,9 @@
 using namespace crossmark;
 using namespace crossmark::validator;
 
+/*!
+ * Create validator for reader.
+ */
 Validator::Validator (Document &reader)
   : _reader (reader), 
     _isBold (FALSE),
@@ -42,9 +45,15 @@ Validator::Validator (Document &reader)
     _isUnderline (FALSE)
 {}
 
+/*!
+ * Dtor.
+ */
 Validator::~Validator ()
 {}
 
+/*!
+ * \sa Document::pushDocument()
+ */
 void
 Validator::pushDocument ()
 {
@@ -53,6 +62,9 @@ Validator::pushDocument ()
 	_reader.pushDocument ();
 }
 
+/*!
+ * \sa Document::popDocument()
+ */
 void
 Validator::popDocument ()
 {
@@ -61,6 +73,9 @@ Validator::popDocument ()
 	_reader.popDocument ();
 }
 
+/*!
+ * \sa Document::text()
+ */
 void
 Validator::text (const std::string &text)
 {
@@ -70,6 +85,8 @@ Validator::text (const std::string &text)
 }
 
 /*!
+ * \sa Document::pushStyle()
+ *
  * \todo Check if we're already in style of that type and add fallback instead if yes.
 	 Wait! First we need to know which style is "stronger", the first or the second.
 	 If it was the second we'd just add the fallback for a nested pushStyle.
@@ -102,6 +119,8 @@ Validator::pushStyle (document::Style::Type type)
 
 /*!
  * For now we don't allow nesting of the same style (e.g. "foo *bar *baz* bar* foo").
+ *
+ * \sa Document::cancelStyle()
  */
 void
 Validator::cancelStyle (document::Style::Type type)
@@ -144,6 +163,8 @@ Validator::cancelStyle (document::Style::Type type)
 }
 
 /*!
+ * \sa Document::popStyle()
+ *
  * \todo Check if style is valid and either pop or cancel it.
 	 Hmm, probably we need to pass the style here too, to correctly
 	 unwind nested 
@@ -176,6 +197,8 @@ Validator::popStyle (document::Style::Type type)
 }
 
 /*!
+ * \sa Document::pushBlock()
+ *
  * \todo Transform the current structure into a heading structure if type is 
 	 a heading type and we're in a block already.
  */
@@ -188,7 +211,7 @@ Validator::pushBlock (document::Block::Type type)
 }
 
 /*!
- * \todo Cancel pending styles.
+ * \sa Document::popBlock()
  */
 void
 Validator::popBlock ()
@@ -214,7 +237,11 @@ Validator::popBlock ()
 	_methods.clear ();
 }
 
-// DEBUG
+/*!
+ * Dump parsed representation of current block.
+ *
+ * \note This is used for debugging purpose only.
+ */
 void
 Validator::dump (const char * indent)
 {

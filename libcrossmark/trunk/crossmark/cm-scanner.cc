@@ -22,11 +22,12 @@
 #include <string>
 #include "cm-scanner-private.hh"
 #include "cm-stream-private.hh"
-// debug
-#include <iostream>
 
 using namespace crossmark;
 
+/*!
+ * Create scanner for file.
+ */
 Scanner::Scanner (const std::string &file)
   : _istream (* stream::Factory::instance().createInput (file)),
     _ownStream (FALSE),
@@ -36,6 +37,9 @@ Scanner::Scanner (const std::string &file)
 	_next = tokens::Factory::instance().createToken (tokens::Token::START);
 }
 
+/*!
+ * Create scanner for stream.
+ */
 Scanner::Scanner (stream::Input &istream)
   : _istream (istream),
     _ownStream (TRUE),
@@ -45,6 +49,9 @@ Scanner::Scanner (stream::Input &istream)
 	_next = tokens::Factory::instance().createToken (tokens::Token::START);
 }
 
+/*!
+ * Dtor.
+ */
 Scanner::~Scanner ()
 {
 	if (_ownStream) {
@@ -99,8 +106,6 @@ Scanner::fetchToken ()
 		// look further
 		c2 = _istream.getChar ();
 
-		//std::cout << "-- '" << _c1 << "' '" << c2 << "'" << std::endl;
-
 		tail = 0;
 		if ((_next = scanEnd (c2))) {
 			if (text) {
@@ -146,6 +151,9 @@ Scanner::fetchToken ()
 	}
 }
 
+/*!
+ * Test for EOF.
+ */
 tokens::Token * 
 Scanner::scanEnd ()
 {
@@ -155,6 +163,9 @@ Scanner::scanEnd ()
 	return NULL;
 }
 
+/*!
+ * Test for EOF.
+ */
 tokens::Token * 
 Scanner::scanEnd (gunichar c)
 {
@@ -165,6 +176,8 @@ Scanner::scanEnd (gunichar c)
 }
 
 /*!
+ * Test for newline.
+ *
  * \todo Not eat the newline if an indentation follows, 
  * 	 need to recognise that for blockquote, lists.
  * \todo Should a newline be replaced by a whitespace under certain circumstances?
@@ -195,6 +208,8 @@ Scanner::scanNewline (gboolean &restart)
 }
 
 /*!
+ * Test for indentation.
+ *
  * \todo For now only tab indentation is supported.
  */
 tokens::Token * 
@@ -208,6 +223,8 @@ Scanner::scanIndent ()
 }
 
 /*!
+ * Test for style markup.
+ *
  * \todo Support all specified word boundaries (whitespace, punctuation, newline).
  */
 tokens::Token * 
@@ -298,6 +315,11 @@ Scanner::scanStyle (gunichar c2, gunichar &tail)
 	return NULL;
 }
 
+/*!
+ * Token factory singleton getter.
+ *
+ * \note The token factory is not yet used ubuquituously.
+ */
 tokens::Factory &
 tokens::Factory::instance ()
 {
@@ -311,11 +333,17 @@ tokens::Factory::instance ()
 
 }
 
+/*!
+ * Token factory ctor.
+ */
 tokens::Factory::Factory ()
 {
 	_factories.push_back (this);
 }
 
+/*!
+ * Hook in a token factory.
+ */
 void 
 tokens::Factory::hook (const FactoryIface *factory)
 {
@@ -323,7 +351,7 @@ tokens::Factory::hook (const FactoryIface *factory)
 }
 
 /*!
- * \todo Implement.
+ * Unhook in a token factory.
  */
 void 
 tokens::Factory::unhook (const FactoryIface *factory)
@@ -341,7 +369,7 @@ tokens::Factory::unhook (const FactoryIface *factory)
 }
 
 /*!
- * \todo Implement.
+ * Request a token from the factory.
  */
 tokens::Token *
 tokens::Factory::createToken (tokens::Token::Class klass) const
@@ -362,6 +390,9 @@ tokens::Factory::createToken (tokens::Token::Class klass) const
 	g_assert_not_reached ();
 }
 
+/*!
+ * Request a style token from the factory.
+ */
 tokens::Style * 
 tokens::Factory::createStyleToken (tokens::Style::Type type, tokens::Style::Pos pos) const
 {
@@ -381,6 +412,9 @@ tokens::Factory::createStyleToken (tokens::Style::Type type, tokens::Style::Pos 
 	g_assert_not_reached ();
 }
 
+/*!
+ * Request a text from the factory.
+ */
 tokens::Text * 
 tokens::Factory::createTextToken (const gchar *text) const
 {
@@ -400,6 +434,9 @@ tokens::Factory::createTextToken (const gchar *text) const
 	g_assert_not_reached ();
 }
 
+/*!
+ * Default token creation impl.
+ */
 tokens::Token *
 tokens::Factory::createTokenImpl (tokens::Token::Class klass) const
 {
@@ -425,12 +462,18 @@ tokens::Factory::createTokenImpl (tokens::Token::Class klass) const
 	}
 }
 
+/*!
+ * Default style token creation impl.
+ */
 tokens::Style * 
 tokens::Factory::createStyleTokenImpl (tokens::Style::Type type, tokens::Style::Pos pos) const
 {
 	return new tokens::Style (type, pos);
 }
 
+/*!
+ * Default text token creation impl.
+ */
 tokens::Text * 
 tokens::Factory::createTextTokenImpl (const gchar *text) const
 {

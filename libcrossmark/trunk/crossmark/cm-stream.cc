@@ -27,6 +27,9 @@
 using namespace crossmark;
 using namespace crossmark::stream;
 
+/*!
+ * Stream factory singleton getter.
+ */
 Factory &
 Factory::instance ()
 {
@@ -42,6 +45,9 @@ Factory::instance ()
 	return *factory;
 }
 
+/*!
+ * Create default input implementation.
+ */
 Input * 
 Factory::createInput (const std::string &file)
 {
@@ -53,10 +59,14 @@ Factory::createInput (const std::string &file)
 }
 
 /*!
- * \todo Use libgsf.
+ * Create default output implementation.
  */
 Output * 
 Factory::createOutput (const std::string &file)
 {
+#ifdef LIBCROSSMARK_FEATURE_LIBGSF
+	return new GsfOutput (file);
+#else
 	return new StdOutput (file);
+#endif
 }
