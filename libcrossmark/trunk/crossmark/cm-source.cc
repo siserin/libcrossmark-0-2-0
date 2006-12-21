@@ -64,7 +64,13 @@ Source::~Source ()
 # + arbitrary nesting of styling allowed
 # + ...
 
-document   := start newline* ( pbreak | paragraph | blockquote )* end
+document   := start newline* ( pbreak | heading | block | blockquote )* end
+block      := heading | paragraph
+heading    := h1 | h2 | h3 | h4
+h1         := line* h1-leadout pbreak
+h2         := line* h2-leadout pbreak
+h3         := h3-leadin line* h3-leadout pbreak
+h4         := h4-leadin line* h4-leadout pbreak
 paragraph  := line* pbreak
 blockquote := indent line ( indent line )* pbreak
 line       := ( text | markup )* newline
@@ -99,16 +105,16 @@ Source::parseDocument ()
 
 	_validator->pushDocument ();
 
-	tokens::Token *token = _scanner->fetchToken ();
-	g_assert (token->getClass () == tokens::Token::START);
+	token::Token *token = _scanner->fetchToken ();
+	g_assert (token->getClass () == token::Token::START);
 	delete token;
 
 	token = _scanner->fetchToken ();
-	while (token->getClass () == tokens::Token::NEWLINE) {
+	while (token->getClass () == token::Token::NEWLINE) {
 		delete token;
 		token = _scanner->fetchToken ();
 	}
-	while (token->getClass () == tokens::Token::PARAGRAPH) {
+	while (token->getClass () == token::Token::PARAGRAPH) {
 		delete token;
 		// ignore empty paragraph at beginning?
 		// _validator->pushBlock (document::Block::PARAGRAPH);
@@ -116,15 +122,15 @@ Source::parseDocument ()
 		token = _scanner->fetchToken ();
 	}
 
-	tokens::Token *next;
-	while (token->getClass () != tokens::Token::END) {
+	token::Token *next;
+	while (token->getClass () != token::Token::END) {
 
 		next = NULL;
 
-		if (token->getClass () == tokens::Token::INDENT) {
+		if (token->getClass () == token::Token::INDENT) {
 			next = parseBlockquote (token);
 		} else {
-			next = parseParagraph (token);
+			next = parseBlock (token);
 		}
 
 		if (token != next) {
@@ -140,24 +146,32 @@ Source::parseDocument ()
 /*!
  * Parse a paragraph.
  */
-tokens::Token * 
-Source::parseParagraph (const tokens::Token *first)
+token::Token * 
+Source::parseBlock (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
-	if (first->getClass () == tokens::Token::END) {
+	if (first->getClass () == token::Token::END) {
 		// ok, because the token is owned by the caller
-		return const_cast<tokens::Token *> (first);
+		return const_cast<token::Token *> (first);
 	}
 
 	// paragraph  := line* pbreak
-	_validator->pushBlock (document::Block::PARAGRAPH);
 
-	tokens::Token *token = parseLine (first);
+	token::Token *token;
+	if (first->getClass () == token::Token::HEADING) {
+		const token::Heading *heading;
+		heading = dynamic_cast<const token::Heading *> (first);
+		_validator->pushBlock ((document::Block::Type) heading->getType ());
+		token = _scanner->fetchToken ();
+	} else {
+		_validator->pushBlock (document::Block::PARAGRAPH);
+		token = parseLine (first);
+	}
 
-	tokens::Token *next;
-	while (token->getClass () != tokens::Token::PARAGRAPH && 
-	       token->getClass () != tokens::Token::END) {
+	token::Token *next;
+	while (token->getClass () != token::Token::PARAGRAPH && 
+	       token->getClass () != token::Token::END) {
 
 		next = parseLine (token);
 
@@ -169,7 +183,7 @@ Source::parseParagraph (const tokens::Token *first)
 	
 	_validator->popBlock ();
 
-	if (token->getClass () == tokens::Token::PARAGRAPH) {
+	if (token->getClass () == token::Token::PARAGRAPH) {
 		delete token;
 		token = _scanner->fetchToken ();
 	}
@@ -179,31 +193,31 @@ Source::parseParagraph (const tokens::Token *first)
 /*!
  * Parse a blockquote.
  */
-tokens::Token * 
-Source::parseBlockquote (const tokens::Token *first)
+token::Token * 
+Source::parseBlockquote (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
-	if (first->getClass () == tokens::Token::PARAGRAPH ||
-	    first->getClass () == tokens::Token::END) {
+	if (first->getClass () == token::Token::PARAGRAPH ||
+	    first->getClass () == token::Token::END) {
 		// ok, because the token is owned by the caller
-		return const_cast<tokens::Token *> (first);
+		return const_cast<token::Token *> (first);
 	}
 
 	// blockquote := indent line ( indent line )* pbreak
 	_validator->pushBlock (document::Block::BLOCKQUOTE);
 
-	g_assert (first->getClass () == tokens::Token::INDENT);
+	g_assert (first->getClass () == token::Token::INDENT);
 
-	tokens::Token *token = parseLine (_scanner->fetchToken ());
-	if (token->getClass () == tokens::Token::END) {
+	token::Token *token = parseLine (_scanner->fetchToken ());
+	if (token->getClass () == token::Token::END) {
 		return token;
 	}	
 	
-	while (token->getClass () != tokens::Token::PARAGRAPH && 
-	       token->getClass () != tokens::Token::END) {
+	while (token->getClass () != token::Token::PARAGRAPH && 
+	       token->getClass () != token::Token::END) {
 
-		g_assert (token->getClass () == tokens::Token::INDENT);
+		g_assert (token->getClass () == token::Token::INDENT);
 		delete token;		
 
 		token = parseLine (_scanner->fetchToken ());		
@@ -211,7 +225,7 @@ Source::parseBlockquote (const tokens::Token *first)
 
 	_validator->popBlock ();
 
-	if (token->getClass () == tokens::Token::PARAGRAPH) {
+	if (token->getClass () == token::Token::PARAGRAPH) {
 		delete token;
 		token = _scanner->fetchToken ();
 	}
@@ -223,34 +237,39 @@ Source::parseBlockquote (const tokens::Token *first)
  *
  * \todo What to do with tabs in running text?
  */
-tokens::Token * 
-Source::parseLine (const tokens::Token *first)
+token::Token * 
+Source::parseLine (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
-	if (first->getClass () == tokens::Token::PARAGRAPH ||
-	    first->getClass () == tokens::Token::END) {
+	if (first->getClass () == token::Token::PARAGRAPH ||
+	    first->getClass () == token::Token::END) {
 		// ok, because the token is owned by the caller
-		return const_cast<tokens::Token *> (first);
+		return const_cast<token::Token *> (first);
 	}
 
 	// line       := ( text | markup )* newline
 
-	tokens::Token *token;
-	if (first->getClass () == tokens::Token::STYLE) {
+	token::Token *token;
+	if (first->getClass () == token::Token::HEADING) {
+		const token::Heading *heading;
+		heading = dynamic_cast<const token::Heading *> (first);
+		_validator->pushBlock ((document::Block::Type) heading->getType ());
+		token = _scanner->fetchToken ();
+	} else if (first->getClass () == token::Token::STYLE) {
 		token = parseMarkup (first);
 	} else {
 		token = parseText (first);
 	}
 
-	tokens::Token *next;
-	while (token->getClass () != tokens::Token::NEWLINE &&
-	       token->getClass () != tokens::Token::PARAGRAPH &&  
-	       token->getClass () != tokens::Token::END) {
+	token::Token *next;
+	while (token->getClass () != token::Token::NEWLINE &&
+	       token->getClass () != token::Token::PARAGRAPH &&  
+	       token->getClass () != token::Token::END) {
 
-		if (token->getClass () == tokens::Token::STYLE) {
+		if (token->getClass () == token::Token::STYLE) {
 			next = parseMarkup (token);
-		} else if (token->getClass () == tokens::Token::INDENT) {
+		} else if (token->getClass () == token::Token::INDENT) {
 			_validator->text ("\t");
 			next = _scanner->fetchToken ();
 		} else {
@@ -263,7 +282,7 @@ Source::parseLine (const tokens::Token *first)
 		token = next;
 	}
 
-	if (token->getClass () == tokens::Token::NEWLINE) {
+	if (token->getClass () == token::Token::NEWLINE) {
 		delete token;
 		token = _scanner->fetchToken ();
 	}
@@ -273,29 +292,29 @@ Source::parseLine (const tokens::Token *first)
 /*!
  * Parse styled text "markup".
  */
-tokens::Token * 
-Source::parseMarkup (const tokens::Token *first)
+token::Token * 
+Source::parseMarkup (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
-	if (first->getClass () == tokens::Token::PARAGRAPH ||
-	    first->getClass () == tokens::Token::END) {
+	if (first->getClass () == token::Token::PARAGRAPH ||
+	    first->getClass () == token::Token::END) {
 		// ok, because the token is owned by the caller
-		return const_cast<tokens::Token *> (first);
+		return const_cast<token::Token *> (first);
 	}
 
 	// markup     := bold | italic | monospace | underline
 
-	const tokens::Style *style;
-	tokens::Token 	    *next;
+	const token::Style *style;
+	token::Token 	    *next;
 
-	style = dynamic_cast<const tokens::Style *> (first);
-	if (style->getClass () == tokens::Token::STYLE && 
-	    style->getPos () == tokens::Style::CENTER) {
+	style = dynamic_cast<const token::Style *> (first);
+	if (style->getClass () == token::Token::STYLE && 
+	    style->getPos () == token::Style::CENTER) {
 		_validator->cancelStyle ((document::Style::Type) style->getType ());
 		next = _scanner->fetchToken ();
 	} else {
-		g_assert (style && style->getPos () == tokens::Style::LEFT);
+		g_assert (style && style->getPos () == token::Style::LEFT);
 		next = parseStyle (style, (document::Style::Type) style->getType ());
 	}
 	return next;
@@ -306,15 +325,15 @@ Source::parseMarkup (const tokens::Token *first)
  *
  * \todo Abort at newline?
  */
-tokens::Token * 
-Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
+token::Token * 
+Source::parseStyle (const token::Token *first, document::Style::Type type_)
 {
 	TRACE (__FUNCTION__);
 
-	if (first->getClass () == tokens::Token::PARAGRAPH ||
-	    first->getClass () == tokens::Token::END) {
+	if (first->getClass () == token::Token::PARAGRAPH ||
+	    first->getClass () == token::Token::END) {
 		// ok, because the token is owned by the caller
-		return const_cast<tokens::Token *> (first);
+		return const_cast<token::Token *> (first);
 	}
 
 	// bold       := style-lb ( text | markup )* style-rb
@@ -322,29 +341,29 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 	// monospace  := style-lm ( text | markup )* style-rm
 	// underline  := style-lu ( text | markup )* style-ru
 
-	tokens::Style::Type type = (tokens::Style::Type) type_;
-	g_assert (type == tokens::Style::ASTERISK || 
-		  type == tokens::Style::SLASH || 
-		  type == tokens::Style::BACKTICK || 
-		  type == tokens::Style::UNDERSCORE);
+	token::Style::Type type = (token::Style::Type) type_;
+	g_assert (type == token::Style::ASTERISK || 
+		  type == token::Style::SLASH || 
+		  type == token::Style::BACKTICK || 
+		  type == token::Style::UNDERSCORE);
 
-	const tokens::Style *style;
-	style = dynamic_cast<const tokens::Style *> (first);
+	const token::Style *style;
+	style = dynamic_cast<const token::Style *> (first);
 	g_assert (style &&  style->getType () == type);
 
 	_validator->pushStyle (type_);
 
-	tokens::Token *token;
-	tokens::Token *next;
+	token::Token *token;
+	token::Token *next;
 
 	token = _scanner->fetchToken ();
-	while (!((style = dynamic_cast<const tokens::Style *> (token)) != NULL &&
+	while (!((style = dynamic_cast<const token::Style *> (token)) != NULL &&
 	          style->getType () == type && 
-		  style->getPos () == tokens::Style::RIGHT) && 
-	       token->getClass () != tokens::Token::PARAGRAPH &&
-	       token->getClass () != tokens::Token::END) {
+		  style->getPos () == token::Style::RIGHT) && 
+	       token->getClass () != token::Token::PARAGRAPH &&
+	       token->getClass () != token::Token::END) {
 
-		if (token->getClass () == tokens::Token::STYLE) {
+		if (token->getClass () == token::Token::STYLE) {
 			next = parseMarkup (token);
 		} else {
 			next = parseText (token);
@@ -358,7 +377,7 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 
 	_validator->popStyle (type_);
 
-	if (token->getClass () == tokens::Token::STYLE) {
+	if (token->getClass () == token::Token::STYLE) {
 		delete token;
 		token = _scanner->fetchToken ();
 	}
@@ -368,18 +387,18 @@ Source::parseStyle (const tokens::Token *first, document::Style::Type type_)
 /*!
  * Parse plain text.
  */
-tokens::Token * 
-Source::parseText (const tokens::Token *first)
+token::Token * 
+Source::parseText (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
-	if (first->getClass () == tokens::Token::PARAGRAPH ||
-	    first->getClass () == tokens::Token::END) {
+	if (first->getClass () == token::Token::PARAGRAPH ||
+	    first->getClass () == token::Token::END) {
 		// ok, because the token is owned by the caller
-		return const_cast<tokens::Token *> (first);
+		return const_cast<token::Token *> (first);
 	}
 
-	g_assert (first->getClass () == tokens::Token::TEXT);
+	g_assert (first->getClass () == token::Token::TEXT);
 	gchar const *text = first->toString ();
 	g_assert (text);
 	g_return_val_if_fail (text, _scanner->fetchToken ());

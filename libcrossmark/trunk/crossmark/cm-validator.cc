@@ -198,16 +198,24 @@ Validator::popStyle (document::Style::Type type)
 
 /*!
  * \sa Document::pushBlock()
- *
- * \todo Transform the current structure into a heading structure if type is 
-	 a heading type and we're in a block already.
  */
 void
 Validator::pushBlock (document::Block::Type type)
 {
 	TRACE (__FUNCTION__);
 
-	_methods.push_front (new PushBlock (_reader, type));
+	if (_methods.empty ()) {
+		_methods.push_front (new PushBlock (_reader, type));
+
+	} else {
+		// change block type
+		std::list<validator::Method *>::iterator iter;
+		validator::PushBlock *block;
+		iter = _methods.end ();
+		--iter;
+		block = dynamic_cast<validator::PushBlock *> (*iter);
+		block->setType (type);
+	}
 }
 
 /*!

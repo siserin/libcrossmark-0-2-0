@@ -114,7 +114,7 @@ class Style
 {
 public:
 	// don't change order
-	// see tokens::Style::Type
+	// see token::Style::Type
 	enum Type {
 		BOLD, 
 		ITALIC,

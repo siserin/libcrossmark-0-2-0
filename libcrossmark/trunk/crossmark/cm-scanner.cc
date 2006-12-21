@@ -33,7 +33,7 @@ Scanner::Scanner (gchar const *file)
     _next (NULL),
     _c1 (0)
 {
-	_next = tokens::Factory::instance().createToken (tokens::Token::START);
+	_next = token::Factory::instance().createToken (token::Token::START);
 }
 
 /*!
@@ -45,7 +45,7 @@ Scanner::Scanner (stream::Input &istream)
     _next (NULL),
     _c1 (0)
 {
-	_next = tokens::Factory::instance().createToken (tokens::Token::START);
+	_next = token::Factory::instance().createToken (token::Token::START);
 }
 
 /*!
@@ -62,24 +62,21 @@ Scanner::~Scanner ()
  * Fetch the next token from the input file.
  * \todo Is g_strdup_printf() UTF-8 compliant?
  */
-tokens::Token *
+token::Token *
 Scanner::fetchToken ()
 {
-	tokens::Token *token;
+	token::Token *token;
 
 	if (_next) {
 		token = _next;
 		_next = NULL;
-		return token;
+		return _return (token);
 	}
 
-	tokens::Text 	*text = NULL;
-	gboolean	 restart;
+	token::Text 	*text = NULL;
 	gunichar 	 c2;
 	gunichar 	 tail;
 	while (TRUE) {
-
-		restart = FALSE;
 
 		// look ahead
 		if (_c1 == 0) {
@@ -87,18 +84,16 @@ Scanner::fetchToken ()
 		}
 
 		if ((_next = scanEnd ()) ||
-		    (_next = scanNewline (restart)) ||
+		    (_next = scanHeading ()) ||
+		    (_next = scanNewline ()) ||
 		    (_next = scanIndent ())) {
 			if (text) {
 				return text;
 			} else {
 				token = _next;
 				_next = NULL;
-				return token;
+				return _return (token);
 			}
-		}
-
-		if (restart) {
 			continue;
 		}
 
@@ -110,7 +105,7 @@ Scanner::fetchToken ()
 			if (text) {
 				text->append (_c1);
 			} else {
-				text = new tokens::Text (g_strdup_printf ("%c", c2));
+				text = new token::Text (g_strdup_printf ("%c", c2));
 			}
 			_c1 = c2;
 			return text;
@@ -121,20 +116,20 @@ Scanner::fetchToken ()
 			} else if (text) {
 				token = text;
 			} else if (tail) {
-				text = new tokens::Text (g_strdup_printf ("%c", tail));
+				text = new token::Text (g_strdup_printf ("%c", tail));
 				token = text;
 			} else {
 				token = _next;
 				_next = NULL;
 			}
-			return token;
+			return _return (token);
 		} else {
 			if (tail) {
 				// both, _c1 and c2 have been consumed
 				if (text) {
 					text->append (tail);
 				} else {
-					text = new tokens::Text (g_strdup_printf ("%c", tail));
+					text = new token::Text (g_strdup_printf ("%c", tail));
 				}
 
 			} else {
@@ -142,7 +137,7 @@ Scanner::fetchToken ()
 				if (text) {
 					text->append (_c1);
 				} else {
-					text = new tokens::Text (g_strdup_printf ("%c", _c1));
+					text = new token::Text (g_strdup_printf ("%c", _c1));
 				}
 				_c1 = c2;
 			}
@@ -153,11 +148,11 @@ Scanner::fetchToken ()
 /*!
  * Test for EOF.
  */
-tokens::Token * 
+token::Token * 
 Scanner::scanEnd ()
 {
 	if (_c1 == (unsigned) EOF) {
-		return new tokens::End ();
+		return new token::End ();
 	}
 	return NULL;
 }
@@ -165,11 +160,64 @@ Scanner::scanEnd ()
 /*!
  * Test for EOF.
  */
-tokens::Token * 
+token::Token * 
 Scanner::scanEnd (gunichar c)
 {
 	if (c == (unsigned) EOF) {
-		return new tokens::End ();
+		return new token::End ();
+	}
+	return NULL;
+}
+
+/*!
+ * Test for heading.
+ *
+ * Must be called before scanNewline() because headings may result from
+ * a special combination of characters over several lines.
+ *
+ * \todo This prolly fails on a file with a single newline on top, 
+ *	 followed by a heading. Maybe we should start scanning a file
+	 with a _c1 of '\n' to prevent that.
+ * \todo Better error handling, especially for H1, H2.
+ * \todo Fall back if H2, H3 not terminated correctly?
+ */
+token::Token * 
+Scanner::scanHeading ()
+{
+	if (_prev == token::Token::NEWLINE) {
+		// scan for H1 or H2
+		if (_c1 == '=') {
+			// H1
+			do {
+				_c1 = _istream.getChar ();
+			} while (_c1 == '=');
+			g_assert (_c1 == '\n');
+			return new token::Heading (token::Heading::HEADING_1);
+		} else if (_c1 == '-') {
+			// H2
+			do {
+				_c1 = _istream.getChar ();
+			} while (_c1 == '-');
+			g_assert (_c1 == '\n');
+			return new token::Heading (token::Heading::HEADING_2);
+		}
+	} else if ((_prev == token::Token::START ||
+		    _prev == token::Token::PARAGRAPH) &&
+		   _c1 == '=' ) {
+		// scan for H3 or H4
+		gint i = 0;
+		do {
+			++i;
+			_c1 = _istream.getChar ();
+		} while (_c1 == '=');
+		// here we would put support for shorthand H1, H2
+		// lead in with "=" and "==" respectively
+		if (i == 3) {
+			return new token::Heading (token::Heading::HEADING_3);
+		} else if (i == 4) {
+			return new token::Heading (token::Heading::HEADING_4);
+		}
+		g_assert (FALSE);
 	}
 	return NULL;
 }
@@ -179,15 +227,14 @@ Scanner::scanEnd (gunichar c)
  *
  * \todo Not eat the newline if an indentation follows, 
  * 	 need to recognise that for blockquote, lists.
- * \todo Should a newline be replaced by a whitespace under certain circumstances?
- *	 Otherwise "foo\nbar" ends up as "foobar".
+ * \todo Should a newline be replaced by a whitespace under certain 
+ * 	 circumstances? Otherwise "foo\nbar" ends up as "foobar".
  */
-tokens::Token * 
-Scanner::scanNewline (gboolean &restart)
+token::Token * 
+Scanner::scanNewline ()
 {
 	gboolean isParagraph;
 
-	restart = FALSE;
 	isParagraph = FALSE;
 	if (_c1 == '\n') {
 		do {
@@ -197,10 +244,9 @@ Scanner::scanNewline (gboolean &restart)
 			}
 		} while (_c1 == '\n');
 		if (isParagraph) {
-			return new tokens::Paragraph ();
+			return new token::Paragraph ();
 		} else {
-			return new tokens::Newline ();
-			restart = TRUE;
+			return new token::Newline ();
 		}
 	}
 	return NULL;
@@ -211,12 +257,12 @@ Scanner::scanNewline (gboolean &restart)
  *
  * \todo For now only tab indentation is supported.
  */
-tokens::Token * 
+token::Token * 
 Scanner::scanIndent ()
 {
 	if (_c1 == '\t') {
 		_c1 = 0;
-		return new tokens::Indent ();
+		return new token::Indent ();
 	}
 	return NULL;
 }
@@ -226,7 +272,7 @@ Scanner::scanIndent ()
  *
  * \todo Support all specified word boundaries (whitespace, punctuation, newline).
  */
-tokens::Token * 
+token::Token * 
 Scanner::scanStyle (gunichar c2, gunichar &tail)
 {
 	tail = 0;
@@ -234,39 +280,39 @@ Scanner::scanStyle (gunichar c2, gunichar &tail)
 	if (_c1 == ' ' && c2 == '*') {
 		tail = _c1;
 		_c1 = 0;
-		return new tokens::Style (tokens::Style::ASTERISK, 
-					  tokens::Style::LEFT);
+		return new token::Style (token::Style::ASTERISK, 
+					  token::Style::LEFT);
 	} else if (_c1 == '*' && c2 == ' ') {
 		_c1 = c2;
-		return new tokens::Style (tokens::Style::ASTERISK, 
-					  tokens::Style::RIGHT);
+		return new token::Style (token::Style::ASTERISK, 
+					  token::Style::RIGHT);
 	} else if (_c1 == ' ' && c2 == '/') {
 		tail = _c1;
 		_c1 = 0;
-		return new tokens::Style (tokens::Style::SLASH, 
-					  tokens::Style::LEFT);
+		return new token::Style (token::Style::SLASH, 
+					  token::Style::LEFT);
 	} else if (_c1 == '/' && c2 == ' ') {
 		_c1 = c2;
-		return new tokens::Style (tokens::Style::SLASH, 
-					  tokens::Style::RIGHT);
+		return new token::Style (token::Style::SLASH, 
+					  token::Style::RIGHT);
 	} else if (_c1 == ' ' && c2 == '`') {
 		tail = _c1;
 		_c1 = 0;
-		return new tokens::Style (tokens::Style::BACKTICK, 
-					  tokens::Style::LEFT);
+		return new token::Style (token::Style::BACKTICK, 
+					  token::Style::LEFT);
 	} else if (_c1 == '`' && c2 == ' ') {
 		_c1 = c2;
-		return new tokens::Style (tokens::Style::BACKTICK, 
-					  tokens::Style::RIGHT);
+		return new token::Style (token::Style::BACKTICK, 
+					  token::Style::RIGHT);
 	} else if (_c1 == ' ' && c2 == '_') {
 		tail = _c1;
 		_c1 = 0;
-		return new tokens::Style (tokens::Style::UNDERSCORE, 
-					  tokens::Style::LEFT);
+		return new token::Style (token::Style::UNDERSCORE, 
+					  token::Style::LEFT);
 	} else if (_c1 == '_' && c2 == ' ') {
 		_c1 = c2;
-		return new tokens::Style (tokens::Style::UNDERSCORE, 
-					  tokens::Style::RIGHT);
+		return new token::Style (token::Style::UNDERSCORE, 
+					  token::Style::RIGHT);
 	}
 	// handle escaped tokens as text
 	else if (_c1 == '\\' && c2 == '*') {
@@ -293,23 +339,23 @@ Scanner::scanStyle (gunichar c2, gunichar &tail)
 	else if (_c1 == '*' && c2 != ' ') {
 		tail = _c1;
 		_c1 = c2;
-		return new tokens::Style (tokens::Style::ASTERISK, 
-					  tokens::Style::CENTER);	
+		return new token::Style (token::Style::ASTERISK, 
+					  token::Style::CENTER);	
 	} else if (_c1 == '/' && c2 != ' ') {
 		tail = _c1;
 		_c1 = c2;
-		return new tokens::Style (tokens::Style::SLASH, 
-					  tokens::Style::CENTER);	
+		return new token::Style (token::Style::SLASH, 
+					  token::Style::CENTER);	
 	} else if (_c1 == '`' && c2 != ' ') {
 		tail = _c1;
 		_c1 = c2;
-		return new tokens::Style (tokens::Style::BACKTICK, 
-					  tokens::Style::CENTER);
+		return new token::Style (token::Style::BACKTICK, 
+					  token::Style::CENTER);
 	} else if (_c1 == '_' && c2 != ' ') {
 		tail = _c1;
 		_c1 = c2;
-		return new tokens::Style (tokens::Style::UNDERSCORE, 
-					  tokens::Style::CENTER);
+		return new token::Style (token::Style::UNDERSCORE, 
+					  token::Style::CENTER);
 	}
 	return NULL;
 }
@@ -319,13 +365,13 @@ Scanner::scanStyle (gunichar c2, gunichar &tail)
  *
  * \note The token factory is not yet used ubuquituously.
  */
-tokens::Factory &
-tokens::Factory::instance ()
+token::Factory &
+token::Factory::instance ()
 {
-	static tokens::Factory *factory = NULL;
+	static token::Factory *factory = NULL;
 
 	if (!factory) {
-		factory = new tokens::Factory ();
+		factory = new token::Factory ();
 	}
 
 	return *factory;
@@ -335,7 +381,7 @@ tokens::Factory::instance ()
 /*!
  * Token factory ctor.
  */
-tokens::Factory::Factory ()
+token::Factory::Factory ()
 {
 	_factories.push_back (this);
 }
@@ -344,7 +390,7 @@ tokens::Factory::Factory ()
  * Hook in a token factory.
  */
 void 
-tokens::Factory::hook (const FactoryIface *factory)
+token::Factory::hook (const FactoryIface *factory)
 {
 	_factories.push_back (factory);
 }
@@ -353,9 +399,9 @@ tokens::Factory::hook (const FactoryIface *factory)
  * Unhook in a token factory.
  */
 void 
-tokens::Factory::unhook (const FactoryIface *factory)
+token::Factory::unhook (const FactoryIface *factory)
 {
-	std::list<const tokens::FactoryIface *>::reverse_iterator iter;
+	std::list<const token::FactoryIface *>::reverse_iterator iter;
 
 	iter = _factories.rbegin ();
 	while (iter != _factories.rend ()) {
@@ -370,11 +416,11 @@ tokens::Factory::unhook (const FactoryIface *factory)
 /*!
  * Request a token from the factory.
  */
-tokens::Token *
-tokens::Factory::createToken (tokens::Token::Class klass) const
+token::Token *
+token::Factory::createToken (token::Token::Class klass) const
 {
-	std::list<const tokens::FactoryIface *>::const_reverse_iterator iter;
-	tokens::Token *token;
+	std::list<const token::FactoryIface *>::const_reverse_iterator iter;
+	token::Token *token;
 
 	iter = _factories.rbegin ();
 	while (iter != _factories.rend ()) {
@@ -392,11 +438,11 @@ tokens::Factory::createToken (tokens::Token::Class klass) const
 /*!
  * Request a style token from the factory.
  */
-tokens::Style * 
-tokens::Factory::createStyleToken (tokens::Style::Type type, tokens::Style::Pos pos) const
+token::Style * 
+token::Factory::createStyleToken (token::Style::Type type, token::Style::Pos pos) const
 {
-	std::list<const tokens::FactoryIface *>::const_reverse_iterator iter;
-	tokens::Style *token;
+	std::list<const token::FactoryIface *>::const_reverse_iterator iter;
+	token::Style *token;
 
 	iter = _factories.rbegin ();
 	while (iter != _factories.rend ()) {
@@ -414,11 +460,11 @@ tokens::Factory::createStyleToken (tokens::Style::Type type, tokens::Style::Pos 
 /*!
  * Request a text from the factory.
  */
-tokens::Text * 
-tokens::Factory::createTextToken (gchar const *text) const
+token::Text * 
+token::Factory::createTextToken (gchar const *text) const
 {
-	std::list<const tokens::FactoryIface *>::const_reverse_iterator iter;
-	tokens::Text *token;
+	std::list<const token::FactoryIface *>::const_reverse_iterator iter;
+	token::Text *token;
 
 	iter = _factories.rbegin ();
 	while (iter != _factories.rend ()) {
@@ -436,24 +482,24 @@ tokens::Factory::createTextToken (gchar const *text) const
 /*!
  * Default token creation impl.
  */
-tokens::Token *
-tokens::Factory::createTokenImpl (tokens::Token::Class klass) const
+token::Token *
+token::Factory::createTokenImpl (token::Token::Class klass) const
 {
 	switch (klass) {
-	case tokens::Token::START: 
-		return new tokens::Start ();
+	case token::Token::START: 
+		return new token::Start ();
 		break;
-	case tokens::Token::END: 
-		return new tokens::End ();
+	case token::Token::END: 
+		return new token::End ();
 		break;
-	case tokens::Token::INDENT: 
-		return new tokens::Indent ();
+	case token::Token::INDENT: 
+		return new token::Indent ();
 		break;
-	case tokens::Token::NEWLINE: 
-		return new tokens::Newline ();
+	case token::Token::NEWLINE: 
+		return new token::Newline ();
 		break;
-	case tokens::Token::PARAGRAPH: 
-		return new tokens::Paragraph ();
+	case token::Token::PARAGRAPH: 
+		return new token::Paragraph ();
 		break;
 	default:
 		g_assert_not_reached ();
@@ -464,17 +510,17 @@ tokens::Factory::createTokenImpl (tokens::Token::Class klass) const
 /*!
  * Default style token creation impl.
  */
-tokens::Style * 
-tokens::Factory::createStyleTokenImpl (tokens::Style::Type type, tokens::Style::Pos pos) const
+token::Style * 
+token::Factory::createStyleTokenImpl (token::Style::Type type, token::Style::Pos pos) const
 {
-	return new tokens::Style (type, pos);
+	return new token::Style (type, pos);
 }
 
 /*!
  * Default text token creation impl.
  */
-tokens::Text * 
-tokens::Factory::createTextTokenImpl (gchar const *text) const
+token::Text * 
+token::Factory::createTextTokenImpl (gchar const *text) const
 {
-	return new tokens::Text (text);
+	return new token::Text (text);
 }

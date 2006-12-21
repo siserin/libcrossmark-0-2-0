@@ -182,6 +182,7 @@ private:
  */
 class PushBlock : public Method
 {
+friend class ::crossmark::Validator; // validator can modify type
 public:
 	PushBlock (Document &reader, document::Block::Type type) 
 	  : Method (reader), 
@@ -190,6 +191,9 @@ public:
 	virtual ~PushBlock () {}
 	virtual void operator () (void) { _reader.pushBlock (_type); }
 	virtual Method::Class getClass () const { return Method::PUSH_BLOCK; }
+
+protected:
+	void setType (document::Block::Type type) { _type = type; }
 
 private:
 	document::Block::Type _type;

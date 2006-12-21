@@ -31,6 +31,9 @@
 
 namespace crossmark {
 
+/*!
+ * \brief String class with an UTF-8 compliant append method.
+ */
 class String : public std::string
 {
 public:
