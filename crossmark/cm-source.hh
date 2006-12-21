@@ -31,7 +31,7 @@
 
 namespace crossmark {
 
-namespace tokens {
+namespace token {
 	class Token;
 };
 class Scanner;
@@ -56,12 +56,12 @@ public:
 
 protected:
 	void parseDocument ();
-	tokens::Token * parseParagraph (const tokens::Token *first);
-	tokens::Token * parseBlockquote (const tokens::Token *first);
-	tokens::Token * parseLine (const tokens::Token *first);
-	tokens::Token * parseMarkup (const tokens::Token *first);
-	tokens::Token * parseStyle (const tokens::Token *first, document::Style::Type type);
-	tokens::Token * parseText (const tokens::Token *first);
+	token::Token * parseBlock (const token::Token *first);
+	token::Token * parseBlockquote (const token::Token *first);
+	token::Token * parseLine (const token::Token *first);
+	token::Token * parseMarkup (const token::Token *first);
+	token::Token * parseStyle (const token::Token *first, document::Style::Type type);
+	token::Token * parseText (const token::Token *first);
 
 private:
 	Scanner   *_scanner;

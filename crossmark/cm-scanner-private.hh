@@ -41,7 +41,7 @@ namespace crossmark {
  * This namespace contains the various token types recognised by the 
  * scanner.
  */
-namespace tokens {
+namespace token {
 
 /*!
  * \brief Abstract token base class.
@@ -349,11 +349,13 @@ private:
    paragraph  := '\n' '\n' '\n'*
    h1         := '\n' "=" "="*
    h2         := '\n' "-" "-"*
-   h3         := '\n' "===" " "
-   h4         := '\n' "====" " "
+   h3         := paragraph "===" " "
+   h4         := paragraph "====" " "
    style      := " *" | "* " | " /" | "/ " | " `" | "` " | " _" | "_ "
    text       := {charset}*
    \endverbatim
+ *
+ * \todo The scanner supports only '\n' newlines for now.
  */
 class Scanner
 {
@@ -362,20 +364,28 @@ public:
 	Scanner (stream::Input &istream);
 	virtual ~Scanner ();
 
-	virtual tokens::Token * fetchToken ();
+	virtual token::Token * fetchToken ();
 
 protected:
-	virtual tokens::Token * scanEnd ();
-	virtual tokens::Token * scanEnd (gunichar c);
-	virtual tokens::Token * scanNewline (gboolean &restart);
-	virtual tokens::Token * scanIndent ();
-	virtual tokens::Token * scanStyle (gunichar c2, gunichar &tail);
+	virtual token::Token * scanEnd ();
+	virtual token::Token * scanEnd (gunichar c);
+	virtual token::Token * scanHeading ();
+	virtual token::Token * scanNewline ();
+	virtual token::Token * scanIndent ();
+	virtual token::Token * scanStyle (gunichar c2, gunichar &tail);
 
 private:
-	stream::Input	&_istream;
-	gboolean	 _ownStream;
-	tokens::Token 	*_next;
-	gunichar	 _c1;
+	token::Token *  _return (token::Token *token)
+	{
+		_prev = token->getClass ();
+		return token;
+	}
+
+	stream::Input		&_istream;
+	gboolean		 _ownStream;
+	token::Token::Class	 _prev;
+	token::Token		*_next;
+	gunichar		 _c1;
 };
 
 }; // namespace crossmark

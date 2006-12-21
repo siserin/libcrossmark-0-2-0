@@ -93,6 +93,22 @@ public:
 			structure = "<p>";
 			_structureStack.push ("</p>");
 			break;
+		case document::Block::HEADING_1: 
+			structure = "<h1>";
+			_structureStack.push ("</h1>");
+			break;
+		case document::Block::HEADING_2: 
+			structure = "<h2>";
+			_structureStack.push ("</h2>");
+			break;
+		case document::Block::HEADING_3: 
+			structure = "<h3>";
+			_structureStack.push ("</h3>");
+			break;
+		case document::Block::HEADING_4: 
+			structure = "<h4>";
+			_structureStack.push ("</h4>");
+			break;
 		default: 
 			g_assert (FALSE);
 		}

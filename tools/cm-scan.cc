@@ -35,14 +35,14 @@ main (int 	  argc,
 
 	Scanner scanner (argv[1]);
 
-	tokens::Token *token = NULL;
+	token::Token *token = NULL;
 	do {
 		if (token)
 			delete token;
 		token = scanner.fetchToken ();
 		std::cout << token->toHtml ();
 
-	} while (!dynamic_cast<tokens::End *> (token));
+	} while (!dynamic_cast<token::End *> (token));
 	delete token;
 
 	return 0;
