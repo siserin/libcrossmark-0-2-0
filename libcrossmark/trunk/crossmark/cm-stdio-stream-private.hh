@@ -28,7 +28,6 @@
 
 #include <glib.h>
 #include <stdio.h>
-#include <string>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-stream.hh>
 
@@ -45,7 +44,7 @@ namespace stream {
 class StdInput : public Input 
 {
 public:
-	StdInput (const std::string &file);
+	StdInput (gchar const *file);
 	StdInput (FILE *istream);
 	virtual ~StdInput ();
 	virtual gunichar getChar ();
@@ -64,7 +63,7 @@ protected:
 class StdOutput : public Output
 {
 public:
-	StdOutput (const  std::string &file);
+	StdOutput (gchar const *file);
 	StdOutput (FILE *ostream);
 	virtual ~StdOutput ();
 	virtual gboolean write (gunichar c);

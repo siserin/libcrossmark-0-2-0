@@ -26,9 +26,8 @@
 #ifndef CM_SCANNER_PRIVATE_HH
 #define CM_SCANNER_PRIVATE_HH
 
-#include <list>
-#include <string>
 #include <glib.h>
+#include <list>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-stream.hh>
 #include <crossmark/cm-string-private.hh>
@@ -117,7 +116,7 @@ public:
 
 	virtual gchar const * getBuffer () { return _text.c_str (); }
 
-	virtual const std::string &getString () { return _text; }
+	virtual const String & getString () { return _text; }
 
 	virtual Token::Class getClass () const { return Token::TEXT; }
 	virtual gchar const * toHtml () const { return _text.c_str (); }
@@ -207,9 +206,9 @@ public:
 	virtual gchar const * toString () const { return _text.c_str (); }
 
 private:
-	Type		_type;
-	Pos		_pos;
-	std::string 	_text;
+	Type   _type;
+	Pos    _pos;
+	String _text;
 };
 
 /*!
@@ -359,7 +358,7 @@ private:
 class Scanner
 {
 public: 
-	Scanner (const std::string &file);
+	Scanner (gchar const *file);
 	Scanner (stream::Input &istream);
 	virtual ~Scanner ();
 

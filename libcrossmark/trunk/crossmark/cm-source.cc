@@ -33,8 +33,7 @@ using namespace crossmark;
 /*!
  * Create a source for filename and reader.
  */
-Source::Source (const std::string &file, 
-		Document &reader)
+Source::Source (gchar const *file, Document &reader)
   : _scanner (new Scanner (file)),
     _validator (new Validator (reader))
 {}
@@ -42,8 +41,7 @@ Source::Source (const std::string &file,
 /*!
  * Create a source input stream and reader.
  */
-Source::Source (stream::Input &istream, 
-		Document &reader)
+Source::Source (stream::Input &istream, Document &reader)
   : _scanner (new Scanner (istream)),
     _validator (new Validator (reader))
 {}

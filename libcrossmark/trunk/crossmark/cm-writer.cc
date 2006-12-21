@@ -26,11 +26,11 @@ using namespace crossmark;
  * \sa Document::text()
  */
 void 
-Writer::text (const std::string &text)
+Writer::text (gchar const *str)
 {
 	g_assert (_ostream);
 
-	fputs (text.c_str (), _ostream);
+	fputs (str, _ostream);
 }
 
 /*!

@@ -28,7 +28,6 @@
 
 #include <glib.h>
 #include <gsf/gsf.h>
-#include <string>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-stream.hh>
 
@@ -43,7 +42,7 @@ namespace stream {
 class GsfInput : public Input 
 {
 public:
-	GsfInput (const std::string &file);
+	GsfInput (gchar const *file);
 	GsfInput (::GsfInput *input);
 	virtual ~GsfInput ();
 	virtual gunichar getChar ();
@@ -59,7 +58,7 @@ private:
 class GsfOutput : public Output
 {
 public:
-	GsfOutput (const  std::string &file);
+	GsfOutput (gchar const *file);
 	GsfOutput (::GsfOutput *output);
 	virtual ~GsfOutput ();
 	virtual gboolean write (gunichar c);

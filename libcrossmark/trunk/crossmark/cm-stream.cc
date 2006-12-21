@@ -49,7 +49,7 @@ Factory::instance ()
  * Create default input implementation.
  */
 Input * 
-Factory::createInput (const std::string &file)
+Factory::createInput (gchar const *file)
 {
 #ifdef LIBCROSSMARK_FEATURE_LIBGSF
 	return new GsfInput (file);
@@ -62,7 +62,7 @@ Factory::createInput (const std::string &file)
  * Create default output implementation.
  */
 Output * 
-Factory::createOutput (const std::string &file)
+Factory::createOutput (gchar const *file)
 {
 #ifdef LIBCROSSMARK_FEATURE_LIBGSF
 	return new GsfOutput (file);

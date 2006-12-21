@@ -16,9 +16,15 @@ blank line. However, if you need to create code sections, e.g. because
 two ore more different classes are implemented in a single source file,
 separate them with three blank lines.
 
+=== Includes ===
+
 Order of includes: 1) system includes in alphabetical order, 
 2) cm-features.hh (only in headers), 3) (only in source files) the
 corresponding header, 4) project includes in alphabetical order.
+
+Do not include private headers in header files if it can be avoided 
+with reasonable effort. That helps to keep dependencies low when 
+exporting interfaces later.
 
 Documentation
 -------------

@@ -25,7 +25,6 @@
 #ifndef CM_SOURCE_HH
 #define CM_SOURCE_HH
 
-#include <string>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-document.hh>
 #include <crossmark/cm-stream.hh>
@@ -44,11 +43,9 @@ class Validator;
 class Source 
 {
 public:
-	Source (const std::string &file, 
-		Document &reader);
+	Source (gchar const *file, Document &reader);
 
-	Source (stream::Input &istream, 
-		Document &reader);
+	Source (stream::Input &istream, Document &reader);
 
 	virtual ~Source ();
 

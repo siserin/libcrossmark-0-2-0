@@ -77,11 +77,11 @@ Validator::popDocument ()
  * \sa Document::text()
  */
 void
-Validator::text (const std::string &text)
+Validator::text (gchar const *str)
 {
 	TRACE (__FUNCTION__);
 
-	_methods.push_front (new validator::Text (_reader, text.c_str ()));
+	_methods.push_front (new validator::Text (_reader, str));
 }
 
 /*!

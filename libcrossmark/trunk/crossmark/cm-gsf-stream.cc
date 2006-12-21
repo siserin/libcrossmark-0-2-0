@@ -51,12 +51,12 @@ stream::createGsfOutput (::GsfOutput *output)
  *
  * \todo Use exceptions.
  */
-stream::GsfInput::GsfInput (const std::string &file)
+stream::GsfInput::GsfInput (gchar const *file)
 {
 	GError	 *error;
 
 	error = NULL;
-	_input = gsf_input_stdio_new (file.c_str (), &error);
+	_input = gsf_input_stdio_new (file, &error);
 	if (error) {
 		g_warning (error->message);
 		g_error_free (error);
@@ -124,12 +124,12 @@ stream::GsfInput::getChar ()
  *
  * \todo Use exceptions.
  */
-stream::GsfOutput::GsfOutput (const std::string &file)
+stream::GsfOutput::GsfOutput (gchar const *file)
 {
 	GError	 *error;
 
 	error = NULL;
-	_output = gsf_output_stdio_new (file.c_str (), &error);
+	_output = gsf_output_stdio_new (file, &error);
 	if (error) {
 		g_warning (error->message);
 		g_error_free (error);

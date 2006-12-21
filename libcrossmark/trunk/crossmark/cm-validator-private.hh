@@ -28,7 +28,6 @@
 
 #include <glib.h>
 #include <list>
-#include <string>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-document.hh>
 
@@ -255,7 +254,7 @@ public:
 	virtual void popDocument ();
 
 	// text interface
-	virtual void text (const std::string &text);
+	virtual void text (gchar const *text);
 
 	// style interface
 	virtual void pushStyle (document::Style::Type type);
