@@ -27,7 +27,6 @@
 
 #include <glib.h>
 #include <stdio.h>
-#include <string>
 #include <crossmark/cm-features.hh>
 #ifdef LIBCROSSMARK_FEATURE_LIBGSF
 #include <gsf/gsf-input.h>

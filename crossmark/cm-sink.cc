@@ -24,8 +24,7 @@ using namespace crossmark;
 /*!
  * \todo Implement.
  */
-Sink::Sink (const std::string &file, 
-		       Writer &writer)
+Sink::Sink (gchar const *file, Writer &writer)
 {
 }
 

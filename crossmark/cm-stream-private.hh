@@ -25,7 +25,7 @@
 #ifndef CM_STREAM_PRIVATE_HH
 #define CM_STREAM_PRIVATE_HH
 
-#include <string>
+#include <glib.h>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-stream.hh>
 
@@ -79,8 +79,8 @@ class Factory
 public:
 	static Factory & instance ();
 
-	Input * createInput (const std::string &file);
-	Output * createOutput (const std::string &file);
+	Input * createInput (gchar const *file);
+	Output * createOutput (gchar const *file);
 
 protected:
 	Factory () {}

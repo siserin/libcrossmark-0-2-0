@@ -50,10 +50,10 @@ createStdOutput (FILE *ostream)
  *
  * \todo Use exceptions.
  */
-StdInput::StdInput (const std::string &file)
+StdInput::StdInput (gchar const *file)
   : _ownStream (TRUE)
 {
-	_istream = fopen (file.c_str (), "r");
+	_istream = fopen (file, "r");
 	g_assert (_istream);
 }
 
@@ -109,10 +109,10 @@ StdInput::getChar ()
  *
  * \todo Use exceptions.
  */
-StdOutput::StdOutput (const std::string &file)
+StdOutput::StdOutput (gchar const *file)
   : _ownStream (TRUE)
 {
-	_ostream = fopen (file.c_str (), "r");
+	_ostream = fopen (file, "r");
 	g_assert (_ostream);
 }
 

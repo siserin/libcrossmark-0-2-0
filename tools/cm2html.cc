@@ -18,7 +18,6 @@
  */
 
 #include <iostream>
-#include <string>
 #include <stdio.h>
 #include <crossmark/crossmark.hh>
 
@@ -40,9 +39,9 @@ public:
 	}
 
 	// text interface
-	void text (const std::string &text)
+	void text (gchar const *str)
 	{
-		std::cout << text.c_str ();
+		std::cout << str;
 	}
 
 	// style interface
@@ -126,9 +125,7 @@ main (int 	  argc,
 	}
 
 	HtmlConverter converter;
-
-	std::string file (argv[1]);
-	Source source (file, converter);
+	Source source (argv[1], converter);
 	source.sputter ();
 
 	return 0;

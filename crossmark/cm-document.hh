@@ -25,10 +25,10 @@
 #ifndef CM_DOCUMENT_HH
 #define CM_DOCUMENT_HH
 
+#include <glib.h>
 #include <list>
 #include <map>
 #include <stack>
-#include <string>
 #include <crossmark/cm-features.hh>
 
 namespace crossmark {
@@ -50,7 +50,7 @@ class Text
 public:
 	virtual ~Text () {}
 
-	virtual void text (const std::string &text) = 0;
+	virtual void text (gchar const *str) = 0;
 };
 
 /*!
@@ -67,11 +67,11 @@ public:
 	virtual ~Note () {}
 
 	virtual void blockNote (Type type, 
-				const std::map<char const *, char const *> *attribs, 
-				const std::string &text) = 0;
+				const std::map<gchar const *, gchar const *> *attribs, 
+				gchar const *text) = 0;
 
 	virtual void inlineNote (Type type, 
-				 const std::string &text) = 0;
+				 gchar const *text) = 0;
 };
 
 /*!
@@ -93,18 +93,18 @@ public:
 	virtual ~Link () {}
 
 	virtual void internalLink (Type type, 
-				   const std::string &anchor) = 0;
+				   gchar const *anchor) = 0;
 
 	virtual void internalCustomLink (Type type, 
-					 const std::string &anchor, 
-					 const std::string &param) = 0;
+					 gchar const *anchor, 
+					 gchar const *param) = 0;
 	
 	virtual void externalLink (Type type, 
-				   const std::string &uri) = 0;
+				   gchar const *uri) = 0;
 
 	virtual void externalCustomLink (Type type, 
-					 const std::string &uri, 
-					 const std::string &param) = 0;
+					 gchar const *uri, 
+					 gchar const *param) = 0;
 };
 
 /*!
@@ -139,12 +139,12 @@ class Image
 public:	
 	virtual ~Image () {}
 
-	virtual void image (const std::string &uri, 
-			    const std::string &caption, 
+	virtual void image (gchar const *uri, 
+			    gchar const *caption, 
 			    const std::map<char const *, char const *> &attribs);
 
 	// helpers
-	std::list<char const *> * parseCamera (const std::string &camera);
+	std::list<char const *> * parseCamera (gchar const *camera);
 	
 };
 
@@ -199,7 +199,7 @@ class Table
 public:
 	virtual ~Table () {}
 
-	virtual void pushTable (const std::string &caption) = 0;
+	virtual void pushTable (gchar const *caption) = 0;
 	virtual void popTable () = 0;
 
 	virtual void pushHeader () = 0;
@@ -233,12 +233,12 @@ class Macro
 public:
 	virtual ~Macro () {}
 
-	virtual void blockMacro (const std::string &name, 
-				 const std::list<char const *> &params, 
-				 const std::map<char const *, char const *> &attribs, 
-				 const std::string &text) = 0;
+	virtual void blockMacro (gchar const *name, 
+				 const std::list<gchar const *> &params, 
+				 const std::map<gchar const *, gchar const *> &attribs, 
+				 gchar const *text) = 0;
 
-	virtual void inlineMacro (const std::string &text) = 0;
+	virtual void inlineMacro (gchar const *text) = 0;
 };
 
 }; // namespace document
@@ -269,7 +269,7 @@ public:
 	virtual void popDocument () = 0;
 
 	// text interface
-	virtual void text (const std::string &text) = 0;
+	virtual void text (gchar const *str) = 0;
 
 	// style interface
 	virtual void pushStyle (document::Style::Type type) = 0;

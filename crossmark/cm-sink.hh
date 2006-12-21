@@ -26,7 +26,6 @@
 #define CM_SINK_HH
 
 #include <stack>
-#include <string>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-document.hh>
 #include <crossmark/cm-stream.hh>
@@ -47,7 +46,7 @@ friend class Sink;
 public:
 	virtual ~Writer ();
 
-	virtual void text (const std::string &text);
+	virtual void text (gchar const *str);
 
 	virtual void pushStyle (document::Style::Type type);
 	virtual void popStyle (document::Style::Type type);
@@ -66,8 +65,7 @@ private:
 class Sink
 {
 public:
-	Sink (const std::string &file, 
-	      Writer &writer);
+	Sink (gchar const *file, Writer &writer);
 
 	virtual ~Sink ();
 };

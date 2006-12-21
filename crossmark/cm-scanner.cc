@@ -19,7 +19,6 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <string>
 #include "cm-scanner-private.hh"
 #include "cm-stream-private.hh"
 
@@ -28,7 +27,7 @@ using namespace crossmark;
 /*!
  * Create scanner for file.
  */
-Scanner::Scanner (const std::string &file)
+Scanner::Scanner (gchar const *file)
   : _istream (* stream::Factory::instance().createInput (file)),
     _ownStream (FALSE),
     _next (NULL),

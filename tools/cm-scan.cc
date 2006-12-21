@@ -33,8 +33,7 @@ main (int 	  argc,
 		return 1;
 	}
 
-	std::string file (argv[1]);
-	Scanner scanner (file);
+	Scanner scanner (argv[1]);
 
 	tokens::Token *token = NULL;
 	do {
