@@ -86,28 +86,28 @@ public:
 
 		switch (type) {
 		case document::Block::BLOCKQUOTE: 
-			structure = "<blockquote>";
-			_structureStack.push ("</blockquote>");
+			structure = "\n<blockquote>";
+			_structureStack.push ("</blockquote>\n");
 			break;
 		case document::Block::PARAGRAPH: 
-			structure = "<p>";
-			_structureStack.push ("</p>");
+			structure = "\n<p>";
+			_structureStack.push ("</p>\n");
 			break;
 		case document::Block::HEADING_1: 
-			structure = "<h1>";
-			_structureStack.push ("</h1>");
+			structure = "\n<h1>";
+			_structureStack.push ("</h1>\n");
 			break;
 		case document::Block::HEADING_2: 
-			structure = "<h2>";
-			_structureStack.push ("</h2>");
+			structure = "\n<h2>";
+			_structureStack.push ("</h2>\n");
 			break;
 		case document::Block::HEADING_3: 
-			structure = "<h3>";
-			_structureStack.push ("</h3>");
+			structure = "\n<h3>";
+			_structureStack.push ("</h3>\n");
 			break;
 		case document::Block::HEADING_4: 
-			structure = "<h4>";
-			_structureStack.push ("</h4>");
+			structure = "\n<h4>";
+			_structureStack.push ("</h4>\n");
 			break;
 		default: 
 			g_assert (FALSE);

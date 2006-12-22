@@ -110,6 +110,22 @@ public:
 	virtual void operator () (void) { _reader.text (_text); }
 	virtual Method::Class getClass () const { return Method::TEXT; }
 
+	/*!
+	 * \todo Actually check before cutting off.
+	 */
+	void rtrim (document::Block::Type type) 
+	{
+		if (type == document::Block::HEADING_3) {
+			gint tail = strlen (" ===");
+			_text[strlen (_text) - tail] = '\0';
+		} else if (type == document::Block::HEADING_4) {
+			gint tail = strlen (" ====");
+			_text[strlen (_text) - tail] = '\0';
+		} else {
+			g_assert_not_reached ();
+		}
+	}
+
 	static Text * fallback (Document &reader, document::Style::Type type) 
 	{ 
 		switch (type) {
@@ -191,6 +207,7 @@ public:
 	virtual ~PushBlock () {}
 	virtual void operator () (void) { _reader.pushBlock (_type); }
 	virtual Method::Class getClass () const { return Method::PUSH_BLOCK; }
+	virtual document::Block::Type getType () const { return _type; }
 
 protected:
 	void setType (document::Block::Type type) { _type = type; }

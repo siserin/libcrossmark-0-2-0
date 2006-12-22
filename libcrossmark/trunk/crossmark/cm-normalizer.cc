@@ -226,10 +226,33 @@ Normalizer::popBlock ()
 {
 	TRACE (__FUNCTION__);
 
+	if (_methods.empty ()) {
+		_reader.popBlock ();
+		return;
+	}
+
 	cancelStyle (document::Style::BOLD);
 	cancelStyle (document::Style::ITALIC);
 	cancelStyle (document::Style::MONOSPACE);
 	cancelStyle (document::Style::UNDERLINE);
+
+	// check if H3 or H4 to cut off lead-out
+	std::list<Method *>::iterator iter;
+	iter = _methods.end ();
+	--iter;
+	if ((*iter)->getClass () == normalizer::Method::PUSH_BLOCK) {
+		PushBlock *push = dynamic_cast<PushBlock *> (*iter);
+		if (push->getType () == document::Block::HEADING_3 ||
+		    push->getType () == document::Block::HEADING_4) {
+
+			iter = _methods.begin ();
+			if ((*iter)->getClass () == normalizer::Method::TEXT) {
+				normalizer::Text *text;
+				text = dynamic_cast<normalizer::Text *> (*iter);
+				text->rtrim (push->getType ());
+			}
+		}
+	}
 
 	std::list<Method *>::reverse_iterator riter;
 	Method *method;
