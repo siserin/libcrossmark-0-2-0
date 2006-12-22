@@ -18,13 +18,13 @@
  */
 
 /*!
- * \file cm-validator-private.hh
- * \brief Crossmark validator.
+ * \file cm-normalizer-private.hh
+ * \brief Crossmark normalizer.
  * \internal
  */
 
-#ifndef CM_VALIDATOR_PRIVATE_HH
-#define CM_VALIDATOR_PRIVATE_HH
+#ifndef CM_NORMALIZER_PRIVATE_HH
+#define CM_NORMALIZER_PRIVATE_HH
 
 #include <glib.h>
 #include <list>
@@ -49,21 +49,21 @@ namespace crossmark {
  * is done using the toolbar and (2) resync when the cursor is moved using
  * mouse or keyboard navigation. 
  * For (2) we may just re-parse from the beginning of the block.
- * \see Validator::resume()
+ * \see Normalizer::resume()
  * 
  * \todo Figure out a better name. Calling it trackers for now because 
 	 it keeps track of keystrokes.
  * \todo This may be exported once we're implementing the input method parser.
  */
 
-class Validator;
+class Normalizer;
 
 /*!
  * \internal
  * \brief Document action proxies.
  * \todo Templatise the methods.
  */
-namespace validator {
+namespace normalizer {
 
 /*!
  * \internal 
@@ -97,7 +97,7 @@ protected:
  */
 class Text : public Method
 {
-friend class ::crossmark::Validator; // DEBUG
+friend class ::crossmark::Normalizer; // DEBUG
 public:
 	Text (Document &reader, gchar const *text) 
 	  : Method (reader),
@@ -182,7 +182,7 @@ private:
  */
 class PushBlock : public Method
 {
-friend class ::crossmark::Validator; // validator can modify type
+friend class ::crossmark::Normalizer; // normalizer can modify type
 public:
 	PushBlock (Document &reader, document::Block::Type type) 
 	  : Method (reader), 
@@ -218,19 +218,19 @@ private:
 	document::Block::Type _type;
 };
 
-}; // namespace validator
+}; // namespace normalizer
 
 /*
  * \internal
- * \brief Extended crossmark::Document interface that is used between parser and validator.
+ * \brief Extended crossmark::Document interface that is used between parser and normalizer.
  *
  * \todo Pull out this classes' public interface for the <i>input method</i>.
  */
-class Validator : public Document
+class Normalizer : public Document
 {
 public:
-	Validator (Document &reader);
-	virtual ~Validator ();
+	Normalizer (Document &reader);
+	virtual ~Normalizer ();
 
 	/*!
 	 * This sets the tracker to initial state. 
@@ -270,7 +270,7 @@ public:
 	virtual void popBlock ();
 
 private:
-	std::list<validator::Method *> _methods;
+	std::list<normalizer::Method *> _methods;
 	Document &_reader;
 
 	gboolean _isBold;
@@ -284,4 +284,4 @@ private:
 
 };  // namespace crossmark
 
-#endif /* CM_VALIDATOR_PRIVATE_HH */
+#endif /* CM_NORMALIZER_PRIVATE_HH */

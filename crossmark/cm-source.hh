@@ -35,7 +35,7 @@ namespace token {
 	class Token;
 };
 class Scanner;
-class Validator;
+class Normalizer;
 
 /*!
  * \brief Crossmark parser implementation.
@@ -64,8 +64,8 @@ protected:
 	token::Token * parseText (const token::Token *first);
 
 private:
-	Scanner   *_scanner;
-	Validator *_validator;
+	Scanner    *_scanner;
+	Normalizer *_normalizer;
 };
 
 };  // namespace crossmark

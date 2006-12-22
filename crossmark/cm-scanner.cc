@@ -175,9 +175,6 @@ Scanner::scanEnd (gunichar c)
  * Must be called before scanNewline() because headings may result from
  * a special combination of characters over several lines.
  *
- * \todo This prolly fails on a file with a single newline on top, 
- *	 followed by a heading. Maybe we should start scanning a file
-	 with a _c1 of '\n' to prevent that.
  * \todo Better error handling, especially for H1, H2.
  * \todo Fall back if H2, H3 not terminated correctly?
  */

@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "cm-validator-private.hh"
+#include "cm-normalizer-private.hh"
 // DEBUG
 #include <iostream>
 
@@ -25,19 +25,19 @@
 //#ifdef DEBUG
 #include <iostream>
 #define _dump(M) dump(M)
-#define TRACE(M) fprintf(stderr,"Validator::");fprintf(stderr,M);fprintf(stderr,"\n");
+#define TRACE(M) fprintf(stderr,"Normalizer::");fprintf(stderr,M);fprintf(stderr,"\n");
 #else
 #define TRACE(M)
 #define _dump(M)
 #endif
 
 using namespace crossmark;
-using namespace crossmark::validator;
+using namespace crossmark::normalizer;
 
 /*!
- * Create validator for reader.
+ * Create normalizer for reader.
  */
-Validator::Validator (Document &reader)
+Normalizer::Normalizer (Document &reader)
   : _reader (reader), 
     _isBold (FALSE),
     _isItalic (FALSE),
@@ -48,14 +48,14 @@ Validator::Validator (Document &reader)
 /*!
  * Dtor.
  */
-Validator::~Validator ()
+Normalizer::~Normalizer ()
 {}
 
 /*!
  * \sa Document::pushDocument()
  */
 void
-Validator::pushDocument ()
+Normalizer::pushDocument ()
 {
 	TRACE (__FUNCTION__);
 
@@ -66,7 +66,7 @@ Validator::pushDocument ()
  * \sa Document::popDocument()
  */
 void
-Validator::popDocument ()
+Normalizer::popDocument ()
 {
 	TRACE (__FUNCTION__);
 
@@ -77,11 +77,11 @@ Validator::popDocument ()
  * \sa Document::text()
  */
 void
-Validator::text (gchar const *str)
+Normalizer::text (gchar const *str)
 {
 	TRACE (__FUNCTION__);
 
-	_methods.push_front (new validator::Text (_reader, str));
+	_methods.push_front (new normalizer::Text (_reader, str));
 }
 
 /*!
@@ -92,7 +92,7 @@ Validator::text (gchar const *str)
 	 If it was the second we'd just add the fallback for a nested pushStyle.
  */
 void
-Validator::pushStyle (document::Style::Type type)
+Normalizer::pushStyle (document::Style::Type type)
 {
 	TRACE (__FUNCTION__);
 
@@ -103,7 +103,7 @@ Validator::pushStyle (document::Style::Type type)
 	    _isMonospace && type == document::Style::MONOSPACE ||
 	    _isUnderline && type == document::Style::UNDERLINE) {
 
-		method = validator::Text::fallback (_reader, type);
+		method = normalizer::Text::fallback (_reader, type);
 
 	} else {
 		method = new PushStyle (_reader, type);
@@ -123,7 +123,7 @@ Validator::pushStyle (document::Style::Type type)
  * \sa Document::cancelStyle()
  */
 void
-Validator::cancelStyle (document::Style::Type type)
+Normalizer::cancelStyle (document::Style::Type type)
 {
 	TRACE (__FUNCTION__);
 
@@ -170,7 +170,7 @@ Validator::cancelStyle (document::Style::Type type)
 	 unwind nested 
  */
 void
-Validator::popStyle (document::Style::Type type)
+Normalizer::popStyle (document::Style::Type type)
 {
 	TRACE (__FUNCTION__);
 
@@ -185,7 +185,7 @@ Validator::popStyle (document::Style::Type type)
 
 	} else {
 		// TODO maybe use cancelStyle() here?
-		method = validator::Text::fallback (_reader, type);
+		method = normalizer::Text::fallback (_reader, type);
 	}
 
 	_methods.push_front (method);
@@ -200,7 +200,7 @@ Validator::popStyle (document::Style::Type type)
  * \sa Document::pushBlock()
  */
 void
-Validator::pushBlock (document::Block::Type type)
+Normalizer::pushBlock (document::Block::Type type)
 {
 	TRACE (__FUNCTION__);
 
@@ -209,11 +209,11 @@ Validator::pushBlock (document::Block::Type type)
 
 	} else {
 		// change block type
-		std::list<validator::Method *>::iterator iter;
-		validator::PushBlock *block;
+		std::list<normalizer::Method *>::iterator iter;
+		normalizer::PushBlock *block;
 		iter = _methods.end ();
 		--iter;
-		block = dynamic_cast<validator::PushBlock *> (*iter);
+		block = dynamic_cast<normalizer::PushBlock *> (*iter);
 		block->setType (type);
 	}
 }
@@ -222,7 +222,7 @@ Validator::pushBlock (document::Block::Type type)
  * \sa Document::popBlock()
  */
 void
-Validator::popBlock ()
+Normalizer::popBlock ()
 {
 	TRACE (__FUNCTION__);
 
@@ -251,7 +251,7 @@ Validator::popBlock ()
  * \note This is used for debugging purpose only.
  */
 void
-Validator::dump (gchar const * indent)
+Normalizer::dump (gchar const * indent)
 {
 	std::list<Method *>::reverse_iterator riter;
 	
@@ -267,7 +267,7 @@ Validator::dump (gchar const * indent)
 		} else if ((*riter)->getClass () == Method::POP_BLOCK) {
 			std::cout << " </block>" << std::endl;
 		} else if ((*riter)->getClass () == Method::TEXT) {
-			validator::Text *text = dynamic_cast<validator::Text *> (*riter);
+			normalizer::Text *text = dynamic_cast<normalizer::Text *> (*riter);
 			std::cout << " \"" << text->_text << "\"" << std::endl;
 		} else {
 			std::cout << std::endl;
