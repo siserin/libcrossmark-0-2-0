@@ -38,7 +38,7 @@ noinst_HEADERS = \
 	cm-stdio-stream-private.hh \
 	cm-string-private.hh \
 	cm-stream-private.hh \
-	cm-validator-private.hh
+	cm-normalizer-private.hh
 
 AM_CPPFLAGS = \
 	$(DEBUG_CXXFLAGS) \
@@ -63,7 +63,7 @@ libcrossmark_1_la_SOURCES = \
 	cm-source.cc \
 	cm-stdio-stream.cc \
 	cm-stream.cc \
-	cm-validator.cc \
+	cm-normalizer.cc \
 	cm-writer.cc
 
 gsf_sources = \
