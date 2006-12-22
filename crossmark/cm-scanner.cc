@@ -83,8 +83,14 @@ Scanner::fetchToken ()
 			_c1 = _istream.getChar ();
 		}
 
+		// only possible if not currently 
+		// scanning text
+		if (!text && 
+		    (token = scanHeading ())) {
+			return _return (token);
+		}
+
 		if ((_next = scanEnd ()) ||
-		    (_next = scanHeading ()) ||
 		    (_next = scanNewline ()) ||
 		    (_next = scanIndent ())) {
 			if (text) {
@@ -207,8 +213,10 @@ Scanner::scanHeading ()
 			++i;
 			_c1 = _istream.getChar ();
 		} while (_c1 == '=');
-		// here we would put support for shorthand H1, H2
-		// lead in with "=" and "==" respectively
+		// eat leading ' ' if there
+		if (_c1 == ' ') {
+			_c1 = _istream.getChar ();
+		}
 		if (i == 3) {
 			return new token::Heading (token::Heading::HEADING_3);
 		} else if (i == 4) {
