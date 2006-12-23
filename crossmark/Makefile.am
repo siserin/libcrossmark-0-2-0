@@ -28,6 +28,7 @@ libcrossmark_1_includedir = $(includedir)/libcrossmark-1/crossmark
 libcrossmark_1_include_HEADERS = \
 	crossmark.hh \
 	cm-document.hh \
+	cm-features.hh \
 	cm-sink.hh \
 	cm-source.hh \
 	cm-stream.hh
