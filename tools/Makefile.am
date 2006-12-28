@@ -5,7 +5,15 @@ AM_CXXFLAGS = \
 
 
 
-bin_PROGRAMS = cm2html
+bin_PROGRAMS = \
+	cm2dox \
+	cm2html
+
+cm2dox_LDADD = \
+	$(DEPS_LIBS) \
+	../crossmark/libcrossmark-1.la
+
+cm2dox_SOURCES = cm2dox.cc
 
 cm2html_LDADD = \
 	$(DEPS_LIBS) \

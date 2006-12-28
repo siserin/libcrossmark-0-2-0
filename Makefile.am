@@ -16,6 +16,7 @@ EXTRA_DIST = \
 	COPYING			\
 	HACKING			\
 	INSTALL			\
+	README			\
 	autogen.sh		\
 	libcrossmark-1.pc.in	\
 	python.m4

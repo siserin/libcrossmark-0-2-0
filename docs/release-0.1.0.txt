@@ -20,7 +20,7 @@ effort, in particular
 # Fridrich Strba: architecture review, advanced C++ tips.
 
 [1] http://wiki.laptop.org/go/Crossmark
-[2] http://laptop.org
-[3] http://www.abisource.com
 
-- Rob Staudinger
+[2] http://laptop.org
+
+[3] http://www.abisource.com
