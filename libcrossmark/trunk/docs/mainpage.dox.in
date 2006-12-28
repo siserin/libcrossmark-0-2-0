@@ -1,5 +1,3 @@
-/*!
-
 \mainpage 
 
 \li \ref release-notes
@@ -7,7 +5,3 @@
 \li \ref authors
 \li \ref copying
 \li \ref todo
-
-\include README
-
-*/

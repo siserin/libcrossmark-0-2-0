@@ -1,0 +1,10 @@
+Readme
+======
+
+Libcrossmark is a set of tools for working with documents in 
+crossmark[1] format. More information can be found at [2].
+
+[1] http://wiki.laptop.org/go/Crossmark
+
+[2] http://abisource.com/projects/libcrossmark
+
