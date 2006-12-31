@@ -80,7 +80,7 @@ Scanner::fetchToken ()
 
 		// look ahead
 		if (_c1 == 0) {
-			_c1 = _istream.getChar ();
+			_c1 = _istream.read ();
 		}
 
 		// only possible if not currently 
@@ -104,7 +104,7 @@ Scanner::fetchToken ()
 		}
 
 		// look further
-		c2 = _istream.getChar ();
+		c2 = _istream.read ();
 
 		tail = 0;
 		if ((_next = scanEnd (c2))) {
@@ -192,14 +192,14 @@ Scanner::scanHeading ()
 		if (_c1 == '=') {
 			// H1
 			do {
-				_c1 = _istream.getChar ();
+				_c1 = _istream.read ();
 			} while (_c1 == '=');
 			g_assert (_c1 == '\n');
 			return new token::Heading (token::Heading::HEADING_1);
 		} else if (_c1 == '-') {
 			// H2
 			do {
-				_c1 = _istream.getChar ();
+				_c1 = _istream.read ();
 			} while (_c1 == '-');
 			g_assert (_c1 == '\n');
 			return new token::Heading (token::Heading::HEADING_2);
@@ -211,11 +211,11 @@ Scanner::scanHeading ()
 		gint i = 0;
 		do {
 			++i;
-			_c1 = _istream.getChar ();
+			_c1 = _istream.read ();
 		} while (_c1 == '=');
 		// eat leading ' ' if there
 		if (_c1 == ' ') {
-			_c1 = _istream.getChar ();
+			_c1 = _istream.read ();
 		}
 		if (i == 3) {
 			return new token::Heading (token::Heading::HEADING_3);
@@ -243,7 +243,7 @@ Scanner::scanNewline ()
 	isParagraph = FALSE;
 	if (_c1 == '\n') {
 		do {
-			_c1 = _istream.getChar ();
+			_c1 = _istream.read ();
 			if (_c1 == '\n') { 
 				isParagraph = TRUE;
 			}

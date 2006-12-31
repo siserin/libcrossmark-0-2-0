@@ -45,7 +45,7 @@ public:
 	GsfInput (gchar const *file);
 	GsfInput (::GsfInput *input);
 	virtual ~GsfInput ();
-	virtual gunichar getChar ();
+	virtual gunichar read ();
 
 private:
 	::GsfInput *_input;

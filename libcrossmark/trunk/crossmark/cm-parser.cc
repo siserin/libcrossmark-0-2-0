@@ -17,13 +17,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "cm-source.hh"
+#include "cm-parser.hh"
 #include "cm-scanner-private.hh"
 #include "cm-normalizer-private.hh"
 
 #if 0
 //#ifdef DEBUG
-#define TRACE(M) fprintf(stderr,"Source::");fprintf(stderr,M);fprintf(stderr,"\n");
+#define TRACE(M) fprintf(stderr,"Parser::");fprintf(stderr,M);fprintf(stderr,"\n");
 #else
 #define TRACE(M)
 #endif
@@ -31,17 +31,17 @@
 using namespace crossmark;
 
 /*!
- * Create a source for filename and reader.
+ * Create a parser for filename and reader.
  */
-Source::Source (gchar const *file, Document &reader)
+Parser::Parser (gchar const *file, Document &reader)
   : _scanner (new Scanner (file)),
     _normalizer (new Normalizer (reader))
 {}
 
 /*!
- * Create a source input stream and reader.
+ * Create a parser input stream and reader.
  */
-Source::Source (stream::Input &istream, Document &reader)
+Parser::Parser (stream::Input &istream, Document &reader)
   : _scanner (new Scanner (istream)),
     _normalizer (new Normalizer (reader))
 {}
@@ -49,7 +49,7 @@ Source::Source (stream::Input &istream, Document &reader)
 /*!
  * Dtor.
  */
-Source::~Source ()
+Parser::~Parser ()
 {
 	delete _scanner;
 }
@@ -87,7 +87,7 @@ underline  := style-lu ( text | markup )* style-ru
  * \todo error handling;
  */
 gboolean 
-Source::sputter ()
+Parser::sputter ()
 {
 	parseDocument ();
 	return TRUE;
@@ -97,7 +97,7 @@ Source::sputter ()
  * Toplevel parsing method.
  */
 void 
-Source::parseDocument ()
+Parser::parseDocument ()
 {
 	TRACE (__FUNCTION__);
 
@@ -147,7 +147,7 @@ Source::parseDocument ()
  * Parse a paragraph.
  */
 token::Token * 
-Source::parseBlock (const token::Token *first)
+Parser::parseBlock (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
@@ -194,7 +194,7 @@ Source::parseBlock (const token::Token *first)
  * Parse a blockquote.
  */
 token::Token * 
-Source::parseBlockquote (const token::Token *first)
+Parser::parseBlockquote (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
@@ -238,7 +238,7 @@ Source::parseBlockquote (const token::Token *first)
  * \todo What to do with tabs in running text?
  */
 token::Token * 
-Source::parseLine (const token::Token *first)
+Parser::parseLine (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
@@ -293,7 +293,7 @@ Source::parseLine (const token::Token *first)
  * Parse styled text "markup".
  */
 token::Token * 
-Source::parseMarkup (const token::Token *first)
+Parser::parseMarkup (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 
@@ -326,7 +326,7 @@ Source::parseMarkup (const token::Token *first)
  * \todo Abort at newline?
  */
 token::Token * 
-Source::parseStyle (const token::Token *first, document::Style::Type type_)
+Parser::parseStyle (const token::Token *first, document::Style::Type type_)
 {
 	TRACE (__FUNCTION__);
 
@@ -388,7 +388,7 @@ Source::parseStyle (const token::Token *first, document::Style::Type type_)
  * Parse plain text.
  */
 token::Token * 
-Source::parseText (const token::Token *first)
+Parser::parseText (const token::Token *first)
 {
 	TRACE (__FUNCTION__);
 

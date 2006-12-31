@@ -47,7 +47,7 @@ class Input
 {
 public:
 	virtual ~Input () {}
-	virtual gunichar getChar () = 0;
+	virtual gunichar read () = 0;
 };
 
 /*!

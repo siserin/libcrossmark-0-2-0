@@ -47,7 +47,7 @@ public:
 	StdInput (gchar const *file);
 	StdInput (FILE *istream);
 	virtual ~StdInput ();
-	virtual gunichar getChar ();
+	virtual gunichar read ();
 
 protected:
 	FILE     *_istream;
