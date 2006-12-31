@@ -26,8 +26,8 @@
 #define CROSSMARK_HH
 
 #include <crossmark/cm-features.hh>
-#include <crossmark/cm-sink.hh>
-#include <crossmark/cm-source.hh>
+#include <crossmark/cm-parser.hh>
+#include <crossmark/cm-writer.hh>
 
 /*!
  * \brief Toplevel crossmark namespace. 

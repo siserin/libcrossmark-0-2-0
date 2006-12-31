@@ -29,8 +29,8 @@ libcrossmark_1_include_HEADERS = \
 	crossmark.hh \
 	cm-document.hh \
 	cm-features.hh \
-	cm-sink.hh \
-	cm-source.hh \
+	cm-writer.hh \
+	cm-parser.hh \
 	cm-stream.hh
 
 noinst_HEADERS = \
@@ -60,8 +60,7 @@ libcrossmark_1_la_LIBADD = \
 
 libcrossmark_1_la_SOURCES = \
 	cm-scanner.cc \
-	cm-sink.cc \
-	cm-source.cc \
+	cm-parser.cc \
 	cm-stdio-stream.cc \
 	cm-stream.cc \
 	cm-normalizer.cc \

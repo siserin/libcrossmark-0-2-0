@@ -89,12 +89,12 @@ stream::GsfInput::~GsfInput ()
 }
 
 /*!
- * \sa stream::Input::getChar()
+ * \sa stream::Input::read()
  * \todo Use g_utf8_get_char_validated() ?
  * \todo This needs a gsf-savvy hand and some error handling.
  */
 gunichar
-stream::GsfInput::getChar ()
+stream::GsfInput::read ()
 {
 	guint8        buf[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
 	int 	      mask;

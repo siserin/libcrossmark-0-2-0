@@ -18,13 +18,14 @@
  */
 
 /*!
- * \file cm-sink.hh
+ * \file cm-writer.hh
  * \brief Crossmark output.
  */
 
-#ifndef CM_SINK_HH
-#define CM_SINK_HH
+#ifndef CM_WRITER_HH
+#define CM_WRITER_HH
 
+#include <glib.h>
 #include <stack>
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-document.hh>
@@ -42,8 +43,11 @@ namespace crossmark {
  */
 class Writer : public Document
 {
-friend class Sink;
 public:
+	Writer (gchar const *file);
+
+	Writer (stream::Output &ostream);
+
 	virtual ~Writer ();
 
 	virtual void text (gchar const *str);
@@ -54,22 +58,10 @@ public:
 	// TODO implement
 
 private:
-	void setStream (FILE *ostream);
-
-	FILE *_ostream;
-};
-
-/*!
- * \brief Wrapper for opening and closing files or streams to write to.
- */
-class Sink
-{
-public:
-	Sink (gchar const *file, Writer &writer);
-
-	virtual ~Sink ();
+	stream::Output &_ostream;
+	gboolean	_ownStream;
 };
 
 };  // namespace crossmark
 
-#endif /* CM_SINK_HH */
+#endif /* CM_WRITER_HH */

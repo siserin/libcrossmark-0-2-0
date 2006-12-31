@@ -17,10 +17,36 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <glib.h>
 #include "crossmark.hh"
+#include "cm-stream-private.hh"
 
 using namespace crossmark;
+
+/*!
+ * Create writer for file.
+ */
+Writer::Writer (gchar const *file)
+  : _ostream (* stream::Factory::instance().createOutput (file)),
+    _ownStream (TRUE)
+{}
+
+/*!
+ * Create writer for stream.
+ */
+Writer::Writer (stream::Output &ostream)
+  : _ostream (ostream),
+    _ownStream (FALSE)
+{}
+
+/*!
+ * Dtor.
+ */
+Writer::~Writer ()
+{
+	if (_ownStream) {
+		delete &_ostream;
+	}
+}
 
 /*!
  * \sa Document::text()
@@ -28,9 +54,7 @@ using namespace crossmark;
 void 
 Writer::text (gchar const *str)
 {
-	g_assert (_ostream);
-
-	fputs (str, _ostream);
+	_ostream.write (str);
 }
 
 /*!
@@ -39,20 +63,18 @@ Writer::text (gchar const *str)
 void 
 Writer::pushStyle (document::Style::Type type)
 {
-	g_assert (_ostream);
-
 	switch (type) {
 	case document::Style::BOLD:
-		fputc ('*', _ostream);
+		_ostream.write ('*');
 		break;
 	case document::Style::ITALIC:
-		fputc ('/', _ostream);
+		_ostream.write ('/');
 		break;
 	case document::Style::MONOSPACE:
-		fputc ('`', _ostream);
+		_ostream.write ('`');
 		break;
 	case document::Style::UNDERLINE:
-		fputc ('_', _ostream);
+		_ostream.write ('_');
 		break;
 	default:
 		g_warning ("%s: type == %d", 
@@ -66,20 +88,18 @@ Writer::pushStyle (document::Style::Type type)
 void 
 Writer::popStyle (document::Style::Type type)
 {
-	g_assert (_ostream);
-
 	switch (type) {
 	case document::Style::BOLD:
-		fputc ('*', _ostream);
+		_ostream.write ('*');
 		break;
 	case document::Style::ITALIC:
-		fputc ('/', _ostream);
+		_ostream.write ('/');
 		break;
 	case document::Style::MONOSPACE:
-		fputc ('`', _ostream);
+		_ostream.write ('`');
 		break;
 	case document::Style::UNDERLINE:
-		fputc ('_', _ostream);
+		_ostream.write ('_');
 		break;
 	default:
 		g_warning ("%s: type == %d", 

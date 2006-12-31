@@ -80,11 +80,11 @@ StdInput::~StdInput ()
 }
 
 /*!
- * \sa stream::Input::getChar()
+ * \sa stream::Input::read()
  * \todo Use g_utf8_get_char_validated() ?
  */
 gunichar
-StdInput::getChar ()
+StdInput::read ()
 {
 	gchar        buf[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
 	int 	     mask;

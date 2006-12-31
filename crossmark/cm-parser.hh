@@ -18,12 +18,12 @@
  */
 
 /*!
- * \file cm-source.hh
+ * \file cm-parser.hh
  * \brief Crossmark input.
  */
 
-#ifndef CM_SOURCE_HH
-#define CM_SOURCE_HH
+#ifndef CM_PARSER_HH
+#define CM_PARSER_HH
 
 #include <crossmark/cm-features.hh>
 #include <crossmark/cm-document.hh>
@@ -40,14 +40,14 @@ class Normalizer;
 /*!
  * \brief Crossmark parser implementation.
  */
-class Source 
+class Parser 
 {
 public:
-	Source (gchar const *file, Document &reader);
+	Parser (gchar const *file, Document &reader);
 
-	Source (stream::Input &istream, Document &reader);
+	Parser (stream::Input &istream, Document &reader);
 
-	virtual ~Source ();
+	virtual ~Parser ();
 
 	/*!
 	 * \todo use GError or exceptions?
@@ -70,4 +70,4 @@ private:
 
 };  // namespace crossmark
 
-#endif /* CM_SOURCE_HH */
+#endif /* CM_PARSER_HH */

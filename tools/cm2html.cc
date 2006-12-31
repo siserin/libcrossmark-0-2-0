@@ -141,8 +141,8 @@ main (int 	  argc,
 	}
 
 	HtmlConverter converter;
-	Source source (argv[1], converter);
-	source.sputter ();
+	Parser parser (argv[1], converter);
+	parser.sputter ();
 
 	return 0;
 }
