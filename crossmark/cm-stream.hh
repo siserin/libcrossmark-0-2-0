@@ -62,7 +62,7 @@ public:
 };
 
 Input * createStdInput (FILE *istream);
-Input * createStdOutput (FILE *ostream);
+Output * createStdOutput (FILE *ostream);
 
 #ifdef LIBCROSSMARK_FEATURE_LIBGSF
 Input * createGsfInput (::GsfInput *input);

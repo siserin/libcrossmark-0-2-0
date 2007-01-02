@@ -28,8 +28,8 @@ using namespace crossmark::stream;
 /*!
  * Create input from a FILE*.
  */
-Input * 
-createStdInput (FILE *istream)
+stream::Input * 
+stream::createStdInput (FILE *istream)
 {
 	return new StdInput (istream);
 }
@@ -37,8 +37,8 @@ createStdInput (FILE *istream)
 /*!
  * Create output from a FILE*.
  */
-Output * 
-createStdOutput (FILE *ostream)
+stream::Output * 
+stream::createStdOutput (FILE *ostream)
 {
 	return new StdOutput (ostream);
 }
