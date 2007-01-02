@@ -1,10 +1,22 @@
-Readme
+README
 ======
 
-Libcrossmark is a set of tools for working with documents in 
-crossmark[1] format. More information can be found at [2].
+Libcrossmark is a library for working with documents in crossmark 
+syntax, see [1] for more info. More info about libcrossmark itself
+can be found at [2].
+
+Please note that libcrossmark is currently not ready for being used in
+multi-threaded applications, in particular when multiple threads are 
+reading documents at the same time. Should be easily fixable, though.
+
+Warning
+-------
+
+This software is in early prototype stadium. Releases are only made 
+to gather feedback from interested developers. Section 15. of the 
+COPYING file distributed with this package provides a more elaborate 
+disclaimer.
 
 [1] http://wiki.laptop.org/go/Crossmark
 
-[2] http://abisource.com/projects/libcrossmark
-
+[2] http://www.abisource.com/projects/libcrossmark/
