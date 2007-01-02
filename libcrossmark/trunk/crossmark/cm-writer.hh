@@ -45,21 +45,25 @@ class Writer : public Document
 {
 public:
 	Writer (gchar const *file);
-
 	Writer (stream::Output &ostream);
 
 	virtual ~Writer ();
+
+	virtual void pushDocument ();
+	virtual void popDocument ();
 
 	virtual void text (gchar const *str);
 
 	virtual void pushStyle (document::Style::Type type);
 	virtual void popStyle (document::Style::Type type);
 
-	// TODO implement
+	virtual void pushBlock (document::Block::Type type);
+	virtual void popBlock ();
 
 private:
-	stream::Output &_ostream;
-	gboolean	_ownStream;
+	stream::Output 		&_ostream;
+	gboolean		 _ownStream;
+	document::Block::Type 	 _currentBlock;
 };
 
 };  // namespace crossmark

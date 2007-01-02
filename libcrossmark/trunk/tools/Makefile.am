@@ -7,7 +7,8 @@ AM_CXXFLAGS = \
 
 bin_PROGRAMS = \
 	cm2dox \
-	cm2html
+	cm2html \
+	html2cm
 
 cm2dox_LDADD = \
 	$(DEPS_LIBS) \
@@ -20,6 +21,13 @@ cm2html_LDADD = \
 	../crossmark/libcrossmark-1.la
 
 cm2html_SOURCES = cm2html.cc
+
+
+html2cm_LDADD = \
+	$(DEPS_LIBS) \
+	../crossmark/libcrossmark-1.la
+
+html2cm_SOURCES = html2cm.cc
 
 
 

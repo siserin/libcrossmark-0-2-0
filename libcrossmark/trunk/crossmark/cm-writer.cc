@@ -48,6 +48,14 @@ Writer::~Writer ()
 	}
 }
 
+void 
+Writer::pushDocument ()
+{}
+
+void 
+Writer::popDocument ()
+{}
+
 /*!
  * \sa Document::text()
  */
@@ -104,5 +112,39 @@ Writer::popStyle (document::Style::Type type)
 	default:
 		g_warning ("%s: type == %d", 
 			   __FUNCTION__, type);
+	}
+}
+
+void 
+Writer::pushBlock (document::Block::Type type)
+{
+	_currentBlock = type;
+}
+
+void 
+Writer::popBlock ()
+{
+	switch (_currentBlock) {
+	case document::Block::BLOCKQUOTE:
+		_ostream.write ("\n\n\n");
+		break;
+	case document::Block::PARAGRAPH:
+		_ostream.write ("\n\n");
+		break;
+	case document::Block::HEADING_1:
+		_ostream.write ("\n\n");
+		break;
+	case document::Block::HEADING_2:
+		_ostream.write ("\n\n");
+		break;
+	case document::Block::HEADING_3:
+		_ostream.write ("\n\n");
+		break;
+	case document::Block::HEADING_4:
+		_ostream.write ("\n\n");
+		break;
+	default:
+		g_warning ("%s: type == %d", 
+			   __FUNCTION__, _currentBlock);
 	}
 }
