@@ -2,6 +2,7 @@
 AM_CPPFLAGS = \
 	$(PYTHON_INCLUDES) \
 	$(DEPS_CFLAGS) \
+	-I$(srcdir) \
 	-I$(top_srcdir)
 
 pkgpyexecdir = @pyexecdir@
@@ -19,8 +20,11 @@ _crossmark_la_LIBADD = \
 _crossmark_la_SOURCES = \
 	crossmark_wrap.cxx
 
-crossmark_wrap.cxx: 
+crossmark_wrap.cxx: crossmark.swig
 	$(SWIG) -c++ -python $(srcdir)/crossmark.swig
+
+noinst_HEADERS = \
+	document.hh
 
 BUILT_SOURCES = \
 	crossmark_wrap.cxx
