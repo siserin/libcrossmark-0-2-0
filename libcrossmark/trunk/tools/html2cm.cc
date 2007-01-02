@@ -17,6 +17,13 @@ start (GMarkupParseContext *context,
 {
 	Writer *writer = static_cast<Writer *> (writer_);
 	
+	// skip these
+	if (0 == strcmp (element, "html") || 
+	    0 == strcmp (element, "body")) {
+		return;
+	}
+
+	// block
 	if (0 == strcmp (element, "blockquote")) {
 		writer->pushBlock (document::Block::PARAGRAPH);
 	} else if (0 == strcmp (element, "p")) {
@@ -29,6 +36,16 @@ start (GMarkupParseContext *context,
 		writer->pushBlock (document::Block::HEADING_3);
 	} else if (0 == strcmp (element, "h4")) {
 		writer->pushBlock (document::Block::HEADING_4);
+	} 
+	// inline
+	else if (0 == strcmp (element, "b")) {
+		writer->pushStyle (document::Style::BOLD);
+	} else if (0 == strcmp (element, "i")) {
+		writer->pushStyle (document::Style::ITALIC);
+	} else if (0 == strcmp (element, "code")) {
+		writer->pushStyle (document::Style::MONOSPACE);
+	} else if (0 == strcmp (element, "u")) {
+		writer->pushStyle (document::Style::UNDERLINE);
 	} else {
 		g_assert (FALSE);
 	}
@@ -42,7 +59,38 @@ end (GMarkupParseContext *context,
 {
 	Writer *writer = static_cast<Writer *> (writer_);
 
-	writer->popBlock ();
+	// skip these
+	if (0 == strcmp (element, "html") || 
+	    0 == strcmp (element, "body")) {
+		return;
+	}
+
+	// block
+	if (0 == strcmp (element, "blockquote")) {
+		writer->popBlock ();
+	} else if (0 == strcmp (element, "p")) {
+		writer->popBlock ();
+	} else if (0 == strcmp (element, "h1")) {
+		writer->popBlock ();
+	} else if (0 == strcmp (element, "h2")) {
+		writer->popBlock ();
+	} else if (0 == strcmp (element, "h3")) {
+		writer->popBlock ();
+	} else if (0 == strcmp (element, "h4")) {
+		writer->popBlock ();
+	} 
+	// inline
+	else if (0 == strcmp (element, "b")) {
+		writer->popStyle (document::Style::BOLD);
+	} else if (0 == strcmp (element, "i")) {
+		writer->popStyle (document::Style::ITALIC);
+	} else if (0 == strcmp (element, "code")) {
+		writer->popStyle (document::Style::MONOSPACE);
+	} else if (0 == strcmp (element, "u")) {
+		writer->popStyle (document::Style::UNDERLINE);
+	} else {
+		g_assert (FALSE);
+	}
 }
 
 static void
@@ -53,6 +101,10 @@ text (GMarkupParseContext *context,
       GError             **error)
 {
 	Writer *writer = static_cast<Writer *> (writer_);
+
+	if (*text == '\n') {
+		return;
+	}
 
 	writer->text (text);
 }
@@ -77,7 +129,8 @@ main (int 	  argc,
 	parser.end_element = end;
 	parser.text = text;
 
-	Writer writer (*stream::createStdOutput (stdout));
+	stream::Output *output = stream::createStdOutput (stdout);
+	Writer writer (*output);
 	context = g_markup_parse_context_new (&parser, (GMarkupParseFlags) 0, 
 					      &writer, NULL);
 
@@ -98,6 +151,7 @@ main (int 	  argc,
 		return 1;
 	}
 
+	delete output;
 	g_free (buffer);
 
 	return 0;
