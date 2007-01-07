@@ -17,26 +17,22 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef DOCUMENT_HH
-#define DOCUMENT_HH
+#ifndef PARSER_HH
+#define PARSER_HH
 
-#include <crossmark/cm-document.hh>
+#include <crossmark/cm-parser.hh>
+#include "document.hh"
 
-class Document : public crossmark::Document
+class Parser : public crossmark::Parser
 {
 public:
-	virtual ~Document () {}
+	Parser (const char *file, Document *reader)
+	  : crossmark::Parser (file, *reader)
+	{}
 
-	virtual void pushDocument () {}
-	virtual void popDocument () {}
+	virtual ~Parser ();
 
-	virtual void text (const char *str) {}
-
-	virtual void pushStyle (Document::Style::Type type) {}
-	virtual void popStyle (Document::Style::Type type) {}
-
-	virtual void pushBlock (Document::Block::Type type) {}
-	virtual void popBlock () {}
+	bool sputter ();
 };
 
-#endif // DOCUMENT_HH
+#endif // PARSER_HH

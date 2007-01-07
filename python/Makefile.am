@@ -6,33 +6,41 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)
 
 pkgpyexecdir = @pyexecdir@
-pkgpyexec_DATA = crossmark.py
-pkgpyexec_LTLIBRARIES = _crossmark.la
+pkgpyexec_DATA = crossmark.py _crossmark.so
+# TODO this gets installed, but noinst_LTLIBRARIES doesn't create the .so for some reason
+pkgpyexec_LTLIBRARIES = libcrossmark.la
 
-_crossmark_la_LDFLAGS = \
-	-module \
+libcrossmark_la_LDFLAGS = \
 	-avoid-version
+	-module -no-undefined
 
-_crossmark_la_LIBADD = \
+libcrossmark_la_LIBADD = \
 	$(DEPS_LIBS) \
 	../crossmark/libcrossmark-1.la
 
-_crossmark_la_SOURCES = \
-	crossmark_wrap.cxx
+libcrossmark_la_SOURCES = \
+	crossmark-wrap.cc
 
-crossmark_wrap.cxx: crossmark.swig
-	$(SWIG) -c++ -python $(srcdir)/crossmark.swig
+crossmark-wrap.cc: crossmark.swig
+	$(SWIG) -Wall -c++ -python -o $@ $^
 
 noinst_HEADERS = \
-	document.hh
+	document.hh \
+	parser.hh
 
 BUILT_SOURCES = \
-	crossmark_wrap.cxx
+	crossmark-wrap.cc
 
 EXTRA_DIST = \
 	crossmark.swig \
-	$(pkgpyexec_DATA)
+	crossmark.py
+
+CLEANFILES = \
+	_crossmark.so
 
 DISTCLEANFILES = \
-	crossmark_wrap.cxx \
-	crossmark.py
+	crossmark-wrap.cc \
+	$(pkgpyexec_DATA)
+
+_crossmark.so: libcrossmark.la
+	cp $^ $@
