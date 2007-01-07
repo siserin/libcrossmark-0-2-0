@@ -43,4 +43,4 @@ DISTCLEANFILES = \
 	$(pkgpyexec_DATA)
 
 _crossmark.so: libcrossmark.la
-	cp $^ $@
+	cp .libs/libcrossmark.so $@
