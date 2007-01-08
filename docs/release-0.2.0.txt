@@ -1,0 +1,40 @@
+Libcrossmark 0.2 released
+=========================
+
+Libcrossmark 0.2 /Placeholder for release name/ has been released on 
+Jan, 8. 2007.
+
+Libcrossmark is a library for handling the emerging crossmark[1] 
+document format, a simple, wiki-inspired text format that lends itself 
+very well for the creation of text documents or elaborate emails. 
+Apart from that the crossmark document format will be used by the One 
+Laptop per Child[2] project.
+
+This early preview release is supporting only a limited subset of the 
+currently specified standard (draft version 4), namely paragraph, 
+blockquote and heading blocks, as well as styling. It is made 
+available to start discussion about the libcrossmark public API. 
+For more information have a look at the README[3] and HACKING[4] files 
+or documentation generated at build (requires doxygen[5]). Please note 
+that this development snapshot is using asserts (specifically calls to 
+g_assert() of the glib[6] library) liberally, and therefore can tear 
+down a consumer application in case of error.
+
+Special thanks goes out to Dom Lachowicz for his assistance in 
+creating python bindings.
+
+Credits for the 0.1 version that was not announced publicly go to 
+
+# Marc Maurer: svn setup, portable build system, initial API review. 
+
+# Fridrich Strba: architecture review, advanced C++ tips. 
+
+[1] http://wiki.laptop.org/go/Crossmark
+
+[2] http://laptop.org
+
+[3] http://svn.abisource.com/libcrossmark/tags/libcrossmark-0-2-0/README
+
+[4] http://svn.abisource.com/libcrossmark/tags/libcrossmark-0-2-0/HACKING
+
+[5] http://www.stack.nl/~dimitri/doxygen/
