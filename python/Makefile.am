@@ -44,10 +44,5 @@ DISTCLEANFILES = \
 	crossmark-wrap.cc \
 	$(pkgpyexec_DATA)
 
-# HACK, see comment above
-install-exec-hook:
-	rm $(pkgpyexecdir)/libcrossmark.la
-	rm $(pkgpyexecdir)/libcrossmark.so
-
 _crossmark.so: libcrossmark.la
 	cp .libs/libcrossmark.so $@

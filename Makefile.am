@@ -15,7 +15,7 @@ EXTRA_DIST = \
 	\
 	AUTHORS			\
 	COPYING			\
-	ChangeLog
+	ChangeLog		\
 	HACKING			\
 	INSTALL			\
 	README			\
@@ -35,7 +35,9 @@ dist-hook: ChangeLog
 	rm -rf `find $(distdir)/tests -name '*_'`
 
 ChangeLog: cl-stamp
-	pwd=`pwd` && cd $(srcdir) && svn log -v > "$$pwd/$@"
+	if [ -d "$(srcdir)/.svn" ]; then \
+		pwd=`pwd` && cd $(srcdir) && svn log -v > "$$pwd/$@"; \
+	fi
 	touch $<
 
 cl-stamp:
