@@ -87,7 +87,7 @@ underline  := style-lu ( text | markup )* style-ru
  * \todo error handling;
  */
 gboolean 
-Parser::sputter ()
+Parser::parse ()
 {
 	parseDocument ();
 	return TRUE;
