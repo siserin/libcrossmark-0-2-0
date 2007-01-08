@@ -9,6 +9,12 @@ Please note that libcrossmark is currently not ready for being used in
 multi-threaded applications, in particular when multiple threads are 
 reading documents at the same time. Should be easily fixable, though.
 
+Python bindings
+---------------
+
+When configured with `--with-python` python bindings are built. Check 
+out the examples for detail.
+
 Warning
 -------
 

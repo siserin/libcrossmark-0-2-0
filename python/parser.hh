@@ -26,7 +26,7 @@
 class Parser : public crossmark::Parser
 {
 public:
-	Parser (const char *file, Document *reader)
+	Parser (char const *file, Document *reader)
 	  : crossmark::Parser (file, *reader)
 	{}
 

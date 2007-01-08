@@ -3,6 +3,8 @@
 %{
 #include "document.hh"
 #include "parser.hh"
+#include "writer.hh"
 %}
 %include "document.hh"
 %include "parser.hh"
+%include "writer.hh"
