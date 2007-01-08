@@ -38,8 +38,3 @@ cm_scan_LDADD = \
 	../crossmark/libcrossmark-1.la
 
 cm_scan_SOURCES = cm-scan.cc
-
-
-
-EXTRA_DIST = \
-	parse.py
