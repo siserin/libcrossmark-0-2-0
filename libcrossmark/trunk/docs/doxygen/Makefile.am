@@ -34,10 +34,12 @@ mainpage.dox: $(top_srcdir)/docs/mainpage.dox.in $(top_srcdir)/README
 	$(top_builddir)/tools/cm2dox $(top_srcdir)/README >> $@
 	echo "*/" >> $@
 
-release-notes.dox:
+release-notes.dox: $(top_srcdir)/docs/release-0.1.0.txt $(top_srcdir)/docs/release-0.2.0.txt
 	sleep 1
 	echo "/*!" > $@
 	echo '\page release-notes Release Notes' >> $@
+	$(top_builddir)/tools/cm2dox $(top_srcdir)/docs/release-0.2.0.txt >> $@
+	sleep 1
 	$(top_builddir)/tools/cm2dox $(top_srcdir)/docs/release-0.1.0.txt >> $@
 	echo "*/" >> $@
 
