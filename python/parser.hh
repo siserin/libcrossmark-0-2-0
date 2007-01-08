@@ -29,6 +29,11 @@ public:
 	Parser (const char *file, Document *reader)
 	  : crossmark::Parser (file, *reader)
 	{}
+
+	virtual ~Parser () 
+	{}
+
+        virtual bool sputter () { return crossmark::Parser::sputter (); }
 };
 
 #endif // PARSER_HH
