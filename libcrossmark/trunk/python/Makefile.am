@@ -22,7 +22,7 @@ libcrossmark_la_SOURCES = \
 	$(BUILT_SOURCES)
 
 crossmark-wrap.cc: crossmark.swig document.hh parser.hh writer.hh Makefile.am
-	$(SWIG) -threads -Wall -c++ -python -o $@ $(srcdir)/crossmark.swig
+	$(SWIG) -threads -Wall -c++ -python -directors -o $@ $(srcdir)/crossmark.swig
 
 noinst_HEADERS = \
 	document.hh \
