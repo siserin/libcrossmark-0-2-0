@@ -5,6 +5,13 @@ EXTRA_DIST = \
 
 if BUILD_DOCS
 
+CLEANFILES = \
+	mainpage.dox \
+	release-notes.dox \
+	hacking.dox \
+	authors.dox \
+	copying.dox
+
 install-data-am:
 	mkdir -p $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html
 	$(INSTALL) html/*.html $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html/
@@ -14,15 +21,10 @@ install-data-am:
 uninstall-am:
 	-rm -rf $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html
 
-all: mainpage.dox release-notes.dox hacking.dox authors.dox copying.dox
+all-local: mainpage.dox release-notes.dox hacking.dox authors.dox copying.dox
 	test -f header.html.in || $(LN_S) $(srcdir)/header.html.in ./
 	test -f footer.html.in || $(LN_S) $(srcdir)/footer.html.in ./
 	doxygen 
-
-else
-
-all:
-
 endif
 
 mainpage.dox: $(top_srcdir)/docs/mainpage.dox.in $(top_srcdir)/README

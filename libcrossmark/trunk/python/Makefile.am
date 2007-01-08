@@ -19,7 +19,7 @@ libcrossmark_la_LIBADD = \
 	../crossmark/libcrossmark-1.la
 
 libcrossmark_la_SOURCES = \
-	crossmark-wrap.cc
+	$(BUILT_SOURCES)
 
 crossmark-wrap.cc: crossmark.swig document.hh parser.hh writer.hh Makefile.am
 	$(SWIG) -threads -Wall -c++ -python -directors -o $@ $(srcdir)/crossmark.swig
@@ -30,7 +30,8 @@ noinst_HEADERS = \
 	writer.hh
 
 BUILT_SOURCES = \
-	crossmark-wrap.cc
+	crossmark-wrap.cc \
+	crossmark-wrap.h
 
 EXTRA_DIST = \
 	crossmark.swig \
