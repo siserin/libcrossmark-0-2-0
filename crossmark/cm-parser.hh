@@ -52,7 +52,7 @@ public:
 	/*!
 	 * \todo use GError or exceptions?
 	 */
-	gboolean sputter ();
+	gboolean parse ();
 
 protected:
 	void parseDocument ();

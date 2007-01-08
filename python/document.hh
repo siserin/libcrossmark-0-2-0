@@ -22,6 +22,22 @@
 
 #include <crossmark/cm-document.hh>
 
+enum BlockType {
+	BLOCKQUOTE = crossmark::Document::Block::BLOCKQUOTE,
+	PARAGRAPH = crossmark::Document::Block::PARAGRAPH,
+	HEADING_1 = crossmark::Document::Block::HEADING_1,
+	HEADING_2 = crossmark::Document::Block::HEADING_2,
+	HEADING_3 = crossmark::Document::Block::HEADING_3,
+	HEADING_4 = crossmark::Document::Block::HEADING_4
+};
+
+enum StyleType {
+	BOLD = crossmark::Document::Style::BOLD,
+	ITALIC = crossmark::Document::Style::ITALIC,
+	MONOSPACE = crossmark::Document::Style::MONOSPACE,
+	UNDERLINE = crossmark::Document::Style::UNDERLINE
+};
+
 class Document : public crossmark::Document
 {
 public:
@@ -32,11 +48,16 @@ public:
 
 	virtual void text (const char *str) {}
 
-	virtual void pushStyle (Document::Style::Type type) {}
-	virtual void popStyle (Document::Style::Type type) {}
-
-	virtual void pushBlock (Document::Block::Type type) {}
+#ifndef SWIG
+	virtual void pushStyle (crossmark::Document::Style::Type type) { pushStyle ((StyleType) type); }
+	virtual void popStyle (crossmark::Document::Style::Type type) { popStyle ((StyleType) type); }
+	virtual void pushBlock (crossmark::Document::Block::Type type) { pushBlock ((BlockType) type); }
+#endif
 	virtual void popBlock () {}
+
+	virtual void pushStyle (StyleType type) {}
+	virtual void popStyle (StyleType type) {}
+	virtual void pushBlock (BlockType type) {}
 };
 
 #endif // DOCUMENT_HH

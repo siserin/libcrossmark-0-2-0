@@ -33,7 +33,7 @@
  * \brief Toplevel crossmark namespace. 
  * 
  * \todo Maybe use glib::ustring instead of std::string and glib::TimeVal?
- * \todo Pass errors to the Document, return them from Source::sputter() or even both?
+ * \todo Pass errors to the Document, return them from Parser::parse() or even both?
  * \todo Not quite happy with citations, e.g. the sample from the v4 spec. Since crossmark
 	 parsers must not handle macros parsing would be up to the application. Or does
 	 that not hold for builtin macros?

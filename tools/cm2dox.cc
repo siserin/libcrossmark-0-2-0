@@ -132,7 +132,7 @@ main (int 	  argc,
 
 	DoxConverter converter;
 	Parser parser (argv[1], converter);
-	parser.sputter ();
+	parser.parse ();
 
 	return 0;
 }

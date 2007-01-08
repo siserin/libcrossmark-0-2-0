@@ -142,7 +142,7 @@ main (int 	  argc,
 
 	HtmlConverter converter;
 	Parser parser (argv[1], converter);
-	parser.sputter ();
+	parser.parse ();
 
 	return 0;
 }

@@ -30,10 +30,9 @@ public:
 	  : crossmark::Parser (file, *reader)
 	{}
 
-	virtual ~Parser () 
-	{}
+	virtual ~Parser () {}
 
-        virtual bool sputter () { return crossmark::Parser::sputter (); }
+        virtual bool parse () { return crossmark::Parser::parse (); }
 };
 
 #endif // PARSER_HH
