@@ -64,6 +64,7 @@ private:
 	stream::Output 		&_ostream;
 	gboolean		 _ownStream;
 	document::Block::Type 	 _currentBlock;
+	glong			 _headingLength;
 };
 
 };  // namespace crossmark

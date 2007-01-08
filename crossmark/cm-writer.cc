@@ -62,6 +62,12 @@ Writer::popDocument ()
 void 
 Writer::text (gchar const *str)
 {
+	switch (_currentBlock) {
+	case document::Block::HEADING_1:
+	case document::Block::HEADING_2:
+		_headingLength += g_utf8_strlen (str, -1);
+	}
+
 	_ostream.write (str);
 }
 
@@ -88,6 +94,13 @@ Writer::pushStyle (document::Style::Type type)
 		g_warning ("%s: type == %d", 
 			   __FUNCTION__, type);
 	}
+
+	// keep track of heading length
+	switch (_currentBlock) {
+	case document::Block::HEADING_1:
+	case document::Block::HEADING_2:
+		++_headingLength;
+	}
 }
 
 /*!
@@ -113,35 +126,71 @@ Writer::popStyle (document::Style::Type type)
 		g_warning ("%s: type == %d", 
 			   __FUNCTION__, type);
 	}
+
+	// keep track of heading length
+	switch (_currentBlock) {
+	case document::Block::HEADING_1:
+	case document::Block::HEADING_2:
+		++_headingLength;
+	}
 }
 
 void 
 Writer::pushBlock (document::Block::Type type)
 {
 	_currentBlock = type;
+
+	switch (_currentBlock) {
+	case document::Block::BLOCKQUOTE:
+	case document::Block::PARAGRAPH:
+	case document::Block::HEADING_1:
+	case document::Block::HEADING_2:
+		_headingLength = 0;
+		break;
+	case document::Block::HEADING_3:
+		_ostream.write ("=== ");
+		break;
+	case document::Block::HEADING_4:
+		_ostream.write ("==== ");
+		break;
+	default:
+		g_warning ("%s: type == %d", 
+			   __FUNCTION__, _currentBlock);
+	}
 }
 
+/*!
+ * \todo Count h1, h2 length.
+ */
 void 
 Writer::popBlock ()
 {
+	gchar *underline;
+
 	switch (_currentBlock) {
 	case document::Block::BLOCKQUOTE:
-		_ostream.write ("\n\n\n");
-		break;
 	case document::Block::PARAGRAPH:
 		_ostream.write ("\n\n");
 		break;
 	case document::Block::HEADING_1:
+		underline = g_strnfill (_headingLength, '=');
+		_ostream.write ("\n");
+		_ostream.write (underline);
 		_ostream.write ("\n\n");
+		g_free (underline); underline = NULL;
 		break;
 	case document::Block::HEADING_2:
+		underline = g_strnfill (_headingLength, '-');
+		_ostream.write ("\n");
+		_ostream.write (underline);
 		_ostream.write ("\n\n");
+		g_free (underline); underline = NULL;
 		break;
 	case document::Block::HEADING_3:
-		_ostream.write ("\n\n");
+		_ostream.write (" ===\n\n");
 		break;
 	case document::Block::HEADING_4:
-		_ostream.write ("\n\n");
+		_ostream.write (" ====\n\n");
 		break;
 	default:
 		g_warning ("%s: type == %d", 
