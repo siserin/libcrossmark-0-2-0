@@ -91,7 +91,7 @@ AC_ARG_WITH([python],
 [
 	cm_cv_python="$withval"
 ], [
-	cm_cv_python="no"
+	cm_cv_python="yes"
 ])
 if test "x$cm_cv_python" == "xyes" && 
    test "x$SWIG" != "xno"; then

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+##
+# \example parse.py
+# Basic crossmark parsing example.
+
 import crossmark
 import sys
-
-
 
 class Document (crossmark.Document):
 
@@ -49,8 +51,6 @@ class Document (crossmark.Document):
 
 	def text (self, string):
 		print '"' + string + '"'
-
-
 
 if len (sys.argv) < 2: 
 	sys.stderr.write ("Need filename\n")

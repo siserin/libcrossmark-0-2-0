@@ -25,10 +25,10 @@ all:
 
 endif
 
-mainpage.dox: $(top_srcdir)/docs/mainpage.dox.in
+mainpage.dox: $(top_srcdir)/docs/mainpage.dox.in $(top_srcdir)/README
 	sleep 1
 	echo "/*!" > $@
-	cat $^ >> $@
+	cat $< >> $@
 	$(top_builddir)/tools/cm2dox $(top_srcdir)/README >> $@
 	echo "*/" >> $@
 
