@@ -15,18 +15,18 @@ class Listener (crossmark.Document):
 	def popDocument (self):
 		print "popDocument"
 
-	def pushBlock (self, blockType):
-		if blockType == crossmark.BLOCKQUOTE:
+	def pushBlock (self, block):
+		if block == crossmark.BLOCKQUOTE:
 			typename = 'BLOCKQUOTE'
-		elif blockType == crossmark.PARAGRAPH:
+		elif block == crossmark.PARAGRAPH:
 			typename = 'PARAGRAPH'
-		elif blockType == crossmark.HEADING_1:
+		elif block == crossmark.HEADING_1:
 			typename = 'HEADING_1'
-		elif blockType == crossmark.HEADING_2:
+		elif block == crossmark.HEADING_2:
 			typename = 'HEADING_2'
-		elif blockType == crossmark.HEADING_3:
+		elif block == crossmark.HEADING_3:
 			typename = 'HEADING_3'
-		elif blockType == crossmark.HEADING_4:
+		elif block == crossmark.HEADING_4:
 			typename = 'HEADING_4'
 		else:
 			typename = 'unknown'
@@ -35,18 +35,18 @@ class Listener (crossmark.Document):
 	def popBlock (self):
 		print "popBlock"
 
-	def pushStyle (self, styleType):
-		if styleType == crossmark.BOLD: 
+	def pushStyle (self, style):
+		if style == crossmark.BOLD: 
 			typename = 'BOLD'
-		if styleType == crossmark.ITALIC: 
+		elif style == crossmark.ITALIC: 
 			typename = 'ITALIC'
-		if styleType == crossmark.MONOSPACE: 
+		elif style == crossmark.MONOSPACE: 
 			typename = 'MONOSPACE'
-		if styleType == crossmark.UNDERLINE: 
+		elif style == crossmark.UNDERLINE: 
 			typename = 'UNDERLINE'
 		print "pushStyle (", typename, ")"
 
-	def popStyle (self, styleType):
+	def popStyle (self, style):
 		print "popStyle"
 
 	def text (self, string):
