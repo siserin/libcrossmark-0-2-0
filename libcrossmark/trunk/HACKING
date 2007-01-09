@@ -31,14 +31,16 @@ Documentation
 
 Source code and interfaces are documented using Doxygen. Usually one 
 short paragraph per method should be enough, except you are doing 
-seriously fancy stuff. Build with --enable-internal-docs to have all
+seriously fancy stuff. Build with `--enable-internal-docs` to have all
 documentation included in the doxygen output (written to 
 docs/doxygen/html).
 
 Some guidelines:
 
 # Each header gets a brief file documentation.
+
 # Document namespaces and classes in the header files.
+
 # Document methods and functions in the implementation.
 
 Auxiliary documentation, like this very file for example, are 

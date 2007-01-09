@@ -1,0 +1,4 @@
+#!/bin/sh
+
+prefix='@prefix@'
+exec `which python` @pythondir@/cm2dox.py $@

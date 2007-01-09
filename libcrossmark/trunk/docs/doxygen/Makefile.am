@@ -1,3 +1,4 @@
+
 EXTRA_DIST = \
 	Doxyfile.in \
 	footer.html.in \
@@ -27,38 +28,34 @@ all-local: mainpage.dox release-notes.dox hacking.dox authors.dox copying.dox
 	doxygen 
 endif
 
+PYTHONPATH := "$(top_builddir)/python:$(top_srcdir)/python"
+
 mainpage.dox: $(top_srcdir)/docs/mainpage.dox.in $(top_srcdir)/README
-	sleep 1
 	echo "/*!" > $@
 	cat $< >> $@
-	$(top_builddir)/tools/cm2dox $(top_srcdir)/README >> $@
+	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $(top_srcdir)/README >> $@
 	echo "*/" >> $@
 
 release-notes.dox: $(top_srcdir)/docs/release-0.1.0.txt $(top_srcdir)/docs/release-0.2.0.txt
-	sleep 1
 	echo "/*!" > $@
 	echo '\page release-notes Release Notes' >> $@
-	$(top_builddir)/tools/cm2dox $(top_srcdir)/docs/release-0.2.0.txt >> $@
-	sleep 1
-	$(top_builddir)/tools/cm2dox $(top_srcdir)/docs/release-0.1.0.txt >> $@
+	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $(top_srcdir)/docs/release-0.2.0.txt >> $@
+	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $(top_srcdir)/docs/release-0.1.0.txt >> $@
 	echo "*/" >> $@
 
 hacking.dox: $(top_srcdir)/HACKING
-	sleep 1
 	echo "/*!" > $@
 	echo '\page hacking Contributing' >> $@
-	$(top_builddir)/tools/cm2dox $^ >> $@
+	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $^ >> $@
 	echo "*/" >> $@
 
 authors.dox: $(top_srcdir)/AUTHORS
-	sleep 1
 	echo "/*!" > $@
 	echo '\page authors Credits' >> $@
-	$(top_builddir)/tools/cm2dox $^ >> $@
+	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $^ >> $@
 	echo "*/" >> $@
 
 copying.dox: $(top_srcdir)/COPYING
-	sleep 1
 	echo "/*!" > $@
 	echo '\page copying License' >> $@
 	echo '\include COPYING' >> $@
