@@ -2,12 +2,12 @@
 
 ##
 # \example parse.py
-# Basic crossmark parsing example.
+# \brief Basic crossmark parsing example.
 
 import crossmark
 import sys
 
-class Document (crossmark.Document):
+class Listener (crossmark.Document):
 
 	def pushDocument (self):
 		print "pushDocument"
@@ -56,6 +56,6 @@ if len (sys.argv) < 2:
 	sys.stderr.write ("Need filename\n")
 	sys.exit (1)
 
-document = Document ()
-parser = crossmark.Parser (sys.argv[1], document)
+listener = Listener ()
+parser = crossmark.Parser (sys.argv[1], listener)
 parser.parse ()

@@ -17,6 +17,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*!
+ * \example cm2dox.cc
+ * \brief Simple crossmark to doxygen converter example.
+ * This application reads a crossmark file and writes the equivalent 
+ * in doxygen format to stdout.
+ */
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,20 +42,17 @@ public:
 
 	~DoxConverter () {}
 
-	// document interface
 	void pushDocument () 
 	{}
 
 	void popDocument ()
 	{}
 
-	// text interface
 	void text (gchar const *str)
 	{
 		std::cout << str;
 	}
 
-	// style interface
 	void pushStyle (document::Style::Type type)
 	{
 		const gchar *style;
@@ -83,7 +87,6 @@ public:
 		_styleStack.pop ();
 	}
 
-	// document structure interface
 	void pushBlock (document::Block::Type type)
 	{
 		switch (type) {

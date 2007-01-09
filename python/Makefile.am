@@ -24,6 +24,10 @@ libcrossmark_la_SOURCES = \
 crossmark-wrap.cc: crossmark.swig document.hh parser.hh writer.hh Makefile.am
 	$(SWIG) -threads -Wall -c++ -python -directors -o $@ $(srcdir)/crossmark.swig
 
+crossmark-wrap.h: crossmark-wrap.cc
+
+crossmark.py: crossmark-wrap.cc
+
 noinst_HEADERS = \
 	document.hh \
 	parser.hh \
@@ -31,11 +35,12 @@ noinst_HEADERS = \
 
 BUILT_SOURCES = \
 	crossmark-wrap.cc \
-	crossmark-wrap.h
+	crossmark-wrap.h \
+	crossmark.py
 
 EXTRA_DIST = \
 	crossmark.swig \
-	crossmark.py
+	$(BUILT_SOURCES)
 
 CLEANFILES = \
 	_crossmark.so

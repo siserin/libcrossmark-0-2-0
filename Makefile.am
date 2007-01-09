@@ -3,11 +3,11 @@ pkgconfdir = $(libdir)/pkgconfig
 pkgconf_DATA = libcrossmark-1.pc
 
 SUBDIRS = crossmark tools 
-if BUILD_DOCS
-SUBDIRS += docs
-endif
 if HAVE_PYTHON
 SUBDIRS += python
+endif
+if BUILD_DOCS
+SUBDIRS += docs
 endif
 
 EXTRA_DIST = \
