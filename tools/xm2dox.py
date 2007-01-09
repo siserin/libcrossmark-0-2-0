@@ -24,11 +24,9 @@ import sys
 
 class Converter (crossmark.Document): 
 
-	_rand = random.SystemRandom ()
-
 	def _randId (self): 
 
-		return str (self._rand.randint (0, sys.maxint))
+		return str (random.randint(0, sys.maxint))
 
 	def pushBlock (self, block):
 
