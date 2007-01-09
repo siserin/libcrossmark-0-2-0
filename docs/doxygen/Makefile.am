@@ -29,30 +29,31 @@ all-local: mainpage.dox release-notes.dox hacking.dox authors.dox copying.dox
 endif
 
 PYTHONPATH := "$(top_builddir)/python:$(top_srcdir)/python"
+XM2DOX := $(top_srcdir)/tools/xm2dox.py
 
 mainpage.dox: $(top_srcdir)/docs/mainpage.dox.in $(top_srcdir)/README
 	echo "/*!" > $@
 	cat $< >> $@
-	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $(top_srcdir)/README >> $@
+	PYTHONPATH=$(PYTHONPATH) $(XM2DOX) $(top_srcdir)/README >> $@
 	echo "*/" >> $@
 
 release-notes.dox: $(top_srcdir)/docs/release-0.1.0.txt $(top_srcdir)/docs/release-0.2.0.txt
 	echo "/*!" > $@
 	echo '\page release-notes Release Notes' >> $@
-	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $(top_srcdir)/docs/release-0.2.0.txt >> $@
-	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $(top_srcdir)/docs/release-0.1.0.txt >> $@
+	PYTHONPATH=$(PYTHONPATH) $(XM2DOX) $(top_srcdir)/docs/release-0.2.0.txt >> $@
+	PYTHONPATH=$(PYTHONPATH) $(XM2DOX) $(top_srcdir)/docs/release-0.1.0.txt >> $@
 	echo "*/" >> $@
 
 hacking.dox: $(top_srcdir)/HACKING
 	echo "/*!" > $@
 	echo '\page hacking Contributing' >> $@
-	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $^ >> $@
+	PYTHONPATH=$(PYTHONPATH) $(XM2DOX) $^ >> $@
 	echo "*/" >> $@
 
 authors.dox: $(top_srcdir)/AUTHORS
 	echo "/*!" > $@
 	echo '\page authors Credits' >> $@
-	PYTHONPATH=$(PYTHONPATH) $(top_srcdir)/tools/cm2dox.py $^ >> $@
+	PYTHONPATH=$(PYTHONPATH) $(XM2DOX) $^ >> $@
 	echo "*/" >> $@
 
 copying.dox: $(top_srcdir)/COPYING

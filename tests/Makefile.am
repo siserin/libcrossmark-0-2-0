@@ -4,14 +4,11 @@ AM_CXXFLAGS = \
 	-I $(top_srcdir)
 
 noinst_PROGRAMS = \
-	xm2dox
+	xm-scan
 
-xm2dox_LDADD = \
+xm_scan_LDADD = \
 	$(DEPS_LIBS) \
 	$(top_builddir)/crossmark/libcrossmark-1.la
 
-xm2dox_SOURCES = xm2dox.cc
-
-EXTRA_DIST = \
-	parse.py \
-	write.py
+xm_scan_SOURCES = \
+	xm-scan.cc

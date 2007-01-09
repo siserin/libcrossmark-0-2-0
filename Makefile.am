@@ -2,7 +2,7 @@
 pkgconfdir = $(libdir)/pkgconfig
 pkgconf_DATA = libcrossmark-1.pc
 
-SUBDIRS = crossmark tools 
+SUBDIRS = crossmark tools tests
 if HAVE_PYTHON
 SUBDIRS += python
 endif
@@ -11,8 +11,6 @@ SUBDIRS += docs
 endif
 
 EXTRA_DIST = \
-	tests 			\
-	\
 	AUTHORS			\
 	COPYING			\
 	ChangeLog		\

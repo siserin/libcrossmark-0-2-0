@@ -18,7 +18,7 @@
  */
 
 /*!
- * \example cm2dox.cc
+ * \example xm2dox.cc
  * \brief Simple crossmark to doxygen converter example.
  * This application reads a crossmark file and writes the equivalent 
  * in doxygen format to stdout.

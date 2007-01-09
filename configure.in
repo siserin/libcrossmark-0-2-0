@@ -291,8 +291,6 @@ AC_SUBST(DEBUG_CXXFLAGS)
 
 
 AC_OUTPUT([
- Makefile
- libcrossmark-1.pc
  crossmark/Makefile
  crossmark/libcrossmark.rc
  docs/Makefile
@@ -300,8 +298,11 @@ AC_OUTPUT([
  docs/doxygen/Doxyfile
  docs/examples/Makefile
  python/Makefile
+ tests/Makefile
  tools/Makefile
- tools/cm2dox
+ tools/xm2dox
+ Makefile
+ libcrossmark-1.pc
 ])
 
 echo "
