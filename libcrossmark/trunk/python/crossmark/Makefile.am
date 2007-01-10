@@ -15,7 +15,7 @@ _crossmark_la_LDFLAGS = \
 
 _crossmark_la_LIBADD = \
 	$(DEPS_LIBS) \
-	../crossmark/libcrossmark-1.la
+	$(top_builddir)/crossmark/libcrossmark-1.la
 
 _crossmark_la_SOURCES = \
 	$(BUILT_SOURCES)
@@ -31,6 +31,14 @@ crossmark-wrap.h: swig-stamp
 
 crossmark.py: swig-stamp
 
+if BUILD_DOCS
+all-local: copy-stamp
+endif
+
+copy-stamp:
+	cp $(srcdir)/__init__.py .
+	touch $@
+
 noinst_HEADERS = \
 	document.hh \
 	parser.hh \
@@ -45,6 +53,9 @@ EXTRA_DIST = \
 	crossmark.swig \
 	$(BUILT_SOURCES) \
 	swig-stamp
+
+CLEANFILES = \
+	copy-stamp
 
 DISTCLEANFILES = \
 	crossmark-wrap.cc \
