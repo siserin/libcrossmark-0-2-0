@@ -17,56 +17,60 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "cm-stream-private.hh"
-#include "cm-stdio-stream-private.hh"
+/*!
+ * \file stream.hh
+ * \brief Crossmark stream interfaces.
+ */
+
+#ifndef CM_STREAM_HH
+#define CM_STREAM_HH
+
+#include <glib.h>
+#include <stdio.h>
+#include <crossmark/features.hh>
 #ifdef LIBCROSSMARK_FEATURE_LIBGSF
-#include <gsf/gsf-utils.h>
-#include "cm-gsf-stream-private.hh"
+#include <gsf/gsf-input.h>
+#include <gsf/gsf-output.h>
 #endif
 
-using namespace crossmark;
-using namespace crossmark::stream;
+namespace crossmark {
 
 /*!
- * Stream factory singleton getter.
+ * \brief Input- and output-streams for reading and writing documents.
  */
-Factory &
-Factory::instance ()
-{
-	static Factory *factory = NULL;
-
-	if (!factory) {
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-		gsf_init ();
-#endif
-		factory = new Factory ();
-	}
-
-	return *factory;
-}
+namespace stream {
 
 /*!
- * Create default input implementation.
+ * \brief Interface for input streams.
  */
-Input * 
-Factory::createInput (gchar const *file)
+class Input 
 {
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-	return new GsfInput (file);
-#else
-	return new StdInput (file);
-#endif
-}
+public:
+	virtual ~Input () {}
+	virtual gunichar read () = 0;
+};
 
 /*!
- * Create default output implementation.
+ * \brief Interface for output streams.
  */
-Output * 
-Factory::createOutput (gchar const *file)
+class Output 
 {
+public:
+	virtual ~Output () {};
+	virtual gboolean write (gunichar c) = 0;
+	virtual gboolean write (gchar const *s) = 0;
+};
+
+Input * createStdInput (FILE *istream);
+Output * createStdOutput (FILE *ostream);
+
 #ifdef LIBCROSSMARK_FEATURE_LIBGSF
-	return new GsfOutput (file);
-#else
-	return new StdOutput (file);
+Input * createGsfInput (::GsfInput *input);
+Output * createGsfOutput (::GsfOutput *output);
 #endif
-}
+
+}; // namespace stream
+
+}; // namespace crossmark
+
+#endif // CM_STREAM_HH

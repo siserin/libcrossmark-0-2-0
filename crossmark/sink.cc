@@ -17,56 +17,21 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "cm-stream-private.hh"
-#include "cm-stdio-stream-private.hh"
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-#include <gsf/gsf-utils.h>
-#include "cm-gsf-stream-private.hh"
-#endif
+#include "sink.hh"
 
 using namespace crossmark;
-using namespace crossmark::stream;
 
 /*!
- * Stream factory singleton getter.
+ * \todo Implement.
  */
-Factory &
-Factory::instance ()
+Sink::Sink (gchar const *file, Writer &writer)
 {
-	static Factory *factory = NULL;
-
-	if (!factory) {
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-		gsf_init ();
-#endif
-		factory = new Factory ();
-	}
-
-	return *factory;
 }
 
 /*!
- * Create default input implementation.
+ * \todo Implement.
  */
-Input * 
-Factory::createInput (gchar const *file)
+Sink::~Sink ()
 {
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-	return new GsfInput (file);
-#else
-	return new StdInput (file);
-#endif
-}
 
-/*!
- * Create default output implementation.
- */
-Output * 
-Factory::createOutput (gchar const *file)
-{
-#ifdef LIBCROSSMARK_FEATURE_LIBGSF
-	return new GsfOutput (file);
-#else
-	return new StdOutput (file);
-#endif
 }

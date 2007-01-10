@@ -25,9 +25,9 @@
 #ifndef CROSSMARK_HH
 #define CROSSMARK_HH
 
-#include <crossmark/cm-features.hh>
-#include <crossmark/cm-parser.hh>
-#include <crossmark/cm-writer.hh>
+#include <crossmark/features.hh>
+#include <crossmark/parser.hh>
+#include <crossmark/writer.hh>
 
 /*!
  * \brief Toplevel crossmark namespace. 

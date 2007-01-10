@@ -6,7 +6,7 @@ AC_INIT(crossmark/crossmark.hh)
 #
 
 AM_CONFIG_HEADER(config.h)
-AC_CONFIG_HEADERS(crossmark/cm-features.hh)
+AC_CONFIG_HEADERS(crossmark/features.hh)
 
 CROSSMARK_MAJOR_VERSION=0
 CROSSMARK_MINOR_VERSION=2
@@ -293,6 +293,7 @@ AC_SUBST(DEBUG_CXXFLAGS)
 AC_OUTPUT([
  crossmark/Makefile
  crossmark/libcrossmark.rc
+ crossmark/stream/Makefile
  docs/Makefile
  docs/doxygen/Makefile
  docs/doxygen/Doxyfile

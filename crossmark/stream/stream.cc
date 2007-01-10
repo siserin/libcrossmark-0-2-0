@@ -17,48 +17,56 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/*!
- * \file cm-string-private.hh
- * \brief String class.
- */
+#include "stream-private.hh"
+#include "stdio-stream-private.hh"
+#ifdef LIBCROSSMARK_FEATURE_LIBGSF
+#include <gsf/gsf-utils.h>
+#include "gsf-stream-private.hh"
+#endif
 
-#ifndef CM_STRING_PRIVATE_HH
-#define CM_STRING_PRIVATE_HH
-
-#include <glib.h>
-#include <string>
-#include <crossmark/cm-features.hh>
-
-namespace crossmark {
+using namespace crossmark;
+using namespace crossmark::stream;
 
 /*!
- * \brief String class with an UTF-8 compliant append method.
+ * Stream factory singleton getter.
  */
-class String : public std::string
+Factory &
+Factory::instance ()
 {
-public:
-	String ()
-	  : std::string ()
-	{}
+	static Factory *factory = NULL;
 
-	String (gchar const *str)
-	  : std::string (str)
-	{}
-
-	String (std::string &str)
-	  : std::string (str)
-	{}
-
-	void append (gunichar c)
-	{
-		gchar buf[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-		gint  n_bytes;
-
-		n_bytes = g_unichar_to_utf8 (c, buf);
-		std::string::append (buf);
+	if (!factory) {
+#ifdef LIBCROSSMARK_FEATURE_LIBGSF
+		gsf_init ();
+#endif
+		factory = new Factory ();
 	}
-};
 
-};  // namespace crossmark
+	return *factory;
+}
 
-#endif /* CM_STRING_PRIVATE_HH */
+/*!
+ * Create default input implementation.
+ */
+Input * 
+Factory::createInput (gchar const *file)
+{
+#ifdef LIBCROSSMARK_FEATURE_LIBGSF
+	return new GsfInput (file);
+#else
+	return new StdInput (file);
+#endif
+}
+
+/*!
+ * Create default output implementation.
+ */
+Output * 
+Factory::createOutput (gchar const *file)
+{
+#ifdef LIBCROSSMARK_FEATURE_LIBGSF
+	return new GsfOutput (file);
+#else
+	return new StdOutput (file);
+#endif
+}

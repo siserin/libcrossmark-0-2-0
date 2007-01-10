@@ -18,7 +18,7 @@
  */
 
 /*!
- * \file cm-normalizer-private.hh
+ * \file normalizer-private.hh
  * \brief Crossmark normalizer.
  * \internal
  */
@@ -28,8 +28,8 @@
 
 #include <glib.h>
 #include <list>
-#include <crossmark/cm-features.hh>
-#include <crossmark/cm-document.hh>
+#include <crossmark/features.hh>
+#include <crossmark/document.hh>
 
 namespace crossmark {
 

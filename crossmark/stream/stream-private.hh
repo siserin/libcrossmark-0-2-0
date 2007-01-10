@@ -18,7 +18,7 @@
  */
 
 /*!
- * \file cm-stream-private.hh
+ * \file stream-private.hh
  * \brief Private crossmark stream interfaces.
  */
 
@@ -26,8 +26,8 @@
 #define CM_STREAM_PRIVATE_HH
 
 #include <glib.h>
-#include <crossmark/cm-features.hh>
-#include <crossmark/cm-stream.hh>
+#include <crossmark/features.hh>
+#include <crossmark/stream/stream.hh>
 
 // Stolen from glib's gutf8.c
 #define UTF8_COMPUTE(Char, Mask, Len)					      \

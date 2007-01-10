@@ -18,18 +18,18 @@
  */
 
 /*!
- * \file cm-gsf-stream-private.hh
- * \brief Crossmark libgsf support.
+ * \file stdio-stream-private.hh
+ * \brief Basic I/O streams.
  * \internal
  */
 
-#ifndef CM_GSF_STREAM_PRIVATE_HH
-#define CM_GSF_STREAM_PRIVATE_HH
+#ifndef CM_STDIO_STREAM_PRIVATE_HH
+#define CM_STDIO_STREAM_PRIVATE_HH
 
 #include <glib.h>
-#include <gsf/gsf.h>
-#include <crossmark/cm-features.hh>
-#include <crossmark/cm-stream.hh>
+#include <stdio.h>
+#include <crossmark/features.hh>
+#include <crossmark/stream/stream.hh>
 
 namespace crossmark {
 
@@ -37,39 +37,45 @@ namespace stream {
 
 /*!
  * \internal
- * \brief UTF-8 compliant input stream.
+ * \brief Basic input stream.
+ *
+ * \warning This class is for testing and not guaranteed to be UTF-8 compliant.
  */
-class GsfInput : public Input 
+class StdInput : public Input 
 {
 public:
-	GsfInput (gchar const *file);
-	GsfInput (::GsfInput *input);
-	virtual ~GsfInput ();
+	StdInput (gchar const *file);
+	StdInput (FILE *istream);
+	virtual ~StdInput ();
 	virtual gunichar read ();
 
-private:
-	::GsfInput *_input;
+protected:
+	FILE     *_istream;
+	gboolean  _ownStream;
 };
 
 /*!
  * \internal
- * \brief UTF-8 compliant output stream.
+ * \brief Basic output stream.
+ *
+ * \warning This class is for testing and not guaranteed to be UTF-8 compliant.
  */
-class GsfOutput : public Output
+class StdOutput : public Output
 {
 public:
-	GsfOutput (gchar const *file);
-	GsfOutput (::GsfOutput *output);
-	virtual ~GsfOutput ();
+	StdOutput (gchar const *file);
+	StdOutput (FILE *ostream);
+	virtual ~StdOutput ();
 	virtual gboolean write (gunichar c);
 	virtual gboolean write (gchar const *s);
 
 protected:
-	::GsfOutput *_output;
+	FILE     *_ostream;
+	gboolean  _ownStream;
 };
 
 }; // namespace stream
 
 }; // namespace crossmark
 
-#endif // CM_GSF_STREAM_PRIVATE_HH
+#endif // CM_STDIO_STREAM_PRIVATE_HH

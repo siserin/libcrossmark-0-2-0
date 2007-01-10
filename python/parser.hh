@@ -20,7 +20,7 @@
 #ifndef PARSER_HH
 #define PARSER_HH
 
-#include <crossmark/cm-parser.hh>
+#include <crossmark/crossmark.hh>
 #include "document.hh"
 
 class Parser : public crossmark::Parser

@@ -18,16 +18,16 @@
  */
 
 /*!
- * \file cm-parser.hh
+ * \file parser.hh
  * \brief Crossmark input.
  */
 
 #ifndef CM_PARSER_HH
 #define CM_PARSER_HH
 
-#include <crossmark/cm-features.hh>
-#include <crossmark/cm-document.hh>
-#include <crossmark/cm-stream.hh>
+#include <crossmark/features.hh>
+#include <crossmark/document.hh>
+#include <crossmark/stream/stream.hh>
 
 namespace crossmark {
 

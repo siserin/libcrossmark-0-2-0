@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "cm-normalizer-private.hh"
+#include "normalizer-private.hh"
 // DEBUG
 #include <iostream>
 
