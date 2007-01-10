@@ -5,10 +5,11 @@ AM_CPPFLAGS = \
 	-I$(srcdir) \
 	-I$(top_srcdir)
 
-pkgpyexecdir = @pyexecdir@
-pkgpyexec_DATA = crossmark.py _crossmark.so
-# TODO this gets installed, but noinst_LTLIBRARIES doesn't create the .so for some reason
-pkgpyexec_LTLIBRARIES = libcrossmark.la
+python_PYTHON = crossmark.py
+pyexec_DATA = _crossmark.so
+# TODO this gets installed, but noinst_LTLIBRARIES doesn't create the .so for 
+# some reason. Maybe rather just symlink _crossmark.so
+pyexec_LTLIBRARIES = libcrossmark.la
 
 libcrossmark_la_LDFLAGS = \
 	-avoid-version
