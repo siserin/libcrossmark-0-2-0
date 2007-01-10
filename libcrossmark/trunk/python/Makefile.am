@@ -6,28 +6,30 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)
 
 python_PYTHON = crossmark.py
-pyexec_DATA = _crossmark.so
-# TODO this gets installed, but noinst_LTLIBRARIES doesn't create the .so for 
-# some reason. Maybe rather just symlink _crossmark.so
-pyexec_LTLIBRARIES = libcrossmark.la
+pyexec_LTLIBRARIES = _crossmark.la
 
-libcrossmark_la_LDFLAGS = \
-	-avoid-version
-	-module -no-undefined
+_crossmark_la_LDFLAGS = \
+	-avoid-version \
+	-module \
+	-no-undefined
 
-libcrossmark_la_LIBADD = \
+_crossmark_la_LIBADD = \
 	$(DEPS_LIBS) \
 	../crossmark/libcrossmark-1.la
 
-libcrossmark_la_SOURCES = \
+_crossmark_la_SOURCES = \
 	$(BUILT_SOURCES)
 
-crossmark-wrap.cc: crossmark.swig document.hh parser.hh writer.hh Makefile.am
-	$(SWIG) -threads -Wall -c++ -python -directors -o $@ $(srcdir)/crossmark.swig
+# swig-stamp is EXTRA_DIST'd so tarball builds don't require swig
+swig-stamp: crossmark.swig document.hh parser.hh writer.hh Makefile.am
+	$(SWIG) -threads -Wall -c++ -python -directors -o crossmark-wrap.cc $(srcdir)/$<
+	touch $@
 
-crossmark-wrap.h: crossmark-wrap.cc
+crossmark-wrap.cc: swig-stamp
 
-crossmark.py: crossmark-wrap.cc
+crossmark-wrap.h: swig-stamp
+
+crossmark.py: swig-stamp
 
 noinst_HEADERS = \
 	document.hh \
@@ -41,14 +43,9 @@ BUILT_SOURCES = \
 
 EXTRA_DIST = \
 	crossmark.swig \
-	$(BUILT_SOURCES)
-
-CLEANFILES = \
-	_crossmark.so
+	$(BUILT_SOURCES) \
+	swig-stamp
 
 DISTCLEANFILES = \
 	crossmark-wrap.cc \
-	$(pkgpyexec_DATA)
-
-_crossmark.so: libcrossmark.la
-	cp .libs/libcrossmark.so $@
+	swig-stamp

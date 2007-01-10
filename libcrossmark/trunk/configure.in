@@ -62,6 +62,15 @@ AC_CHECK_PROG([SWIG], [swig], [swig], [no])
 AC_SUBST(SWIG)
 AC_ARG_VAR(SWIG, Swig interface generator)
 
+swig_stamp="$srcdir/python/swig-stamp"
+AC_MSG_CHECKING([for python binding code in $swig_stamp])
+if test -f "$swig_stamp"; then
+	PYTHON_BINDING_SHIPPED="yes"
+else
+	PYTHON_BINDING_SHIPPED="no"
+fi
+AC_MSG_RESULT([$PYTHON_BINDING_SHIPPED])
+
 AC_CHECK_PROG(DOXYGEN, doxygen, doxygen)
 AC_SUBST(DOXYGEN)
 AC_ARG_VAR(DOXYGEN, Doxygen doc generator)
@@ -93,15 +102,29 @@ AC_ARG_WITH([python],
 ], [
 	cm_cv_python="yes"
 ])
-if test "x$cm_cv_python" == "xyes" && 
+if test "x$cm_cv_python" == "xyes" && \
    test "x$SWIG" != "xno"; then
 
+	# with-python, and swig available
 	AM_PATH_PYTHON(2.3)
 	AM_CHECK_PYTHON_HEADERS(
 	[], [
 		cm_cv_python="no"
 	])
-else 
+	cm_cv_python_msg="(wrappers generated)"
+
+elif test "x$cm_cv_python" == "xyes" && \
+     test "x$PYTHON_BINDING_SHIPPED" == "xyes"; then
+
+	# with-python, swig wrappers shipped
+	AM_PATH_PYTHON(2.3)
+	AM_CHECK_PYTHON_HEADERS(
+	[], [
+		cm_cv_python="no"
+	])
+	cm_cv_python_msg="(wrappers shipped)"
+
+else
 	cm_cv_python="no"
 fi
 AM_CONDITIONAL([HAVE_PYTHON], test "x$cm_cv_python" == "xyes")
@@ -309,7 +332,7 @@ AC_OUTPUT([
 echo "
     Configuration
         Use libgsf:                    ${cm_cv_libgsf}
-        Python bindings:               ${cm_cv_python} (not implemented)
+        Python bindings:               ${cm_cv_python} ${cm_cv_python_msg}
             installing to:             ${pyexecdir}
         Build documentation:           ${cm_cv_docs}
             examples:                  ${cm_cv_examples}
