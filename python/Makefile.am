@@ -5,8 +5,8 @@ AM_CPPFLAGS = \
 	-I$(srcdir) \
 	-I$(top_srcdir)
 
-python_PYTHON = crossmark.py
-pyexec_LTLIBRARIES = _crossmark.la
+pkgpyexec_PYTHON = __init__.py crossmark.py
+pkgpyexec_LTLIBRARIES = _crossmark.la
 
 _crossmark_la_LDFLAGS = \
 	-avoid-version \
