@@ -12,3 +12,7 @@ xm_scan_LDADD = \
 
 xm_scan_SOURCES = \
 	xm-scan.cc
+
+EXTRA_DIST = \
+	$(wildcard $(srcdir)/*.html) \
+	$(wildcard $(srcdir)/*.xm)

@@ -18,7 +18,7 @@
  */
 
 #include "crossmark.hh"
-#include "cm-stream-private.hh"
+#include "stream/stream-private.hh"
 
 using namespace crossmark;
 

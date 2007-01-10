@@ -18,7 +18,7 @@
  */
 
 /*!
- * \file cm-writer.hh
+ * \file writer.hh
  * \brief Crossmark output.
  */
 
@@ -27,9 +27,9 @@
 
 #include <glib.h>
 #include <stack>
-#include <crossmark/cm-features.hh>
-#include <crossmark/cm-document.hh>
-#include <crossmark/cm-stream.hh>
+#include <crossmark/features.hh>
+#include <crossmark/document.hh>
+#include <crossmark/stream/stream.hh>
 
 namespace crossmark {
 

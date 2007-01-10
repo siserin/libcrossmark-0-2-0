@@ -20,7 +20,7 @@
 #ifndef DOCUMENT_HH
 #define DOCUMENT_HH
 
-#include <crossmark/cm-document.hh>
+#include <crossmark/crossmark.hh>
 
 enum BlockType {
 	BLOCKQUOTE = crossmark::document::Block::BLOCKQUOTE,

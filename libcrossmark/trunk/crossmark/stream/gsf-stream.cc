@@ -19,8 +19,8 @@
 
 #include <gsf/gsf-input-stdio.h>
 #include <gsf/gsf-output-stdio.h>
-#include "cm-gsf-stream-private.hh"
-#include "cm-stream-private.hh"
+#include "gsf-stream-private.hh"
+#include "stream-private.hh"
 
 using namespace crossmark;
 

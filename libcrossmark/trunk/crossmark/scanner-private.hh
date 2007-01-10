@@ -18,7 +18,7 @@
  */
 
 /*!
- * \file cm-scanner-private.hh
+ * \file scanner-private.hh
  * \brief Crossmark scanner.
  * \internal
  */
@@ -28,9 +28,9 @@
 
 #include <glib.h>
 #include <list>
-#include <crossmark/cm-features.hh>
-#include <crossmark/cm-stream.hh>
-#include <crossmark/cm-string-private.hh>
+#include <crossmark/features.hh>
+#include <crossmark/string-private.hh>
+#include <crossmark/stream/stream.hh>
 
 namespace crossmark {
 

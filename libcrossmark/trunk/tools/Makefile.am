@@ -26,8 +26,3 @@ bin_SCRIPTS = \
 
 python_PYTHON = \
 	xm2dox.py
-
-EXTRA_DIST = \
-	$(pybin_DATA) \
-	$(wildcard $(srcdir)/*.html) \
-	$(wildcard $(srcdir)/*.xm)

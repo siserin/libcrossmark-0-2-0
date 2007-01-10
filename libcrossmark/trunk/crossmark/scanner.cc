@@ -19,8 +19,8 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
-#include "cm-scanner-private.hh"
-#include "cm-stream-private.hh"
+#include "scanner-private.hh"
+#include "stream/stream-private.hh"
 
 using namespace crossmark;
 

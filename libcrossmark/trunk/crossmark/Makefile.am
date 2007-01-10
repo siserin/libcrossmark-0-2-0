@@ -1,3 +1,6 @@
+
+SUBDIRS = stream
+
 if PLATFORM_WIN32
 no_undefined = -no-undefined
 else
@@ -27,19 +30,10 @@ lib_LTLIBRARIES = libcrossmark-1.la
 libcrossmark_1_includedir = $(includedir)/libcrossmark-1/crossmark
 libcrossmark_1_include_HEADERS = \
 	crossmark.hh \
-	cm-document.hh \
-	cm-features.hh \
-	cm-writer.hh \
-	cm-parser.hh \
-	cm-stream.hh
-
-noinst_HEADERS = \
-	cm-gsf-stream-private.hh \
-	cm-scanner-private.hh \
-	cm-stdio-stream-private.hh \
-	cm-string-private.hh \
-	cm-stream-private.hh \
-	cm-normalizer-private.hh
+	document.hh \
+	features.hh \
+	writer.hh \
+	parser.hh
 
 AM_CPPFLAGS = \
 	$(DEBUG_CXXFLAGS) \
@@ -56,35 +50,29 @@ libcrossmark_1_la_LDFLAGS = \
 	$(no_undefined)
 
 libcrossmark_1_la_LIBADD = \
-	$(DEPS_LIBS)
+	$(DEPS_LIBS) \
+	stream/libstream.la
 
 libcrossmark_1_la_SOURCES = \
-	cm-scanner.cc \
-	cm-parser.cc \
-	cm-stdio-stream.cc \
-	cm-stream.cc \
-	cm-normalizer.cc \
-	cm-writer.cc
-
-gsf_sources = \
-	cm-gsf-stream.cc
-
-if HAVE_LIBGSF
-libcrossmark_1_la_SOURCES += $(gsf_sources)
-endif
+	scanner.cc \
+	scanner-private.hh \
+	parser.cc \
+	string-private.hh \
+	normalizer.cc \
+	normalizer-private.hh \
+	writer.cc
 
 if OS_WIN32
 @LIBCROSSMARK_WIN32_RESOURCE@ : libcrossmark.rc
 	$(top_srcdir)/build/win32/lt-compile-resource libcrossmark.rc @LIBCROSSMARK_WIN32_RESOURCE@
 endif
 
-
 install-data-local: install-libtool-import-lib
 
 uninstall-local: uninstall-libtool-import-lib
 
 EXTRA_DIST = \
-	cm-features.hh.in \
+	features.hh.in \
 	libcrossmark.rc.in
 
 # These may be in the builddir too
@@ -92,4 +80,4 @@ BUILD_EXTRA_DIST = \
 	libcrossmark.rc 
 
 DISTCLEANFILES = \
-	cm-features.hh
+	features.hh

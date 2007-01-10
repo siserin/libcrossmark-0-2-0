@@ -20,7 +20,7 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
-#include <crossmark/cm-scanner-private.hh>
+#include <crossmark/scanner-private.hh>
 
 using namespace crossmark;
 

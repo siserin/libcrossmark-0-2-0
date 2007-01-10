@@ -20,7 +20,7 @@
 #ifndef WRITER_HH
 #define WRITER_HH
 
-#include <crossmark/cm-writer.hh>
+#include <crossmark/crossmark.hh>
 #include "document.hh"
 
 class Writer : public crossmark::Writer

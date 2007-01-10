@@ -18,7 +18,7 @@
  */
 
 /*!
- * \file cm-document.hh
+ * \file document.hh
  * \brief Crossmark document interfaces.
  */
 
@@ -29,7 +29,7 @@
 #include <list>
 #include <map>
 #include <stack>
-#include <crossmark/cm-features.hh>
+#include <crossmark/features.hh>
 
 namespace crossmark {
 

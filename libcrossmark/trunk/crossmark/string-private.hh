@@ -18,58 +18,47 @@
  */
 
 /*!
- * \file cm-gsf-stream-private.hh
- * \brief Crossmark libgsf support.
- * \internal
+ * \file string-private.hh
+ * \brief String class.
  */
 
-#ifndef CM_GSF_STREAM_PRIVATE_HH
-#define CM_GSF_STREAM_PRIVATE_HH
+#ifndef CM_STRING_PRIVATE_HH
+#define CM_STRING_PRIVATE_HH
 
 #include <glib.h>
-#include <gsf/gsf.h>
-#include <crossmark/cm-features.hh>
-#include <crossmark/stream/cm-stream.hh>
+#include <string>
+#include <crossmark/features.hh>
 
 namespace crossmark {
 
-namespace stream {
-
 /*!
- * \internal
- * \brief UTF-8 compliant input stream.
+ * \brief String class with an UTF-8 compliant append method.
  */
-class GsfInput : public Input 
+class String : public std::string
 {
 public:
-	GsfInput (gchar const *file);
-	GsfInput (::GsfInput *input);
-	virtual ~GsfInput ();
-	virtual gunichar read ();
+	String ()
+	  : std::string ()
+	{}
 
-private:
-	::GsfInput *_input;
+	String (gchar const *str)
+	  : std::string (str)
+	{}
+
+	String (std::string &str)
+	  : std::string (str)
+	{}
+
+	void append (gunichar c)
+	{
+		gchar buf[] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+		gint  n_bytes;
+
+		n_bytes = g_unichar_to_utf8 (c, buf);
+		std::string::append (buf);
+	}
 };
 
-/*!
- * \internal
- * \brief UTF-8 compliant output stream.
- */
-class GsfOutput : public Output
-{
-public:
-	GsfOutput (gchar const *file);
-	GsfOutput (::GsfOutput *output);
-	virtual ~GsfOutput ();
-	virtual gboolean write (gunichar c);
-	virtual gboolean write (gchar const *s);
+};  // namespace crossmark
 
-protected:
-	::GsfOutput *_output;
-};
-
-}; // namespace stream
-
-}; // namespace crossmark
-
-#endif // CM_GSF_STREAM_PRIVATE_HH
+#endif /* CM_STRING_PRIVATE_HH */
