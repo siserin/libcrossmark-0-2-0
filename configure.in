@@ -62,7 +62,7 @@ AC_CHECK_PROG([SWIG], [swig], [swig], [no])
 AC_SUBST(SWIG)
 AC_ARG_VAR(SWIG, Swig interface generator)
 
-swig_stamp="$srcdir/python/swig-stamp"
+swig_stamp="$srcdir/python/crossmark/swig-stamp"
 AC_MSG_CHECKING([for python binding code in $swig_stamp])
 if test -f "$swig_stamp"; then
 	PYTHON_BINDING_SHIPPED="yes"
@@ -322,6 +322,7 @@ AC_OUTPUT([
  docs/doxygen/Doxyfile
  docs/examples/Makefile
  python/Makefile
+ python/crossmark/Makefile
  tests/Makefile
  tools/Makefile
  tools/xm2dox
