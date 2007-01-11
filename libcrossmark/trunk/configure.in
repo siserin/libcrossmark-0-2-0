@@ -322,7 +322,6 @@ AC_OUTPUT([
  docs/doxygen/Doxyfile
  docs/examples/Makefile
  python/Makefile
- python/crossmark/Makefile
  tests/Makefile
  tools/Makefile
  tools/xm2dox
