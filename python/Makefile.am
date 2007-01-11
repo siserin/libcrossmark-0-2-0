@@ -36,8 +36,19 @@ if BUILD_DOCS
 all-local: copy-stamp
 endif
 
+clean-local: 
+	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
+		rm -f __init__.py*; \
+		rm -f crossmark.py*; \
+	fi
+
 copy-stamp:
-	cp $(srcdir)/__init__.py .
+	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
+		cp $(srcdir)/__init__.py .; \
+		if test -f "$(srcdir)/crossmark.py"; then \
+			cp $(srcdir)/crossmark.py .; \
+		fi; \
+	fi
 	touch $@
 
 noinst_HEADERS = \

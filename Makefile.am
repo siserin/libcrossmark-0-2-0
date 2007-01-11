@@ -10,19 +10,33 @@ if BUILD_DOCS
 SUBDIRS += docs
 endif
 
-EXTRA_DIST = \
+doc_DATA = \
 	AUTHORS			\
 	COPYING			\
 	ChangeLog		\
 	HACKING			\
 	INSTALL			\
-	README			\
+	README
+
+EXTRA_DIST = \
+	$(doc_DATA)		\
 	autogen.sh		\
+	crossmark.py		\
 	libcrossmark-1.pc.in	\
 	python.m4
 
 CLEANFILES = \
-	cl-stamp
+	cl-stamp \
+	copy-stamp
+
+if BUILD_DOCS
+all-local: copy-stamp
+endif
+
+clean-local: 
+	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
+		rm -f crossmark.py*; \
+	fi
 
 distclean-local:
 	rm -rf *.cache *~
@@ -40,14 +54,9 @@ ChangeLog: cl-stamp
 
 cl-stamp:
 
-if BUILD_DOCS
-install-data-local:
-	mkdir -p $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@
-	$(INSTALL) $(srcdir)/ChangeLog $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
-	$(INSTALL) $(srcdir)/COPYING $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
-	$(INSTALL) $(srcdir)/AUTHORS $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
-	$(INSTALL) $(srcdir)/HACKING $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
-	$(INSTALL) $(srcdir)/INSTALL $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/
-uninstall-local:
-	-rm -rf $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@
-endif
+copy-stamp:
+	if test "$(srcdir)" != "$(builddir)" && \
+	   test ! -f "crossmark.py"; then \
+		cp $(srcdir)/crossmark.py .; \
+	fi
+	touch $@
