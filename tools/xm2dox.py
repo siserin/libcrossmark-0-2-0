@@ -27,6 +27,8 @@ import time
 
 class Converter (crossmark.Document): 
 
+	_styleStack = []
+
 	def _randId (self): 
 
 		return str (random.randint(0, sys.maxint))
@@ -63,9 +65,11 @@ class Converter (crossmark.Document):
 			sys.stdout.write ("<code>")
 		elif klass == style.UNDERLINE:
 			sys.stdout.write ("<u>")
+		self._styleStack.append (klass)
 
-	def popStyle (self, klass):
+	def popStyle (self):
 
+		klass = self._styleStack.pop ()
 		if klass == style.BOLD:
 			sys.stdout.write ("</b>")
 		elif klass == style.ITALIC:

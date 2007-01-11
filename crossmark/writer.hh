@@ -55,7 +55,7 @@ public:
 	virtual void text (gchar const *str);
 
 	virtual void pushStyle (document::Style::Type type);
-	virtual void popStyle (document::Style::Type type);
+	virtual void popStyle ();
 
 	virtual void pushBlock (document::Block::Type type);
 	virtual void popBlock ();
@@ -65,6 +65,7 @@ private:
 	gboolean		 _ownStream;
 	document::Block::Type 	 _currentBlock;
 	glong			 _headingLength;
+	std::stack<Document::Style::Type> _styleStack;
 };
 
 };  // namespace crossmark

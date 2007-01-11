@@ -125,7 +125,7 @@ public:
 	virtual ~Style () {}
 
 	virtual void pushStyle (Type type) = 0;
-	virtual void popStyle (Type type) = 0;
+	virtual void popStyle () = 0;
 };
 
 /*!
@@ -273,7 +273,7 @@ public:
 
 	// style interface
 	virtual void pushStyle (document::Style::Type type) = 0;
-	virtual void popStyle (document::Style::Type type) = 0;
+	virtual void popStyle () = 0;
 
 	// document structure interface
 	virtual void pushBlock (document::Block::Type type) = 0;

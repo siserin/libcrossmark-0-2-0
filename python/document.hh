@@ -34,13 +34,12 @@ public:
 
 #ifndef SWIG
 	virtual void pushStyle (crossmark::document::Style::Type type) { pushStyle ((int) type); }
-	virtual void popStyle (crossmark::document::Style::Type type) { popStyle ((int) type); }
 	virtual void pushBlock (crossmark::document::Block::Type type) { pushBlock ((int) type); }
 #endif
 	virtual void popBlock () {}
 
 	virtual void pushStyle (int type) {}
-	virtual void popStyle (int type) {}
+	virtual void popStyle () {}
 	virtual void pushBlock (int type) {}
 };
 

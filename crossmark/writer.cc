@@ -95,6 +95,8 @@ Writer::pushStyle (document::Style::Type type)
 			   __FUNCTION__, type);
 	}
 
+	_styleStack.push (type);
+
 	// keep track of heading length
 	switch (_currentBlock) {
 	case document::Block::HEADING_1:
@@ -107,9 +109,9 @@ Writer::pushStyle (document::Style::Type type)
  * \sa Document::popStyle()
  */
 void 
-Writer::popStyle (document::Style::Type type)
+Writer::popStyle ()
 {
-	switch (type) {
+	switch (_styleStack.top ()) {
 	case document::Style::BOLD:
 		_ostream.write ('*');
 		break;
@@ -124,8 +126,10 @@ Writer::popStyle (document::Style::Type type)
 		break;
 	default:
 		g_warning ("%s: type == %d", 
-			   __FUNCTION__, type);
+			   __FUNCTION__, _styleStack.top ());
 	}
+
+	_styleStack.pop ();
 
 	// keep track of heading length
 	switch (_currentBlock) {
