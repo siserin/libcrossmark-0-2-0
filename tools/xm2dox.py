@@ -23,6 +23,7 @@ from crossmark import block
 from crossmark import style
 import random
 import sys
+import time
 
 class Converter (crossmark.Document): 
 
@@ -84,6 +85,7 @@ if len (sys.argv) < 2:
         sys.stderr.write ("Need filename\n")
         sys.exit (1)
 
+random.seed (time.time () * 10000000)
 converter = Converter ()
 parser = crossmark.Parser (sys.argv[1], converter)
 parser.parse ()
