@@ -17,30 +17,16 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef WRITER_HH
-#define WRITER_HH
+#ifndef STYLE_HH
+#define STYLE_HH
 
 #include <crossmark/crossmark.hh>
 
-class Writer : public crossmark::Writer
-{
-public:
-	Writer (char const *file)
-	  : crossmark::Writer (file)
-	{}
-
-	virtual ~Writer () {}
-
-	virtual void pushDocument () { crossmark::Writer::pushDocument (); }
-	virtual void popDocument () { crossmark::Writer::popDocument (); }
-
-	virtual void text (char const *str) { crossmark::Writer::text (str); }
-
-	virtual void pushStyle (int type) { crossmark::Writer::pushStyle ((crossmark::document::Style::Type) type); }
-	virtual void popStyle (int type) { crossmark::Writer::popStyle ((crossmark::document::Style::Type) type); }
-
-	virtual void pushBlock (int type) { crossmark::Writer::pushBlock ((crossmark::document::Block::Type) type); }
-	virtual void popBlock () { crossmark::Writer::popBlock (); }
+enum StyleType {
+	BOLD = crossmark::document::Style::BOLD,
+	ITALIC = crossmark::document::Style::ITALIC,
+	MONOSPACE = crossmark::document::Style::MONOSPACE,
+	UNDERLINE = crossmark::document::Style::UNDERLINE
 };
 
-#endif // WRITER_HH
+#endif // STYLE_HH

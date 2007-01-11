@@ -22,22 +22,6 @@
 
 #include <crossmark/crossmark.hh>
 
-enum BlockType {
-	BLOCKQUOTE = crossmark::document::Block::BLOCKQUOTE,
-	PARAGRAPH = crossmark::document::Block::PARAGRAPH,
-	HEADING_1 = crossmark::document::Block::HEADING_1,
-	HEADING_2 = crossmark::document::Block::HEADING_2,
-	HEADING_3 = crossmark::document::Block::HEADING_3,
-	HEADING_4 = crossmark::document::Block::HEADING_4
-};
-
-enum StyleType {
-	BOLD = crossmark::document::Style::BOLD,
-	ITALIC = crossmark::document::Style::ITALIC,
-	MONOSPACE = crossmark::document::Style::MONOSPACE,
-	UNDERLINE = crossmark::document::Style::UNDERLINE
-};
-
 class Document : public crossmark::Document
 {
 public:
@@ -49,15 +33,15 @@ public:
 	virtual void text (char const *str) {}
 
 #ifndef SWIG
-	virtual void pushStyle (crossmark::document::Style::Type type) { pushStyle ((StyleType) type); }
-	virtual void popStyle (crossmark::document::Style::Type type) { popStyle ((StyleType) type); }
-	virtual void pushBlock (crossmark::document::Block::Type type) { pushBlock ((BlockType) type); }
+	virtual void pushStyle (crossmark::document::Style::Type type) { pushStyle ((int) type); }
+	virtual void popStyle (crossmark::document::Style::Type type) { popStyle ((int) type); }
+	virtual void pushBlock (crossmark::document::Block::Type type) { pushBlock ((int) type); }
 #endif
 	virtual void popBlock () {}
 
-	virtual void pushStyle (StyleType type) {}
-	virtual void popStyle (StyleType type) {}
-	virtual void pushBlock (BlockType type) {}
+	virtual void pushStyle (int type) {}
+	virtual void popStyle (int type) {}
+	virtual void pushBlock (int type) {}
 };
 
 #endif // DOCUMENT_HH

@@ -19,6 +19,8 @@
 #
 
 import crossmark
+from crossmark import block
+from crossmark import style
 import random
 import sys
 
@@ -28,21 +30,21 @@ class Converter (crossmark.Document):
 
 		return str (random.randint(0, sys.maxint))
 
-	def pushBlock (self, block):
+	def pushBlock (self, klass):
 
-		if block == crossmark.BLOCKQUOTE: 
+		if klass == block.BLOCKQUOTE: 
 			pass
 			# TODO
-		elif block == crossmark.PARAGRAPH:
+		elif klass == block.PARAGRAPH:
 			pass
 			# the closing \n\n of the previous paragraph should suffice
-		elif block == crossmark.HEADING_1:
+		elif klass == block.HEADING_1:
 			sys.stdout.write ("\n\\section s" + self._randId () + " ")
-		elif block == crossmark.HEADING_2:
+		elif klass == block.HEADING_2:
 			sys.stdout.write ("\n\\subsection s" + self._randId () + " ")
-		elif block == crossmark.HEADING_3:
+		elif klass == block.HEADING_3:
 			sys.stdout.write ("\n\\subsubsection s" + self._randId () + " ")
-		elif block == crossmark.HEADING_4: 
+		elif klass == block.HEADING_4: 
 			pass
 			# TODO
 
@@ -50,26 +52,26 @@ class Converter (crossmark.Document):
 
 		sys.stdout.write ("\n\n")
 
-	def pushStyle (self, style):
+	def pushStyle (self, klass):
 
-		if style == crossmark.BOLD:
+		if klass == style.BOLD:
 			sys.stdout.write ("<b>")
-		elif style == crossmark.ITALIC:
+		elif klass == style.ITALIC:
 			sys.stdout.write ("<i>")
-		elif style == crossmark.MONOSPACE:
+		elif klass == style.MONOSPACE:
 			sys.stdout.write ("<code>")
-		elif style == crossmark.UNDERLINE:
+		elif klass == style.UNDERLINE:
 			sys.stdout.write ("<u>")
 
-	def popStyle (self, style):
+	def popStyle (self, klass):
 
-		if style == crossmark.BOLD:
+		if klass == style.BOLD:
 			sys.stdout.write ("</b>")
-		elif style == crossmark.ITALIC:
+		elif klass == style.ITALIC:
 			sys.stdout.write ("</i>")
-		elif style == crossmark.MONOSPACE:
+		elif klass == style.MONOSPACE:
 			sys.stdout.write ("</code>")
-		elif style == crossmark.UNDERLINE:
+		elif klass == style.UNDERLINE:
 			sys.stdout.write ("</u>")
 
 	def text (self, string):
