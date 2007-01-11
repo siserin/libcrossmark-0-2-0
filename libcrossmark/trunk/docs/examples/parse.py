@@ -5,6 +5,8 @@
 # \brief Basic crossmark parsing example.
 
 import crossmark
+from crossmark import block
+from crossmark import style
 import sys
 
 class Listener (crossmark.Document):
@@ -15,18 +17,18 @@ class Listener (crossmark.Document):
 	def popDocument (self):
 		print "popDocument"
 
-	def pushBlock (self, block):
-		if block == crossmark.BLOCKQUOTE:
+	def pushBlock (self, klass):
+		if klass == block.BLOCKQUOTE:
 			typename = 'BLOCKQUOTE'
-		elif block == crossmark.PARAGRAPH:
+		elif klass == block.PARAGRAPH:
 			typename = 'PARAGRAPH'
-		elif block == crossmark.HEADING_1:
+		elif klass == block.HEADING_1:
 			typename = 'HEADING_1'
-		elif block == crossmark.HEADING_2:
+		elif klass == block.HEADING_2:
 			typename = 'HEADING_2'
-		elif block == crossmark.HEADING_3:
+		elif klass == block.HEADING_3:
 			typename = 'HEADING_3'
-		elif block == crossmark.HEADING_4:
+		elif klass == block.HEADING_4:
 			typename = 'HEADING_4'
 		else:
 			typename = 'unknown'
@@ -35,18 +37,18 @@ class Listener (crossmark.Document):
 	def popBlock (self):
 		print "popBlock"
 
-	def pushStyle (self, style):
-		if style == crossmark.BOLD: 
+	def pushStyle (self, klass):
+		if klass == style.BOLD: 
 			typename = 'BOLD'
-		elif style == crossmark.ITALIC: 
+		elif klass == style.ITALIC: 
 			typename = 'ITALIC'
-		elif style == crossmark.MONOSPACE: 
+		elif klass == style.MONOSPACE: 
 			typename = 'MONOSPACE'
-		elif style == crossmark.UNDERLINE: 
+		elif klass == style.UNDERLINE: 
 			typename = 'UNDERLINE'
 		print "pushStyle (", typename, ")"
 
-	def popStyle (self, style):
+	def popStyle (self, klass):
 		print "popStyle"
 
 	def text (self, string):

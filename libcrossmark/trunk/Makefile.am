@@ -13,13 +13,13 @@ endif
 doc_DATA = \
 	AUTHORS			\
 	COPYING			\
-	ChangeLog		\
 	HACKING			\
 	INSTALL			\
 	README
 
 EXTRA_DIST = \
 	$(doc_DATA)		\
+	ChangeLog		\
 	autogen.sh		\
 	crossmark.py		\
 	libcrossmark-1.pc.in	\

@@ -29,7 +29,7 @@ all-local: mainpage.dox release-notes.dox hacking.dox authors.dox copying.dox
 	doxygen 
 endif
 
-PYTHONPATH := "$(top_builddir):$(top_builddir)/python/.libs"
+PYTHONPATH := "$(top_builddir):$(top_builddir)/python/.libs:$(top_builddir)/python/block/.libs:$(top_builddir)/python/style/.libs"
 XM2DOX := $(top_srcdir)/tools/xm2dox.py
 
 mainpage.dox: $(top_srcdir)/docs/mainpage.dox.in $(top_srcdir)/README copy-stamp
