@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 	-I$(srcdir) \
 	-I$(top_srcdir)
 
+pkgpyexecdir = $(pyexecdir)/crossmark
 pkgpyexec_PYTHON = __init__.py crossmark.py
 pkgpyexec_LTLIBRARIES = _crossmark.la
 
