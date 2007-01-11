@@ -81,13 +81,13 @@ end (GMarkupParseContext *context,
 	} 
 	// inline
 	else if (0 == strcmp (element, "b")) {
-		writer->popStyle (document::Style::BOLD);
+		writer->popStyle ();
 	} else if (0 == strcmp (element, "i")) {
-		writer->popStyle (document::Style::ITALIC);
+		writer->popStyle ();
 	} else if (0 == strcmp (element, "code")) {
-		writer->popStyle (document::Style::MONOSPACE);
+		writer->popStyle ();
 	} else if (0 == strcmp (element, "u")) {
-		writer->popStyle (document::Style::UNDERLINE);
+		writer->popStyle ();
 	} else {
 		g_assert (FALSE);
 	}

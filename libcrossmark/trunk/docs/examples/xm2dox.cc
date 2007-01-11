@@ -80,7 +80,7 @@ public:
 	
 		std::cout << style;
 	}
-	void popStyle (document::Style::Type unused)
+	void popStyle ()
 	{
 		g_assert (!_styleStack.empty ());
 		std::cout << _styleStack.top ();

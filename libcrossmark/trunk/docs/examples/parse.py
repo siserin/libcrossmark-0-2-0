@@ -48,7 +48,7 @@ class Listener (crossmark.Document):
 			typename = 'UNDERLINE'
 		print "pushStyle (", typename, ")"
 
-	def popStyle (self, klass):
+	def popStyle (self):
 		print "popStyle"
 
 	def text (self, string):

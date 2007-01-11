@@ -174,6 +174,7 @@ private:
 /*!
  * \internal 
  * \brief Buffered "pop style" call.
+ * \todo get rid of style
  */
 class PopStyle : public Method
 {
@@ -183,7 +184,7 @@ public:
 	    _type (type)
 	{}
 	virtual ~PopStyle () {}
-	virtual void operator () (void) { _reader.popStyle (_type); }
+	virtual void operator () (void) { _reader.popStyle (); }
 	virtual Method::Class getClass () const { return Method::POP_STYLE; }
 	virtual document::Style::Type getType () const { return _type; }
 	virtual Text * createFallback () { return Text::fallback (_reader, _type); }
@@ -281,6 +282,7 @@ public:
 	virtual void pushStyle (document::Style::Type type);
 	virtual void cancelStyle (document::Style::Type type);
 	virtual void popStyle (document::Style::Type type);
+	virtual void popStyle () { g_assert (FALSE); }
 
 	// document structure interface
 	virtual void pushBlock (document::Block::Type type);

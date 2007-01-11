@@ -37,7 +37,7 @@ public:
 	virtual void text (char const *str) { crossmark::Writer::text (str); }
 
 	virtual void pushStyle (int type) { crossmark::Writer::pushStyle ((crossmark::document::Style::Type) type); }
-	virtual void popStyle (int type) { crossmark::Writer::popStyle ((crossmark::document::Style::Type) type); }
+	virtual void popStyle () { crossmark::Writer::popStyle (); }
 
 	virtual void pushBlock (int type) { crossmark::Writer::pushBlock ((crossmark::document::Block::Type) type); }
 	virtual void popBlock () { crossmark::Writer::popBlock (); }
