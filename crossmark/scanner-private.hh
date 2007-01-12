@@ -146,25 +146,52 @@ public:
 
 /*!
  * \brief Hyperlink token.
+ * \todo update to new way of doing things.
  */
 class Link : public Token
 {
 public:
-	Link () {}
+	enum Pos {
+		LEFT,
+		RIGHT
+	};
+
+	Link (Pos pos, gchar const *target, gchar const *scroll) 
+	  : _pos (pos),
+	    _target (target),
+	    _scroll (scroll)
+	{}
 	virtual ~Link () {}
+
+	virtual Pos getPos () const { return _pos; }
+	virtual gchar const * getTarget () { return _target.c_str (); }
+	virtual gchar const * getScroll () { return _scroll.c_str (); }
 
 	virtual Token::Class getClass () const { return Token::LINK; }
 	virtual gchar const * toHtml () const 
-	{
-		return NULL;
+	{ 
+		String html;
+		if (_pos == LEFT) {
+			String html = "<a href=\"";
+			html += _target;
+			html += "\">";
+			
+		} else {
+			html = "</a>";
+		}
+		return html.c_str ();
 	}
-	virtual gchar const * toString () const { return toHtml (); }
+	virtual gchar const * toString () const 
+	{ 
+		String s = _target;
+		s += _scroll;
+		return s.c_str ();
+	}
 
 private:
-	String _label;
-	String _target;
-	String _scroll;
-	String _html;
+	Pos	_pos;
+	String 	_target;
+	String 	_scroll;
 };
 
 /*!

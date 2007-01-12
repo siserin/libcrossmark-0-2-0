@@ -58,10 +58,10 @@ public:
 	virtual void pushStyle (document::Style::Type type);
 	virtual void popStyle ();
 
-	virtual void link (document::Link::Type type, 
-			   gchar const *label, 
-			   gchar const *target,
-			   gchar const *scroll);
+	virtual void pushLink (document::Link::Type type, 
+			       gchar const *target,
+			       gchar const *scroll);
+	virtual void popLink ();
 
 	virtual void text (gchar const *str);
 

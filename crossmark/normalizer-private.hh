@@ -286,10 +286,10 @@ public:
 	virtual void popStyle () { g_assert (FALSE); }
 
 	// link interface
-	virtual void link (document::Link::Type type, 
-			   gchar const *label, 
-			   gchar const *target,
-			   gchar const *scroll);
+	virtual void pushLink (document::Link::Type type, 
+			       gchar const *target,
+			       gchar const *scroll);
+	virtual void popLink ();
 
 	// text interface
 	virtual void text (gchar const *text);

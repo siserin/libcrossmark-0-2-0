@@ -200,10 +200,18 @@ Normalizer::popStyle (document::Style::Type type)
  * \todo implement
  */
 void 
-Normalizer::link (document::Link::Type type, 
-		  gchar const *label, 
-		  gchar const *target,
-		  gchar const *scroll)
+Normalizer::pushLink (document::Link::Type type, 
+		      gchar const *target,
+		      gchar const *scroll)
+{
+
+}
+
+/*!
+ * \todo implement
+ */
+void 
+Normalizer::popLink ()
 {
 
 }

@@ -93,10 +93,11 @@ public:
  	 * \param target URI or page.
  	 * \param scroll In-page target, if given. 
 	 */
-	virtual void link (Type type, 
-			   gchar const *label, 
-			   gchar const *target,
-			   gchar const *scroll) = 0;
+	virtual void pushLink (Type type, 
+			       gchar const *target,
+			       gchar const *scroll) = 0;
+
+	virtual void popLink () = 0;
 };
 
 /*!
@@ -269,10 +270,10 @@ public:
 	virtual void popStyle () = 0;
 
 	// link interface
-	virtual void link (document::Link::Type type, 
-			   gchar const *label, 
-			   gchar const *target,
-			   gchar const *scroll) = 0;
+	virtual void pushLink (document::Link::Type type, 
+			       gchar const *target,
+			       gchar const *scroll) = 0;
+	virtual void popLink () = 0;
 
 	// text interface
 	virtual void text (gchar const *str) = 0;
