@@ -275,8 +275,9 @@ public:
 	virtual void pushDocument ();
 	virtual void popDocument ();
 
-	// text interface
-	virtual void text (gchar const *text);
+	// document structure interface
+	virtual void pushBlock (document::Block::Type type);
+	virtual void popBlock ();
 
 	// style interface
 	virtual void pushStyle (document::Style::Type type);
@@ -284,9 +285,14 @@ public:
 	virtual void popStyle (document::Style::Type type);
 	virtual void popStyle () { g_assert (FALSE); }
 
-	// document structure interface
-	virtual void pushBlock (document::Block::Type type);
-	virtual void popBlock ();
+	// link interface
+	virtual void link (document::Link::Type type, 
+			   gchar const *label, 
+			   gchar const *target,
+			   gchar const *scroll);
+
+	// text interface
+	virtual void text (gchar const *text);
 
 private:
 	std::list<normalizer::Method *> _methods;

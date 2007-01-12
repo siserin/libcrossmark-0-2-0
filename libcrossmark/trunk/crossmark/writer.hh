@@ -52,13 +52,18 @@ public:
 	virtual void pushDocument ();
 	virtual void popDocument ();
 
-	virtual void text (gchar const *str);
+	virtual void pushBlock (document::Block::Type type);
+	virtual void popBlock ();
 
 	virtual void pushStyle (document::Style::Type type);
 	virtual void popStyle ();
 
-	virtual void pushBlock (document::Block::Type type);
-	virtual void popBlock ();
+	virtual void link (document::Link::Type type, 
+			   gchar const *label, 
+			   gchar const *target,
+			   gchar const *scroll);
+
+	virtual void text (gchar const *str);
 
 private:
 	stream::Output 		&_ostream;

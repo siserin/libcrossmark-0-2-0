@@ -5,51 +5,53 @@ AM_CPPFLAGS = \
 	-I$(srcdir) \
 	-I$(top_srcdir)
 
-pkgpyexecdir = $(pyexecdir)/crossmark/block
-pkgpyexec_PYTHON = __init__.py block.py
-pkgpyexec_LTLIBRARIES = _block.la
+pkgpyexecdir = $(pyexecdir)/crossmark/link
+pkgpyexec_PYTHON = __init__.py link.py
+pkgpyexec_LTLIBRARIES = _link.la
 
-_block_la_LDFLAGS = \
+_link_la_LDFLAGS = \
 	-avoid-version \
 	-module \
 	-no-undefined
 
-_block_la_LIBADD = \
+_link_la_LIBADD = \
 	$(DEPS_LIBS) \
 	$(top_builddir)/crossmark/libcrossmark-1.la
 
-_block_la_SOURCES = \
-	$(BUILT_SOURCES) \
-	block.hh
+_link_la_SOURCES = \
+	$(BUILT_SOURCES)
 
 # swig-stamp is EXTRA_DIST'd so tarball builds don't require swig
-swig-stamp: block.swig block.hh Makefile.am
-	$(SWIG) -threads -Wall -c++ -python -directors -o block-wrap.cc $(srcdir)/$<
+swig-stamp: link.swig link.hh Makefile.am
+	$(SWIG) -threads -Wall -c++ -python -directors -o link-wrap.cc $(srcdir)/$<
 	touch $@
 
-block-wrap.cc: swig-stamp
+link-wrap.cc: swig-stamp
 
-block-wrap.h: swig-stamp
+link-wrap.h: swig-stamp
 
-block.py: swig-stamp
+link.py: swig-stamp
 
 # when generating docs we run python tools in the build tree
 all-local:
 	test -f __init__.py || $(LN_S) $(srcdir)/__init__.py
-	test -f block.py || $(LN_S) $(srcdir)/block.py
+	test -f link.py || $(LN_S) $(srcdir)/link.py
+
+noinst_HEADERS = \
+	link.hh
 
 BUILT_SOURCES = \
-	block-wrap.cc \
-	block-wrap.h \
-	block.py
+	link-wrap.cc \
+	link-wrap.h \
+	link.py
 
 EXTRA_DIST = \
-	block.swig \
+	link.swig \
 	$(BUILT_SOURCES) \
 	swig-stamp
 
 DISTCLEANFILES = \
 	$(BUILT_SOURCES) \
 	__init__.pyc \
-	block.pyc \
+	link.pyc \
 	swig-stamp

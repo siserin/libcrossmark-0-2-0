@@ -34,13 +34,15 @@ public:
 	virtual void pushDocument () { crossmark::Writer::pushDocument (); }
 	virtual void popDocument () { crossmark::Writer::popDocument (); }
 
-	virtual void text (char const *str) { crossmark::Writer::text (str); }
+	virtual void pushBlock (int type) { crossmark::Writer::pushBlock ((crossmark::document::Block::Type) type); }
+	virtual void popBlock () { crossmark::Writer::popBlock (); }
 
 	virtual void pushStyle (int type) { crossmark::Writer::pushStyle ((crossmark::document::Style::Type) type); }
 	virtual void popStyle () { crossmark::Writer::popStyle (); }
 
-	virtual void pushBlock (int type) { crossmark::Writer::pushBlock ((crossmark::document::Block::Type) type); }
-	virtual void popBlock () { crossmark::Writer::popBlock (); }
+	virtual void link (int type, gchar const *label, gchar const *target, gchar const *scroll) { crossmark::Writer::link ((crossmark::document::Link::Type) type, label, target, scroll); }
+
+	virtual void text (char const *str) { crossmark::Writer::text (str); }
 };
 
 #endif // WRITER_HH

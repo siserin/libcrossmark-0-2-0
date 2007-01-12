@@ -17,34 +17,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef DOCUMENT_HH
-#define DOCUMENT_HH
+#ifndef LINK_HH
+#define LINK_HH
 
 #include <crossmark/crossmark.hh>
 
-class Document : public crossmark::Document
-{
-public:
-	virtual ~Document () {}
-
-#ifndef SWIG
-	virtual void pushStyle (crossmark::document::Style::Type type) { pushStyle ((int) type); }
-	virtual void pushBlock (crossmark::document::Block::Type type) { pushBlock ((int) type); }
-	virtual void link (crossmark::document::Link::Type type, gchar const *label, gchar const *target, gchar const *scroll) { link (type, label, target, scroll); }
-#endif
-
-	virtual void pushDocument () {}
-	virtual void popDocument () {}
-
-	virtual void popBlock () {}
-	virtual void pushBlock (int type) {}
-
-	virtual void pushStyle (int type) {}
-	virtual void popStyle () {}
-
-	virtual void link (int type, gchar const *label, gchar const *target, gchar const *scroll) {}
-
-	virtual void text (char const *str) {}
+enum LinkType {
+	INTERNAL = crossmark::document::Link::INTERNAL,
+	EXTERNAL = crossmark::document::Link::EXTERNAL
 };
 
-#endif // DOCUMENT_HH
+#endif // LINK_HH

@@ -324,6 +324,7 @@ AC_OUTPUT([
  docs/examples/Makefile
  python/Makefile
  python/block/Makefile
+ python/link/Makefile
  python/style/Makefile
  tests/Makefile
  tools/Makefile

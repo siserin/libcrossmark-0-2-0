@@ -139,6 +139,18 @@ Writer::popStyle ()
 	}
 }
 
+/*!
+ * \todo implement
+ */
+void 
+Writer::link (document::Link::Type type, 
+	      gchar const *label, 
+	      gchar const *target,
+	      gchar const *scroll)
+{
+
+}
+
 void 
 Writer::pushBlock (document::Block::Type type)
 {

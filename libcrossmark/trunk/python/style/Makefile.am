@@ -19,7 +19,8 @@ _style_la_LIBADD = \
 	$(top_builddir)/crossmark/libcrossmark-1.la
 
 _style_la_SOURCES = \
-	$(BUILT_SOURCES)
+	$(BUILT_SOURCES) \
+	style.hh
 
 # swig-stamp is EXTRA_DIST'd so tarball builds don't require swig
 swig-stamp: style.swig style.hh Makefile.am
@@ -36,9 +37,6 @@ style.py: swig-stamp
 all-local:
 	test -f __init__.py || $(LN_S) $(srcdir)/__init__.py
 	test -f style.py || $(LN_S) $(srcdir)/style.py
-
-noinst_HEADERS = \
-	style.hh
 
 BUILT_SOURCES = \
 	style-wrap.cc \
