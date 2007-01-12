@@ -143,10 +143,18 @@ Writer::popStyle ()
  * \todo implement
  */
 void 
-Writer::link (document::Link::Type type, 
-	      gchar const *label, 
-	      gchar const *target,
-	      gchar const *scroll)
+Writer::pushLink (document::Link::Type type, 
+		  gchar const *target,
+		  gchar const *scroll)
+{
+
+}
+
+/*!
+ * \todo implement
+ */
+void 
+Writer::popLink ()
 {
 
 }
