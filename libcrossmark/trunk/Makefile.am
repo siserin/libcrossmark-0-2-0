@@ -8,8 +8,10 @@ SUBDIRS += docs
 endif
 
 pkgconfdir = $(libdir)/pkgconfig
-pkgconf_DATA = libcrossmark-1.pc
+pkgconf_DATA = \
+	libcrossmark-1.pc
 
+docdir = $(datadir)/doc/$(PACKAGE)-$(VERSION)
 doc_DATA = \
 	AUTHORS			\
 	COPYING			\
