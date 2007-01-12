@@ -55,6 +55,7 @@ public:
 		TEXT,
 		INDENT,
 		STYLE,
+		LINK,
 		NEWLINE,
 		PARAGRAPH,
 		HEADING
@@ -140,6 +141,30 @@ public:
 	 * \todo Might become an issue with whitespace-indentation.
 	 */
 	virtual gchar const * toString () const { return "\t"; }
+};
+
+
+/*!
+ * \brief Hyperlink token.
+ */
+class Link : public Token
+{
+public:
+	Link () {}
+	virtual ~Link () {}
+
+	virtual Token::Class getClass () const { return Token::LINK; }
+	virtual gchar const * toHtml () const 
+	{
+		return NULL;
+	}
+	virtual gchar const * toString () const { return toHtml (); }
+
+private:
+	String _label;
+	String _target;
+	String _scroll;
+	String _html;
 };
 
 /*!

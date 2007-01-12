@@ -1,5 +1,5 @@
 
-SUBDIRS = block style
+SUBDIRS = block link style
 
 AM_CPPFLAGS = \
 	$(PYTHON_INCLUDES) \
@@ -21,7 +21,10 @@ _crossmark_la_LIBADD = \
 	$(top_builddir)/crossmark/libcrossmark-1.la
 
 _crossmark_la_SOURCES = \
-	$(BUILT_SOURCES)
+	$(BUILT_SOURCES) \
+	document.hh \
+	parser.hh \
+	writer.hh
 
 # swig-stamp is EXTRA_DIST'd so tarball builds don't require swig
 swig-stamp: crossmark.swig document.hh parser.hh writer.hh Makefile.am
@@ -38,11 +41,6 @@ crossmark.py: swig-stamp
 all-local:
 	test -f __init__.py || $(LN_S) $(srcdir)/__init__.py
 	test -f crossmark.py || $(LN_S) $(srcdir)/crossmark.py
-
-noinst_HEADERS = \
-	document.hh \
-	parser.hh \
-	writer.hh
 
 BUILT_SOURCES = \
 	crossmark-wrap.cc \

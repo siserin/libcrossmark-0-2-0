@@ -87,6 +87,17 @@ public:
 		_styleStack.pop ();
 	}
 
+	/*!
+ 	 * \todo implement
+ 	 */
+	void link (document::Link::Type type, 
+		   gchar const *label, 
+		   gchar const *target,
+		   gchar const *scroll)
+	{
+
+	}
+
 	void pushBlock (document::Block::Type type)
 	{
 		switch (type) {

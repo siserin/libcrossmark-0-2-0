@@ -82,29 +82,21 @@ class Link
 public:
 	enum Type {
 		INTERNAL,		//< Link leads to the specified wiki-internal page.
-		INTERNAL_HEADING,	//< Link leads to the specified heading on the specified page.
-		INTERNAL_SECTION,	//< Link leads to the specified numbered section on the specified page.
-		INTERNAL_LABEL,		//< Link with custom label, leads to specified wiki-internal page.
-
 		EXTERNAL,		//< External link.
-		EXTERNAL_LABEL		//< External link with custom label.
 	};
 
 	virtual ~Link () {}
 
-	virtual void internalLink (Type type, 
-				   gchar const *anchor) = 0;
-
-	virtual void internalCustomLink (Type type, 
-					 gchar const *anchor, 
-					 gchar const *param) = 0;
-	
-	virtual void externalLink (Type type, 
-				   gchar const *uri) = 0;
-
-	virtual void externalCustomLink (Type type, 
-					 gchar const *uri, 
-					 gchar const *param) = 0;
+	/*!
+ 	 * Parameters are ordered the way they have to be put into the crossmark document.
+ 	 * \param label Link text if given, or NULL.
+ 	 * \param target URI or page.
+ 	 * \param scroll In-page target, if given. 
+	 */
+	virtual void link (Type type, 
+			   gchar const *label, 
+			   gchar const *target,
+			   gchar const *scroll) = 0;
 };
 
 /*!
@@ -250,7 +242,7 @@ public:
  */
 class Document : public document::Text, 
 		 //public document::Note,
-		 //public document::Link,
+		 public document::Link,
 		 public document::Style,
 		 //public document::Image,
 		 public document::Block
@@ -268,16 +260,22 @@ public:
 	virtual void pushDocument () = 0;
 	virtual void popDocument () = 0;
 
-	// text interface
-	virtual void text (gchar const *str) = 0;
+	// document structure interface
+	virtual void pushBlock (document::Block::Type type) = 0;
+	virtual void popBlock () = 0;
 
 	// style interface
 	virtual void pushStyle (document::Style::Type type) = 0;
 	virtual void popStyle () = 0;
 
-	// document structure interface
-	virtual void pushBlock (document::Block::Type type) = 0;
-	virtual void popBlock () = 0;
+	// link interface
+	virtual void link (document::Link::Type type, 
+			   gchar const *label, 
+			   gchar const *target,
+			   gchar const *scroll) = 0;
+
+	// text interface
+	virtual void text (gchar const *str) = 0;
 };
 
 };  // namespace crossmark
