@@ -1,4 +1,6 @@
 
+DIST_SUBDIRS = crossmark tools tests python docs
+
 SUBDIRS = crossmark tools tests
 if HAVE_PYTHON
 SUBDIRS += python

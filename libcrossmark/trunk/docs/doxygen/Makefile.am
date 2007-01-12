@@ -1,7 +1,15 @@
 
 # TODO install generated docs
 
+doxfiles = \
+	mainpage.dox \
+	release-notes.dox \
+	hacking.dox \
+	authors.dox \
+	copying.dox
+
 EXTRA_DIST = \
+	$(doxfiles) \
 	Doxyfile.in \
 	footer.html.in \
 	header.html.in
@@ -14,7 +22,7 @@ CLEANFILES = \
 	copying.dox \
 	copy-stamp
 
-all-local: mainpage.dox release-notes.dox hacking.dox authors.dox copying.dox
+all-local: $(doxfiles)
 	test -f header.html.in || $(LN_S) $(srcdir)/header.html.in
 	test -f footer.html.in || $(LN_S) $(srcdir)/footer.html.in
 	doxygen 
