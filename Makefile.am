@@ -1,7 +1,4 @@
 
-pkgconfdir = $(libdir)/pkgconfig
-pkgconf_DATA = libcrossmark-1.pc
-
 SUBDIRS = crossmark tools tests
 if HAVE_PYTHON
 SUBDIRS += python
@@ -9,6 +6,9 @@ endif
 if BUILD_DOCS
 SUBDIRS += docs
 endif
+
+pkgconfdir = $(libdir)/pkgconfig
+pkgconf_DATA = libcrossmark-1.pc
 
 doc_DATA = \
 	AUTHORS			\
@@ -25,26 +25,20 @@ EXTRA_DIST = \
 	libcrossmark-1.pc.in	\
 	python.m4
 
-CLEANFILES = \
-	cl-stamp \
-	copy-stamp
-
-if BUILD_DOCS
-all-local: copy-stamp
-endif
-
-clean-local: 
-	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
-		rm -f crossmark.py*; \
-	fi
-
-distclean-local:
-	rm -rf *.cache *~
+DISTCLEANFILES = \
+	crossmark.pyc \
+	cl-stamp
 
 dist-hook: ChangeLog
 	rm -rf `find $(distdir)/tests -name '\.svn'`
 	rm -rf `find $(distdir)/tests -name '*~'`
 	rm -rf `find $(distdir)/tests -name '*_'`
+
+distclean-local:
+	rm -rf *.cache *~
+	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
+		test -f crossmark.py && rm -f crossmark.py; \
+	fi
 
 ChangeLog: cl-stamp
 	if [ -d "$(srcdir)/.svn" ]; then \
@@ -53,10 +47,3 @@ ChangeLog: cl-stamp
 	touch $<
 
 cl-stamp:
-
-copy-stamp:
-	if test "$(srcdir)" != "$(builddir)" && \
-	   test ! -f "crossmark.py"; then \
-		cp $(srcdir)/crossmark.py .; \
-	fi
-	touch $@

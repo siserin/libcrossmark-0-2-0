@@ -26,6 +26,22 @@ Do not include private headers in header files if it can be avoided
 with reasonable effort. That helps to keep dependencies low when 
 exporting interfaces later.
 
+=== Makefile.am layout ===
+
+1) DIST_SUBDIRS
+
+2) SUBDIRS
+
+3) AM_$fooFLAGS
+
+4) targets
+
+5) EXTRA_DIST, CLEANFILES, DISTCLEANFILES
+
+6) -local and -hook targets
+
+7) custom targets
+
 Documentation
 -------------
 

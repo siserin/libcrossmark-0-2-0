@@ -32,24 +32,10 @@ style-wrap.h: swig-stamp
 
 style.py: swig-stamp
 
-if BUILD_DOCS
-all-local: copy-stamp
-endif
-
-clean-local: 
-	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
-		rm -f __init__.py*; \
-		rm -f style.py*; \
-	fi
-
-copy-stamp:
-	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
-		cp $(srcdir)/__init__.py .; \
-		if test -f "$(srcdir)/style.py"; then \
-			cp $(srcdir)/style.py .; \
-		fi; \
-	fi
-	touch $@
+# when generating docs we run python tools in the build tree
+all-local:
+	test -f __init__.py || $(LN_S) $(srcdir)/__init__.py
+	test -f style.py || $(LN_S) $(srcdir)/style.py
 
 noinst_HEADERS = \
 	style.hh
@@ -64,9 +50,8 @@ EXTRA_DIST = \
 	$(BUILT_SOURCES) \
 	swig-stamp
 
-CLEANFILES = \
-	copy-stamp
-
 DISTCLEANFILES = \
-	style-wrap.cc \
+	$(BUILT_SOURCES) \
+	__init__.pyc \
+	style.pyc \
 	swig-stamp
