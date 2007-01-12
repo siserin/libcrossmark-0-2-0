@@ -1,10 +1,10 @@
 
+# TODO install generated docs
+
 EXTRA_DIST = \
 	Doxyfile.in \
 	footer.html.in \
 	header.html.in
-
-if BUILD_DOCS
 
 CLEANFILES = \
 	mainpage.dox \
@@ -14,20 +14,10 @@ CLEANFILES = \
 	copying.dox \
 	copy-stamp
 
-install-data-am:
-	mkdir -p $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html
-	$(INSTALL) html/*.html $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html/
-	$(INSTALL) html/*.png $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html/
-	$(INSTALL) html/*.css $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html/
-
-uninstall-am:
-	-rm -rf $(DESTDIR)$(datadir)/doc/libcrossmark-@CROSSMARK_VERSION@/html
-
 all-local: mainpage.dox release-notes.dox hacking.dox authors.dox copying.dox
-	test -f header.html.in || $(LN_S) $(srcdir)/header.html.in ./
-	test -f footer.html.in || $(LN_S) $(srcdir)/footer.html.in ./
+	test -f header.html.in || $(LN_S) $(srcdir)/header.html.in
+	test -f footer.html.in || $(LN_S) $(srcdir)/footer.html.in
 	doxygen 
-endif
 
 PYTHONPATH := "$(top_builddir):$(top_builddir)/python/.libs:$(top_builddir)/python/block/.libs:$(top_builddir)/python/style/.libs"
 XM2DOX := $(top_srcdir)/tools/xm2dox.py
@@ -64,12 +54,8 @@ copying.dox: $(top_srcdir)/COPYING copy-stamp
 	echo "*/" >> $@
 
 copy-stamp:
-	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
-		cp "$(top_srcdir)/crossmark.py" "$(top_builddir)/"; \
-	fi
+	test -f $(top_builddir)/crossmark.py || cp $(top_srcdir)/crossmark.py $(top_builddir)/
 	touch $@
-
-distclean-local: clean-local
 
 clean-local:
 	rm -rf html

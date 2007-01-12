@@ -34,24 +34,10 @@ crossmark-wrap.h: swig-stamp
 
 crossmark.py: swig-stamp
 
-if BUILD_DOCS
-all-local: copy-stamp
-endif
-
-clean-local: 
-	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
-		rm -f __init__.py*; \
-		rm -f crossmark.py*; \
-	fi
-
-copy-stamp:
-	if test `basename ./$(srcdir)` != `basename ./$(builddir)`; then \
-		cp $(srcdir)/__init__.py .; \
-		if test -f "$(srcdir)/crossmark.py"; then \
-			cp $(srcdir)/crossmark.py .; \
-		fi; \
-	fi
-	touch $@
+# when generating docs we run python tools in the build tree
+all-local:
+	test -f __init__.py || $(LN_S) $(srcdir)/__init__.py
+	test -f crossmark.py || $(LN_S) $(srcdir)/crossmark.py
 
 noinst_HEADERS = \
 	document.hh \
@@ -68,9 +54,8 @@ EXTRA_DIST = \
 	$(BUILT_SOURCES) \
 	swig-stamp
 
-CLEANFILES = \
-	copy-stamp
-
 DISTCLEANFILES = \
-	crossmark-wrap.cc \
+	$(BUILT_SOURCES) \
+	__init__.pyc \
+	crossmark.pyc \
 	swig-stamp
