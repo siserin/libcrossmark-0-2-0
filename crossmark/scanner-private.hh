@@ -156,10 +156,8 @@ public:
 		RIGHT
 	};
 
-	Link (Pos pos, gchar const *target, gchar const *scroll) 
-	  : _pos (pos),
-	    _target (target),
-	    _scroll (scroll)
+	Link () 
+	  : _pos (LEFT)
 	{}
 	virtual ~Link () {}
 
@@ -186,6 +184,23 @@ public:
 		String s = _target;
 		s += _scroll;
 		return s.c_str ();
+	}
+
+protected:
+	virtual void flip () 
+	{ 
+		g_assert (_pos == LEFT); 
+		_pos = RIGHT;
+	}
+	virtual void setScroll (gchar const *scroll) 
+	{ 
+		g_assert (_scroll.size () == 0);
+		_scroll = scroll; 
+	}
+	virtual void setTarget (gchar const *target) 
+	{ 
+		g_assert (_target.size () == 0);
+		_target = target; 
 	}
 
 private:

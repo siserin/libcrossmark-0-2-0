@@ -11,10 +11,11 @@ doxfiles = \
 EXTRA_DIST = \
 	$(doxfiles) \
 	Doxyfile.in \
+	dox-stamp \
 	footer.html.in \
 	header.html.in
 
-CLEANFILES = \
+DISTCLEANFILES = \
 	mainpage.dox \
 	release-notes.dox \
 	hacking.dox \
@@ -22,13 +23,16 @@ CLEANFILES = \
 	copying.dox \
 	copy-stamp
 
-all-local: $(doxfiles)
+all-local:
 	test -f header.html.in || $(LN_S) $(srcdir)/header.html.in
 	test -f footer.html.in || $(LN_S) $(srcdir)/footer.html.in
 	doxygen 
 
 PYTHONPATH := "$(top_builddir):$(top_builddir)/python/.libs:$(top_builddir)/python/block/.libs:$(top_builddir)/python/link/.libs:$(top_builddir)/python/style/.libs"
 XM2DOX := $(top_srcdir)/tools/xm2dox.py
+
+dox-stamp: $(doxfiles)
+	touch $@
 
 mainpage.dox: $(top_srcdir)/docs/mainpage.dox.in $(top_srcdir)/README copy-stamp
 	echo "/*!" > $@

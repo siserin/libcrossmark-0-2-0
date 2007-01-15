@@ -82,10 +82,17 @@ public:
 	/*!
  	 * \todo implement
  	 */
-	void link (document::Link::Type type, 
-		   gchar const *label, 
-		   gchar const *target,
-		   gchar const *scroll)
+	void pushLink (document::Link::Type type, 
+		       gchar const *target,
+		       gchar const *scroll)
+	{
+
+	}
+
+	/*!
+ 	 * \todo implement
+ 	 */
+	void popLink ()
 	{
 
 	}
