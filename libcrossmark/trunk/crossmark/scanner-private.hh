@@ -34,6 +34,8 @@
 
 namespace crossmark {
 
+class Scanner;
+
 /*!
  * \internal
  * \brief Tokens recognised by the scanner.
@@ -150,6 +152,7 @@ public:
  */
 class Link : public Token
 {
+friend class crossmark::Scanner;
 public:
 	enum Pos {
 		LEFT,
@@ -439,6 +442,7 @@ protected:
 	virtual token::Token * scanHeading ();
 	virtual token::Token * scanNewline ();
 	virtual token::Token * scanIndent ();
+	virtual token::Token * scanLink (gunichar c2);
 	virtual token::Token * scanStyle (gunichar c2, gunichar &tail);
 
 private:
@@ -452,6 +456,7 @@ private:
 	gboolean		 _ownStream;
 	token::Token::Class	 _prev;
 	token::Token		*_next;
+	token::Link		*_link;
 	gunichar		 _c1;
 };
 
