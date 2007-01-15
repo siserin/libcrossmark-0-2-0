@@ -31,6 +31,7 @@ Scanner::Scanner (gchar const *file)
   : _istream (* stream::Factory::instance().createInput (file)),
     _ownStream (FALSE),
     _next (NULL),
+    _link (NULL),
     _c1 (0)
 {
 	_next = token::Factory::instance().createToken (token::Token::START);
@@ -43,6 +44,7 @@ Scanner::Scanner (stream::Input &istream)
   : _istream (istream),
     _ownStream (TRUE),
     _next (NULL),
+    _link (NULL),
     _c1 (0)
 {
 	_next = token::Factory::instance().createToken (token::Token::START);
@@ -115,6 +117,10 @@ Scanner::fetchToken ()
 			}
 			_c1 = c2;
 			return text;
+		} else if ((_next = scanLink (c2)) != NULL) {
+
+//TODO
+
 		} else if ((_next = scanStyle (c2, tail)) != NULL) {
 			if (text && tail) {
 				text->append (tail);
@@ -268,6 +274,24 @@ Scanner::scanIndent ()
 	if (_c1 == '\t') {
 		_c1 = 0;
 		return new token::Indent ();
+	}
+	return NULL;
+}
+
+token::Token * 
+Scanner::scanLink (gunichar c2)
+{
+	return NULL; // TODO don't want do match
+
+	if (_c1 == '[' && c2 == '[') {
+		// cannot nest links
+		g_assert (_link == NULL);
+		_link = new token::Link ();
+		return _link;
+	} else if (_link && _c1 == ' ' && c2 == ' |') {
+		// TODO this is a label/URI separator
+	} else if (_link && _c1 == ']' && c2 == ']') {
+		// TODO this is a label/URI separator		
 	}
 	return NULL;
 }

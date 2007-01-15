@@ -57,6 +57,7 @@ Parser::~Parser ()
 /*
  * Scanner tokens:
  * start end pbreak newline indent text 
+ * link-l link-r
  * style-lb style-rb style-li style-ri style-lm style-rm style-lu style-ru
 
 # Some quickie top-down grammar, flaws:
@@ -74,7 +75,8 @@ h4         := h4-leadin line* h4-leadout pbreak
 paragraph  := line* pbreak
 blockquote := indent line ( indent line )* pbreak
 line       := ( text | markup )* newline
-markup     := bold | italic | monospace | underline
+markup     := link | bold | italic | monospace | underline
+link       := link-l markup link-r
 bold       := style-lb ( text | markup )* style-rb
 italic     := style-li ( text | markup )* style-ri
 monospace  := style-lm ( text | markup )* style-rm
