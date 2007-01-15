@@ -72,6 +72,15 @@ else
 fi
 AC_MSG_RESULT([$PYTHON_BINDING_SHIPPED])
 
+dox_stamp="$srcdir/docs/doxygen/dox-stamp"
+AC_MSG_CHECKING([documentation in $dox_stamp])
+if test -f "$dox_stamp"; then
+	DOX_SHIPPED="yes"
+else
+	DOX_SHIPPED="no"
+fi
+AC_MSG_RESULT([$PYTHON_BINDING_SHIPPED])
+
 AC_CHECK_PROG(DOXYGEN, doxygen, doxygen)
 AC_SUBST(DOXYGEN)
 AC_ARG_VAR(DOXYGEN, Doxygen doc generator)
@@ -131,7 +140,7 @@ fi
 AM_CONDITIONAL([HAVE_PYTHON], test "x$cm_cv_python" == "xyes")
 
 AC_ARG_ENABLE([docs], 
-[AS_HELP_STRING([--enable-docs], [build documentation (requires doxygen)])],
+[AS_HELP_STRING([--enable-docs], [build documentation, requires doxygen])],
 [
 	cm_cv_docs="$enableval"
 ], [
@@ -139,7 +148,7 @@ AC_ARG_ENABLE([docs],
 ])
 
 AC_ARG_ENABLE([internal-docs], 
-[AS_HELP_STRING([--enable-internal-docs], [build internal documentation (requires doxygen)])],
+[AS_HELP_STRING([--enable-internal-docs], [build internal documentation, requires doxygen])],
 [
 	cm_cv_internal_docs="$enableval"
 	cm_cv_docs="$enableval"
@@ -162,17 +171,27 @@ AC_ARG_ENABLE([examples],
 
 ABS_ROOTDIR=`pwd`
 AC_SUBST(ABS_ROOTDIR)
+pushd `pwd`
+cd $ABS_ROOTDIR/..
+DOXYGEN_STRIP_PATH=`pwd`
+popd
 
 DOXYGEN_STRIP_PATH=
 if test "x$cm_cv_docs" == "xyes" && \
-   test "x$cm_cv_python" == "xyes" && \
-   test "x$DOXYGEN" != "x" ; then
+   test "x$DOXYGEN" != "x" && \
+   test "$cm_cv_python" == "xyes"; then
+
 	cm_cv_docs="yes"
-	pushd `pwd`
-	cd $ABS_ROOTDIR/..
-	DOXYGEN_STRIP_PATH=`pwd`
-	popd
+	cm_cv_docs_msg="(xmark generated)"
+
+elif test "x$cm_cv_docs" == "xyes" && \
+     test "x$DOXYGEN" != "x" && \
+     test "x$DOX_SHIPPED" == "xyes"; then
+
+	cm_cv_docs="yes"
+	cm_cv_docs_msg="(xmark shipped)"
 else
+	cm_cv_docs_msg="(docs:$cm_cv_docs, doxygen:$DOXYGEN, python:$cm_cv_python, dox:$DOX_SHIPPED)"
 	cm_cv_docs="no"
 	cm_cv_internal_docs="no"
 fi
@@ -338,7 +357,7 @@ echo "
         Use libgsf:                    ${cm_cv_libgsf}
         Python bindings:               ${cm_cv_python} ${cm_cv_python_msg}
             installing to:             ${pyexecdir}
-        Build documentation:           ${cm_cv_docs}
+        Build documentation:           ${cm_cv_docs} ${cm_cv_docs_msg}
             examples:                  ${cm_cv_examples}
             internal docs:             ${cm_cv_internal_docs}
         Debugging support:             ${debug}

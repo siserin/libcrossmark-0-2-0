@@ -30,19 +30,20 @@ public:
 #ifndef SWIG
 	virtual void pushStyle (crossmark::document::Style::Type type) { pushStyle ((int) type); }
 	virtual void pushBlock (crossmark::document::Block::Type type) { pushBlock ((int) type); }
-	virtual void link (crossmark::document::Link::Type type, gchar const *label, gchar const *target, gchar const *scroll) { link (type, label, target, scroll); }
+	virtual void pushLink (crossmark::document::Link::Type type, gchar const *target, gchar const *scroll) { pushLink (type, target, scroll); }
 #endif
 
 	virtual void pushDocument () {}
 	virtual void popDocument () {}
 
-	virtual void popBlock () {}
 	virtual void pushBlock (int type) {}
+	virtual void popBlock () {}
 
 	virtual void pushStyle (int type) {}
 	virtual void popStyle () {}
 
-	virtual void link (int type, gchar const *label, gchar const *target, gchar const *scroll) {}
+	virtual void pushLink (int type, gchar const *target, gchar const *scroll) {}
+	virtual void popLink () {}
 
 	virtual void text (char const *str) {}
 };

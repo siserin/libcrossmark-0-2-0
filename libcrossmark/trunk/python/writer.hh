@@ -40,7 +40,8 @@ public:
 	virtual void pushStyle (int type) { crossmark::Writer::pushStyle ((crossmark::document::Style::Type) type); }
 	virtual void popStyle () { crossmark::Writer::popStyle (); }
 
-	virtual void link (int type, gchar const *label, gchar const *target, gchar const *scroll) { crossmark::Writer::link ((crossmark::document::Link::Type) type, label, target, scroll); }
+	virtual void pushLink (int type, gchar const *target, gchar const *scroll) { crossmark::Writer::pushLink ((crossmark::document::Link::Type) type, target, scroll); }
+	virtual void popLink () { crossmark::Writer::popLink (); }
 
 	virtual void text (char const *str) { crossmark::Writer::text (str); }
 };
